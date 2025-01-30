@@ -1,0 +1,305 @@
+﻿@page "/CharacterGrid"
+@using Microsoft.Extensions.Logging
+@inject ILogger<TeamDetails> Logger
+
+<link rel="stylesheet" href="css/charactercolor.css" />
+
+@if (selected is null)
+{
+	<span> Loading Character </span>
+}
+else
+{
+	<div class="p-4 bordered bg-subtlegrad rounded">
+		<div class="d-flex text-end justify-content-end text-light p-2">
+			<button class="text-end d-flex justify-content-end text-light" @onclick="Getout">✖</button>
+		</div>
+		<div class="p-2 m-2 d-flex flex-row flex-wrap justify-content-center">
+			<div class="d-flex flex-row flex-wrap col-12">
+				<div class="row col-md-12 col-lg-4 d-flex flex-column">
+					<div class="flex-column justify-content-center d-flex text-light flex-fill">
+						<img class="col-lg-12 col-md-10 col-sm-12 mx-2" src="@selected.character.img" />
+						@if (!dmgonly)
+						{
+							<div class="d-flex flex-wrap justify-content-evenly flex-fill">
+								<h5 class="mt-1"> Image link: </h5>
+								<input type="text" class="spinput mx-2 mb-1 rounded d-flex flex-fill text-light p-2" @bind="@selected.character.img" @bind:after="Update">
+							</div>
+						}
+					</div>
+					<div class="col-12 m-2 flex-wrap justify-content-evenly d-flex text-light flex-fill">
+						@if (!dmgonly)
+						{
+							<h5 class="mt-1"> Name: </h5>
+							<input type="text" class="spinput mx-2 mb-1 rounded d-flex flex-fill text-light p-2 bg-@selected.character.element" @bind="@selected.character.name" @bind:after="Update">
+						}
+						else
+						{
+							<h3 class="bg-selected.character.element"> @selected.character.name </h3>
+						}
+					</div>
+					@if (!dmgonly)
+					{
+						<div class="col-12 m-2 flex-wrap text-start flex-column d-flex text-light flex-fill">
+							<button @onclick="ToggleDropdown" class="ts-2 text-start p-1 clickable-cursor rounded bg-@selected.character.element"><h5 class="my-1">Element: @selected.character.element</h5></button>
+							<div class="@dropdown floater rounded d-flex flex-column">
+								<a @onclick="() => Element(1)" class="d-flex ts-2 p-3 darken-95 text-pyro">Pyro</a>
+								<a @onclick="() => Element(2)" class="d-flex ts-2 p-3 darken-95 text-hydro">Hydro</a>
+								<a @onclick="() => Element(3)" class="d-flex ts-2 p-3 darken-95 text-anemo">Anemo</a>
+								<a @onclick="() => Element(4)" class="d-flex ts-2 p-3 darken-95 text-electro">Electro</a>
+								<a @onclick="() => Element(5)" class="d-flex ts-2 p-3 darken-95 text-dendro">Dendro</a>
+								<a @onclick="() => Element(6)" class="d-flex ts-2 p-3 darken-95 text-cryo">Cryo</a>
+								<a @onclick="() => Element(7)" class="d-flex ts-2 p-3 darken-95 text-geo">Geo</a>
+							</div>
+						</div>
+					}
+				</div>
+				<div class="row col-md-12 col-lg-8 d-flex flex-column text-light m-2">
+					<h5> Relative Damages: </h5>
+					@if (selected.damages.Count <= 0)
+					{
+						<div class="col-sm-12 col-lg-4 mx-2 flex-column justify-content-center d-flex flex-fill">
+							<h5> This character has no registered relative damages. </h5>
+						</div>
+					}
+					<div class="row mx-1 flex-row flex-wrap d-flex">
+						@for (int local = 0; local < selected.damages.Count; local++)
+						{
+							int i = local;
+							<div class="row col-6 mx-0 my-1 d-flex flex-fill flex-wrap">
+								<div class="row p-0 col-12 d-flex flex-column">
+								@if (dmgonly)
+								{
+									<button class="bg-highlight text-light p-2 rounded clickable" @onclick="() => SelectDmg(i)">Use</button>
+								}
+								<div class="d-flex p-0 flex-nowrap flex-row">
+									<input type="text" class="spinput rounded flex-fill border-@IsUsed(i) text-light p-2" @bind="@selected.damages[i]" @bind:after="Update">
+									<button class="text-light p-2 ms-1 bg-pyro clickable rounded flex-nowrap" @onclick="() => RemoveDmg(i)">✖</button>
+								</div>
+								</div>
+							</div>
+						}
+						@if (selected.damages.Count < 10)
+						{
+							<div class="row col-6 mx-0 my-1 d-flex p-0 flex-wrap">
+								<h5 class="clickable p-0 m-0 rounded template" @onclick="NewDmg"> Add damage </h5>
+							</div>
+						}
+
+					</div>
+					@if (dmgonly)
+					{
+						<button class="bg-highlight col-6 text-light rounded border-@IsUsed(-1) p-2 clickable" @onclick="() => SelectDmg(-1)">Use Raw Damage</button>
+					}
+					<p class="text-light">* You can add comments between (parentheses) to identify the damage.</p>
+					<div class="col-sm-12 col-lg-4 text-light mx-2 mt-2 flex-column justify-content-center d-flex flex-fill">
+						<h5> Global AoE: </h5>
+						<input type="number" class="spinput rounded text-light p-2" @bind="@selected.character.aoe" @bind:after="Update">
+					</div>
+				</div>
+				@if (!dmgonly)
+				{
+					<div class="d-flex justify-content-end m-2 pb-2">
+						<div class="d-flex flex-fill">
+							<button class="my-3 col-12 btn btn-danger text-light" @onclick="Yousure" type="button">Remove Character</button>
+						</div>
+					</div>
+					@if (yousure)
+					{
+						<div class="maiedal d-flex flex-column text-center justify-content-center">
+							<div class="p-2 darken-95 d-flex rounded text-center flex-column justify-content-center mx-auto text-light col-6">
+								<p> Are you sure you want to permanently remove this character? </p>
+								<div class="d-flex flex-row flex-wrap mx-auto">
+									<MudButton Class="text-light" OnClick="Yousure">No</MudButton>
+									<MudButton Color="Color.Error" OnClick="Delete">Yes, remove them</MudButton>
+								</div>
+							</div>
+						</div>
+					}
+				}
+			</div>
+		</div>
+	</div>
+}
+
+@code
+{
+	[CascadingParameter]
+	CharacterCondensed selected { get; set;  }
+
+	[CascadingParameter(Name = "dmgonly")]
+	bool dmgonly { get; set; }
+
+	Calc calc;
+
+	bool yousure = false;
+	string dropdown = "hidden";
+
+	[Parameter]
+	public EventCallback<CharacterCondensed> OnDelete { get; set; }
+
+	[Parameter]
+	public EventCallback Exit { get; set; }
+
+	[Parameter]
+	public EventCallback<int> OnSelected { get; set; }
+
+	protected override async void OnInitialized()
+	{
+		calc = await icalc.Start();
+		if (dmgonly)
+		{
+			StreamReader reader = new StreamReader(calc.DBlocation);
+			string temp = reader.ReadLine();
+			while (!temp.Split(',')[0].Equals(selected.character.name))
+			{
+				temp = reader.ReadLine();
+			}
+			selected.text = temp.Split(',').ToList();
+			for (int i = 2; i < selected.text.Count-2; i++)
+			{
+				selected.damages.Add(selected.text[i]);
+			}
+			reader.Close();
+		}
+	}
+
+	void Element(int i)
+	{
+		Logger.LogInformation($"Element {i}");
+		switch (i)
+		{
+			case 1:
+				selected.character.element = "pyro";
+				break;
+			case 2:
+				selected.character.element = "hydro";
+				break;
+			case 3:
+				selected.character.element = "anemo";
+				break;
+			case 4:
+				selected.character.element = "electro";
+				break;
+			case 5:
+				selected.character.element = "dendro";
+				break;
+			case 6:
+				selected.character.element = "cryo";
+				break;
+			case 7:
+				selected.character.element = "geo";
+				break;
+		}
+		dropdown = "hidden";
+		Update();
+	}
+
+	void ToggleDropdown()
+	{
+		Logger.LogInformation($"toggle!");
+		if (dropdown == "hidden"){
+			dropdown = "shown";
+		}
+		else {
+			dropdown = "hidden";
+		}
+	}
+	void NewDmg()
+	{
+		selected.damages.Add("10");
+	}
+
+	void RemoveDmg(int i)
+	{
+		selected.damages.RemoveAt(i);
+	}
+
+	void SelectDmg(int i)
+	{
+		selected.character.relative = i;
+		Update();
+		OnSelected.InvokeAsync(i);
+	}
+
+	string IsUsed(int i)
+	{
+		if (selected.character.relative == i)
+		{
+			return "anemo";
+		}
+		return "";
+	}
+
+	void Update()
+	{
+		selected.Update(calc);
+		if (dmgonly)
+		{
+			StreamReader reader = new StreamReader(calc.DBlocation);
+			string temp = reader.ReadLine();
+			string full = "";
+			while (!temp.Split(',')[0].Equals(selected.character.name))
+			{
+				full += temp + "\r\n";
+				temp = reader.ReadLine();
+			}
+			temp = selected.text[0];
+			for (int i = 1; i < selected.text.Count; i++)
+			{
+				temp += $",{selected.text[i]}";
+			}
+			if (reader.Peek() != -1)
+			{
+				temp += ";\r\n";
+			}
+			full += temp;
+			temp = reader.ReadToEnd();
+			full += temp;
+			reader.Close();
+			File.WriteAllText(calc.DBlocation, full);
+			double mult;
+			if (selected.character.relative < 0)
+			{
+				mult = 1;
+			}
+			else 
+			{
+				mult = selected.character.dmg / calc.GetDmg(selected.character, selected.character.relative);
+			}
+			calc.Reload();
+			if (selected.character.relative >= 0)
+			{
+				int start = selected.damages[selected.character.relative].IndexOf('(');
+				if (start >= 0) // has comments
+				{
+					int end = selected.damages[selected.character.relative].IndexOf(')');
+					selected.character.dmg = double.Parse(selected.damages[selected.character.relative].Remove(start, (end - start + 1)));
+				}
+				else
+				{
+					selected.character.dmg = double.Parse(selected.damages[selected.character.relative]);
+				}
+				selected.character.dmg *= mult;
+				selected.character.dmg = Math.Floor(selected.character.dmg);
+			}
+		}
+		selected.Update(calc);
+	}
+
+	void Yousure()
+	{
+		yousure = !yousure;
+	}
+
+	void Delete()
+	{
+		OnDelete.InvokeAsync(selected);
+		Getout();
+	}
+
+	void Getout()
+	{
+		Exit.InvokeAsync();
+	}
+}

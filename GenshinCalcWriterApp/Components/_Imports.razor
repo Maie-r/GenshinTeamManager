@@ -1,0 +1,18 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using GenshinCalcWriterApp
+@using GenshinCalcWriterApp.Components
+@using GenshinTeamCalc
+@using CalcViewer
+@using CalcViewer.Components
+@using CalcViewer.Data
+
+@* Here you should add the required folders from the library, and the layout of this main library. and another injection on navigation *@
+@using GenshinCalcWriterApp.Components.Layout
+@inject NavigationManager _navigation
+@inject ICalc icalc

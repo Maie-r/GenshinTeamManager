@@ -1,0 +1,499 @@
+﻿@page "/TeamPairDetails"
+@using Microsoft.Extensions.Logging
+@inject ILogger<TeamDetails> Logger
+
+<link rel="stylesheet" href="css/charactercolor.css" />
+
+@if (selected is null)
+{
+	<span> Loading Team </span>
+
+}
+else
+{
+	<div class="p-2 dontscrollman justify-content-center darken-50 veryrounded">
+		@if (compaired == null) // Regular Team Pair 
+		{
+			@for (int j = 0; j < 2; j++)
+			{
+				<h3 class="col-12 text-center mx-auto"> @selected[j].name </h3>
+				<div class="d-flex col-10 mx-auto flex-row flex-wrap justify-content-evenly">
+					@for (int i = 0; i < selected[j].characters.Count; i++)
+					{
+						<div class="row d-flex justify-content-center col-3 col-sm-3 col-md-3 col-lg-3 d-flex">
+							<img src="@selected[j].characters[i].img" class="charimg" />
+							<h5 class="col-11 p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center bg-@selected[j].characters[i].element">@selected[j].characters[i].name </h5>
+							<h5 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@selected[j].characters[i].element">@Calc.NumberClarity(selected[j].characters[i].dmg) </h5>
+							<h5 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center">(@selectpercentages[j][i]%)</h5>
+							<h5 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@selected[j].characters[i].element">(Aoe: @Calc.NumberClarity((selected[j].characters[i].dmg * selected[j].characters[i].aoe)))</h5>
+						</div>
+					}
+				</div>
+				<br />
+				<div class="col-12 text-center mx-auto">
+					@if (calc.dmgType == "dps")
+					{
+						<h5 class="hole"> @((selected[j].dps / 1000).ToString("N2"))k dps | @(Calc.ToDps(selected[j].dpmAoe / 1000, selected[j].rotlen).ToString("N2"))k dps in Aoe</h5>
+					}
+					else
+					{
+						<h5 class="hole"> @selected[j].dpm mi dpm | @selected[j].dpmAoe mi dpm in Aoe</h5>
+					}
+				</div>
+			}
+			if (calc.dmgType == "dps")
+			{
+				<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> Total: @Math.Round((selected[0].dps + selected[1].dps)/1000, 2)k dps</h4>
+				<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> Total: @Math.Round((Calc.ToDps(selected[0].dpmAoe, selected[0].rotlen) + Calc.ToDps(selected[1].dpmAoe, selected[1].rotlen)) / 1000, 2)k dps in Aoe</h4>
+				<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> Total: @Math.Round(((selected[0].dps + selected[1].dps + Calc.ToDps(selected[0].dpmAoe, selected[0].rotlen) + Calc.ToDps(selected[1].dpmAoe, selected[1].rotlen)) / 2000), 2)k dps Average</h4>
+			}
+			else 
+			{
+				<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> Total: @Math.Round((selected[0].dpm + selected[1].dpm), 2) mi dmg Single Target</h4>
+				<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> Total: @Math.Round((selected[0].dpmAoe + selected[1].dpmAoe), 2) mi dmg Aoe</h4>
+				<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> Total: @Math.Round(((selected[0].dpm + selected[1].dpm + selected[0].dpmAoe + selected[1].dpmAoe) / 2), 2) mi dmg Average</h4>
+			}
+		}
+		else  // Team Pair Comparasion
+		{
+			<div>
+				<h3 class="col-12 text-center mx-auto">
+					<span class="draggable clickable team" draggable="true" @ondragleave="OuttaHereTeam" @ondragover="() => OverHereTeam(selected[0], 0)" @ondragstart="(e) => StartDrag(e, selected[0], 0)" @ondragend="StopDragTeam">
+						@selected[0].name
+					</span> and
+					<span class="draggable team" draggable="true" @ondragleave="OuttaHereTeam" @ondragover="() => OverHereTeam(selected[1], 0)" @ondragstart="(e) => StartDrag(e, selected[1], 0)" @ondragend="StopDragTeam">
+						@selected[1].name
+					</span>
+				</h3>
+				<div class="d-flex col-12 mx-auto flex-row flex-wrap justify-content-evenly">
+					@for (int local1 = 0; local1 < 2; local1++) // For Selected Pair
+					{
+						int j = local1;
+						<div class="col-md-12 col-lg-6 ">
+							<div class="d-flex justify-content-evenly">
+								@for (int local2 = 0; local2 < selected[j].characters.Count; local2++)
+								{
+									int i = local2;
+									<div class="row d-flex justify-content-center col-3">
+										<img src="@selected[j].characters[i].img" class="charimg" />
+										<h5 class="draggable col-11 p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center bg-@selected[j].characters[i].element" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(selected[j].characters[i], j)" @ondragstart="(e) => StartDrag(e, selected[j].characters[i], j)" @ondragend="StopDrag">
+											@selected[j].characters[i].name </h5>
+										<MudTooltip class="col-2" Color="Color.Transparent">
+											<ChildContent>
+												<h5 class="hole p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center text-@GetDiffColor(compaired[j].characters[i].dmg, selected[j].characters[i].dmg)">
+													@Calc.NumberClarity(selected[j].characters[i].dmg)
+												</h5>
+											</ChildContent>
+											<TooltipContent>
+												<span class="ts-3 darken-95 p-3 veryrounded text-@GetDiffColor(compaired[j].characters[i].dmg, selected[j].characters[i].dmg)"> @GetDiffPercent(compaired[j].characters[i].dmg, selected[j].characters[i].dmg)</span>
+											</TooltipContent>
+										</MudTooltip>
+										<MudTooltip class="col-2" Color="Color.Transparent">
+											<ChildContent>
+												<h5 class="hole p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center text-@GetDiffColor((compaired[j].characters[i].dmg * compaired[j].characters[i].aoe), (selected[j].characters[i].dmg * selected[j].characters[i].aoe))">
+													(@Calc.NumberClarity((selected[j].characters[i].dmg * selected[j].characters[i].aoe)))
+												</h5>
+											</ChildContent>
+											<TooltipContent>
+												<span class="ts-3 darken-95 p-3 veryrounded text-@GetDiffColor((compaired[j].characters[i].dmg * compaired[j].characters[i].aoe), (selected[j].characters[i].dmg * selected[j].characters[i].aoe))">
+													@GetDiffPercent((compaired[j].characters[i].dmg * compaired[j].characters[i].aoe), (selected[j].characters[i].dmg * selected[j].characters[i].aoe))
+												</span>
+											</TooltipContent>
+										</MudTooltip>
+									</div>
+								}
+							</div>
+							@if (calc.dmgType == "dps")
+							{
+								<div class="col-12 hole text-center mx-auto">
+									<p class="fs-3">
+										<span class="text-@GetDiffColor(compaired[j].dpm, selected[j].dpm)">
+											@((selected[j].dps/1000).ToString("N2"))k dps </span> | 
+										<span class="text-@GetDiffColor(compaired[j].dpmAoe, selected[j].dpmAoe)"> 
+											@(Calc.ToDps(selected[j].dpmAoe/1000, selected[j].rotlen).ToString("N2"))k dps in Aoe </span>
+									</p>
+								</div>
+							}
+							else 
+							{
+								<div class="col-12 hole text-center mx-auto">
+									<p class="fs-3">
+										<span class="text-@GetDiffColor(compaired[j].dpm, selected[j].dpm)">
+											@selected[j].dpm mi dpm </span> | 
+										<span class="text-@GetDiffColor(compaired[j].dpmAoe, selected[j].dpmAoe)"> 
+											@selected[j].dpmAoe mi dpm in Aoe </span>
+									</p>
+								</div>
+							}
+
+						</div>
+					}
+				</div>
+				@if (calc.dmgType == "dps")
+				{
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor((compaired[0].dpm + compaired[1].dpm), (selected[0].dpm + selected[1].dpm))">
+						Total: @Math.Round((selected[0].dps + selected[1].dps)/1000, 2)k dps (@GetDiffPercent((compaired[0].dpm + compaired[1].dpm), (selected[0].dpm + selected[1].dpm)))
+					</h4>
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor((compaired[0].dpmAoe + compaired[1].dpmAoe), (selected[0].dpmAoe + selected[1].dpmAoe))">
+						Total: @Math.Round((Calc.ToDps(selected[0].dpmAoe, selected[0].rotlen) + Calc.ToDps(selected[1].dpmAoe, selected[1].rotlen))/1000, 2)k dps in Aoe (@GetDiffPercent((compaired[0].dpmAoe + compaired[1].dpmAoe), (selected[0].dpmAoe + selected[1].dpmAoe)))
+					</h4>
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor(((compaired[0].dpm + compaired[1].dpm + compaired[0].dpmAoe + compaired[1].dpmAoe)/2), ((selected[0].dpm + selected[1].dpm + selected[0].dpmAoe + selected[1].dpmAoe)/2))">
+						Total: @Math.Round(((selected[0].dps + selected[1].dps + Calc.ToDps(selected[0].dpmAoe, selected[0].rotlen) + Calc.ToDps(selected[1].dpmAoe, selected[1].rotlen)) / 2000), 2)k dps Average
+						(@GetDiffPercent(((compaired[0].dpm + compaired[1].dpm + compaired[0].dpmAoe + compaired[1].dpmAoe) / 2), ((selected[0].dpm + selected[1].dpm + selected[0].dpmAoe + selected[1].dpmAoe)/2)))
+					</h4>
+				}
+				else
+				{
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor((compaired[0].dpm + compaired[1].dpm), (selected[0].dpm + selected[1].dpm))">
+						Total: @Math.Round((selected[0].dpm + selected[1].dpm), 2) mi dpm Single Target (@GetDiffPercent((compaired[0].dpm + compaired[1].dpm), (selected[0].dpm + selected[1].dpm)))
+					</h4>
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor((compaired[0].dpmAoe + compaired[1].dpmAoe), (selected[0].dpmAoe + selected[1].dpmAoe))">
+						Total: @Math.Round((selected[0].dpmAoe + selected[1].dpmAoe), 2) mi dpm Aoe (@GetDiffPercent((compaired[0].dpmAoe + compaired[1].dpmAoe), (selected[0].dpmAoe + selected[1].dpmAoe)))
+					</h4>
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor(((compaired[0].dpm + compaired[1].dpm + compaired[0].dpmAoe + compaired[1].dpmAoe)/2), ((selected[0].dpm + selected[1].dpm + selected[0].dpmAoe + selected[1].dpmAoe)/2))">
+						Total: @Math.Round(((selected[0].dpm + selected[1].dpm + selected[0].dpmAoe + selected[1].dpmAoe) / 2), 2) mi dpm Average
+						(@GetDiffPercent(((compaired[0].dpm + compaired[1].dpm + compaired[0].dpmAoe + compaired[1].dpmAoe) / 2), ((selected[0].dpm + selected[1].dpm + selected[0].dpmAoe + selected[1].dpmAoe) / 2))
+					</h4>
+				}
+			</div>
+			<div>
+				<h3 class="col-12 text-center mx-auto">
+					<span class="draggable team" draggable="true" @ondragleave="OuttaHereTeam" @ondragover="() => OverHereTeam(compaired[0], 1)" @ondragstart="(e) => StartDrag(e, compaired[0], 1)" @ondragend="StopDragTeam">
+						@compaired[0].name</span> and
+					<span class="draggable team" draggable="true" @ondragleave="OuttaHereTeam" @ondragover="() => OverHereTeam(compaired[1], 1)" @ondragstart="(e) => StartDrag(e, compaired[1], 1)" @ondragend="StopDragTeam">
+						@compaired[1].name
+					</span>
+
+				</h3>
+				<div class="d-flex col-12 mx-auto flex-row flex-wrap justify-content-evenly">
+					@for (int local1 = 0; local1 < 2; local1++) // For Compaired Pair
+					{
+						int j = local1;
+						<div class="col-md-12 col-lg-6 ">
+							<div class="d-flex justify-content-evenly">
+								@for (int local2 = 0; local2 < compaired[j].characters.Count; local2++)
+								{
+									int i = local2;
+									<div class="row d-flex justify-content-center col-3">
+										<img src="@compaired[j].characters[i].img" class="charimg" />
+										<h5 class="draggable col-11 p-0 fs-md-4 fs-lg-3 lh-sm m-0 text-center bg-@compaired[j].characters[i].element" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(compaired[j].characters[i], j + 2)" @ondragstart="(e) => StartDrag(e, compaired[j].characters[i], j + 2)" @ondragend="StopDrag">
+											@compaired[j].characters[i].name </h5>
+										<MudTooltip class="col-2" Color="Color.Transparent">
+											<ChildContent>
+												<h5 class="hole p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center text-@GetDiffColor(selected[j].characters[i].dmg, compaired[j].characters[i].dmg)">
+													@Calc.NumberClarity(compaired[j].characters[i].dmg)
+												</h5>
+											</ChildContent>
+											<TooltipContent>
+												<span class="ts-3 darken-95 p-3 veryrounded text-@GetDiffColor(selected[j].characters[i].dmg, compaired[j].characters[i].dmg)"> @GetDiffPercent(selected[j].characters[i].dmg, compaired[j].characters[i].dmg)</span>
+											</TooltipContent>
+										</MudTooltip>
+										<MudTooltip class="col-2" Color="Color.Transparent">
+											<ChildContent>
+												<h5 class="hole p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center text-@GetDiffColor((selected[j].characters[i].dmg * selected[j].characters[i].aoe), (compaired[j].characters[i].dmg * compaired[j].characters[i].aoe))">
+													(@Calc.NumberClarity((compaired[j].characters[i].dmg * compaired[j].characters[i].aoe)))
+												</h5>
+											</ChildContent>
+											<TooltipContent>
+												<span class="ts-3 darken-95 p-3 veryrounded text-@GetDiffColor((selected[j].characters[i].dmg * selected[j].characters[i].aoe), (compaired[j].characters[i].dmg * compaired[j].characters[i].aoe))">
+													@GetDiffPercent((selected[j].characters[i].dmg * selected[j].characters[i].aoe), (compaired[j].characters[i].dmg * compaired[j].characters[i].aoe))
+												</span>
+											</TooltipContent>
+										</MudTooltip>
+									</div>
+								}
+							</div>
+							@if (calc.dmgType == "dps")
+							{
+								<div class="col-12 hole text-center mx-auto">
+									<p class="fs-4">
+										<span class="text-@GetDiffColor(selected[j].dpm, compaired[j].dpm)">
+											@((compaired[j].dps / 1000).ToString("N2"))k dps
+										</span> |
+										<span class="text-@GetDiffColor(selected[j].dpmAoe, compaired[j].dpmAoe)">
+											@(Calc.ToDps(compaired[j].dpmAoe/1000, compaired[j].rotlen).ToString("N2"))k dps in Aoe
+										</span>
+									</p>
+								</div>
+							}
+							else
+							{
+								<div class="col-12 hole text-center mx-auto">
+									<p class="fs-4">
+										<span class="text-@GetDiffColor(selected[j].dpm, compaired[j].dpm)">
+											@compaired[j].dpm mi dpm
+										</span> |
+										<span class="text-@GetDiffColor(selected[j].dpmAoe, compaired[j].dpmAoe)">
+											@compaired[j].dpmAoe mi dpm in Aoe
+										</span>
+									</p>
+								</div>
+							}
+						</div>
+					}
+				</div>
+				@if (calc.dmgType == "dps")
+				{
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor((selected[0].dpm + selected[1].dpm), (compaired[0].dpm + compaired[1].dpm))">
+						Total: @Math.Round((compaired[0].dps + compaired[1].dps)/1000, 2)k dps (@GetDiffPercent((selected[0].dpm + selected[1].dpm), (compaired[0].dpm + compaired[1].dpm)))</h4>
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor((selected[0].dpmAoe + selected[1].dpmAoe), (compaired[0].dpmAoe + compaired[1].dpmAoe))">
+						Total: @Math.Round((Calc.ToDps(compaired[0].dpmAoe, compaired[0].rotlen) + Calc.ToDps(compaired[1].dpmAoe, compaired[1].rotlen))/1000, 2)k dps in Aoe (@GetDiffPercent((selected[0].dpmAoe + selected[1].dpmAoe), (compaired[0].dpmAoe + compaired[1].dpmAoe)))
+					</h4>
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor(((compaired[0].dpm + compaired[1].dpm + compaired[0].dpmAoe + compaired[1].dpmAoe)/2), ((selected[0].dpm + selected[1].dpm + selected[0].dpmAoe + selected[1].dpmAoe)/2))">
+						Total: @Math.Round(((compaired[0].dps + compaired[1].dps + Calc.ToDps(compaired[0].dpmAoe, compaired[0].rotlen) + Calc.ToDps(compaired[1].dpmAoe, compaired[1].rotlen)) / 2000), 2)k dps Average
+						(@GetDiffPercent(((selected[0].dpm + selected[1].dpm + selected[0].dpmAoe + selected[1].dpmAoe) / 2), ((compaired[0].dpm + compaired[1].dpm + compaired[0].dpmAoe + compaired[1].dpmAoe) / 2)))
+					</h4>
+				}
+				else
+				{
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor((selected[0].dpm + selected[1].dpm), (compaired[0].dpm + compaired[1].dpm))">
+						Total: @Math.Round((compaired[0].dpm + compaired[1].dpm), 2) mi dpm Single Target (@GetDiffPercent((selected[0].dpm + selected[1].dpm), (compaired[0].dpm + compaired[1].dpm)))</h4>
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor((selected[0].dpmAoe + selected[1].dpmAoe), (compaired[0].dpmAoe + compaired[1].dpmAoe))">
+						Total: @Math.Round((compaired[0].dpmAoe + compaired[1].dpmAoe), 2) mi dpm Aoe (@GetDiffPercent((selected[0].dpmAoe + selected[1].dpmAoe), (compaired[0].dpmAoe + compaired[1].dpmAoe)))</h4>
+					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor(((selected[0].dpm + selected[1].dpm + selected[0].dpmAoe + selected[1].dpmAoe)/2), ((compaired[0].dpm + compaired[1].dpm + compaired[0].dpmAoe + compaired[1].dpmAoe)/2))">
+						Total: @Math.Round(((compaired[0].dpm + compaired[1].dpm + compaired[0].dpmAoe + compaired[1].dpmAoe) / 2), 2) mi dpm Average 
+						(@GetDiffPercent(((selected[0].dpm + selected[1].dpm + selected[0].dpmAoe + selected[1].dpmAoe)/2), ((compaired[0].dpm + compaired[1].dpm + compaired[0].dpmAoe + compaired[1].dpmAoe)/2)))</h4>
+				}
+			</div>
+			<p> * You can drag and drop the character's names from the same team to change their position </p>
+			<p> * You can drag and drop the Team's name from the same pair to change their position </p>
+		}
+	</div>
+}
+
+@code
+{
+	[CascadingParameter(Name = "Selected Pair")]
+	public required Team[] selected { get; set; }
+	[CascadingParameter(Name = "Pair to Compare")]
+	public Team[]? compaired { get; set; }
+	Calc calc;
+
+	int[] draggedteam = new int[] { -1, -1 };
+	int[] overteam = new int[] { -1, -1 };
+	int[] dragged = new int[] { -1, -1, -1, -1 };
+	int[] over = new int[] { -1, -1, -1, -1 };
+
+	List<double>[] selectpercentages = new List<double>[2];
+	bool ShowAoe = false;
+
+	protected override async void OnInitialized(){
+		calc = await icalc.Start();
+		selectpercentages[0] = selected[0].GetPercentages();
+		selectpercentages[1] = selected[1].GetPercentages();
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if (firstRender)
+		{
+			StateHasChanged(); 
+		}
+	}
+
+	string GetDiffColor(double selected, double compare)
+	{
+		if (selected < compare)
+		{
+			return "better";
+		}
+		else if (selected > compare)
+		{
+			return "danger";
+		}
+		else
+		{
+			return "same";
+		}
+	}
+
+	string GetDiffPercent(double selected, double compare)
+	{
+		if (compare - selected > 0)
+		{
+			return "+" + (((compare / selected) - 1) * 100).ToString("N1") + "%";
+		}
+		else
+		{
+			return (((compare / selected) - 1) * 100).ToString("N1") + "%";
+		}
+	}
+
+	void StartDrag(MouseEventArgs e, Character chara, int type) // (0 for select, 1 for compare) Characacter Draggin'
+	{
+		Logger.LogInformation($"Started drag with {chara.name}!");
+		switch (type){
+			case 0:
+				dragged[0] = selected[0].characters.IndexOf(chara);
+				break;
+			case 1:
+				dragged[1] = selected[1].characters.IndexOf(chara);
+				break;
+			case 2:
+				dragged[2] = compaired[0].characters.IndexOf(chara);
+				break;
+			case 3:
+				dragged[3] = compaired[1].characters.IndexOf(chara);
+				break;
+		}
+	}
+
+	void StopDrag(MouseEventArgs e)
+	{
+		Logger.LogInformation($"{dragged[0]} {dragged[1]} {dragged[2]} {dragged[3]}");
+		Logger.LogInformation($"{over[0]} {over[1]} {over[2]} {over[3]}");
+		if (over[0] >= 0) // team 1 of selected
+		{
+			if (over[0] != dragged[0] && dragged[0] >= 0)
+			{
+				Character temp = selected[0].characters[over[0]];
+				selected[0].characters[over[0]] = selected[0].characters[dragged[0]];
+				selected[0].characters[dragged[0]] = temp;
+			}
+		}
+		else if (over[1] >= 0) // team 2 of selected
+		{
+			if (over[1] != dragged[1] && dragged[1] >= 0)
+			{
+				Character temp = selected[1].characters[over[1]];
+				selected[1].characters[over[1]] = selected[1].characters[dragged[1]];
+				selected[1].characters[dragged[1]] = temp;
+			}
+		} 
+		else if (over[2] >= 0) // team 1 of compaired
+		{
+			if (over[2] != dragged[2] && dragged[2] >= 0)
+			{
+				Character temp = compaired[0].characters[over[2]];
+				compaired[0].characters[over[2]] = compaired[0].characters[dragged[2]];
+				compaired[0].characters[dragged[2]] = temp;
+			}
+		}
+		else if (over[3] >= 0) // team 2 of compaired
+		{
+			if (over[3] != dragged[3] && dragged[3] >= 0)
+			{
+				Character temp = compaired[1].characters[over[3]];
+				compaired[1].characters[over[3]] = compaired[1].characters[dragged[3]];
+				compaired[1].characters[dragged[3]] = temp;
+			}
+		}
+		dragged[0] = dragged[1] = dragged[2] = dragged[3] = -1;
+		over[0] = over[1] = over[2] = over[3] = -1;
+		StateHasChanged();
+
+	}
+
+	void OverHere(Character overchar, int i)
+	{
+		Logger.LogInformation($"Mouse over {overchar.name}!");
+		switch (i)
+		{
+			case 0:
+				over[0] = selected[0].characters.IndexOf(overchar);
+				break;
+			case 1:
+				over[1] = selected[1].characters.IndexOf(overchar);
+				break;
+			case 2:
+				over[2] = compaired[0].characters.IndexOf(overchar);
+				break;
+			case 3:
+				over[3] = compaired[1].characters.IndexOf(overchar);
+				break;
+		}
+	}
+
+	void OuttaHere(MouseEventArgs e)
+	{
+		over[0] = over[1] = over[2] = over[3] = -1;
+	}
+
+	void StartDrag(MouseEventArgs e, Team team, int type) // Team drag
+	{
+		Logger.LogInformation($"Started drag with {team.name}!");
+		switch (type)
+		{
+			case 0:
+				if (selected[0] == team)
+				{
+					draggedteam[0] = 0;
+				}
+				else
+				{
+					draggedteam[0] = 1;
+				}
+				break;
+			case 1:
+				if (compaired[0] == team)
+				{
+					draggedteam[1] = 0;
+				}
+				else 
+				{
+					draggedteam[1] = 1;
+				}
+				break;
+		}
+	}
+
+	void StopDragTeam()
+	{
+		if (overteam[0] >= 0) // selected
+		{
+			if (overteam[0] != draggedteam[0] && draggedteam[0] >= 0)
+			{
+				Team temp = selected[0];
+				selected[0] = selected[1];
+				selected[1] = temp;
+			}
+		}
+		else if (overteam[1] >= 0) // compaired compaired
+		{
+			if (overteam[1] != draggedteam[1] && draggedteam[1] >= 0)
+			{
+				Team temp = compaired[0];
+				compaired[0] = compaired[1];
+				compaired[1] = temp;
+			}
+		}
+		draggedteam[0] = draggedteam[1] = -1;
+		overteam[0] = overteam[1] = -1;
+		StateHasChanged();
+
+	}
+
+	void OverHereTeam(Team team, int i)
+	{
+		switch (i)
+		{
+			case 0:
+				if (selected[0] == team)
+				{
+					overteam[0] = 0;
+				}
+				else 
+				{
+					overteam[0] = 1;
+				}
+				break;
+			case 1:
+				if (compaired[0] == team)
+				{
+					overteam[1] = 0;
+				}
+				else
+				{
+					overteam[1] = 1;
+				}
+				break;
+		}
+	}
+
+	void OuttaHereTeam(MouseEventArgs e)
+	{
+		overteam[0] = overteam[1] = -1;
+	}
+	// End Characacter Draggin'
+
+}

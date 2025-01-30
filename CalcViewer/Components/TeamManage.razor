@@ -1,0 +1,352 @@
+﻿@page "/TeamManage"
+@using Microsoft.Extensions.Logging
+@using System.Windows
+@inject ILogger<TeamDetails> Logger
+@inject IDialogService DialogService
+
+<link rel="stylesheet" href="css/charactercolor.css" />
+
+@if (selectedcondensed is null)
+{
+	<h2>Loading</h2>
+}
+else
+{
+	@if (characterchange)
+	{
+		<div class="maiedal">
+			<CharacterGrid OnCharSelected="HandleCharSelected" Exit="@ChangeCharacter"/>
+		</div>
+	}
+	@if (relativeChange)
+	{
+		<div class="maiedal">
+			<CascadingValue Value="selectedRelative">
+				<CascadingValue Value="true" Name="dmgonly">
+					<CharacterDetail Exit="RelativeClose" OnSelected="RelativeChanged" />
+				</CascadingValue>
+			</CascadingValue>
+		</div>
+	}
+	<div class="p-2 darken-50 veryrounded">
+		<div class="d-flex justify-content-evenly text-light">
+			<div class="d-flex flex-fill justify-content-center text-center">
+				<div class="col-sm-12 col-lg-4 mx-2 flex-column justify-content-center d-flex flex-fill">
+					<h5> Team Name: </h5>
+					<input type="text" class="spinput rounded text-light p-2" @bind="selected.name" @bind:after="Update">
+				</div>
+				<div class="col-sm-12 col-lg-4 mx-2 flex-column justify-content-center d-flex flex-fill">
+					<h5> Rotation length (Seconds): </h5>
+					<input type="number" class="spinput rounded text-light p-2" @bind="@selected.rotlen" @bind:after="Update">
+				</div>
+				<div class="col-sm-12 col-lg-4 mx-2 flex-column justify-content-center d-flex flex-fill">
+					<h5> Account:  </h5>
+					<input type="text" class="spinput rounded text-light p-2" @bind="@selected.server" @bind:after="Update">
+				</div>
+			</div>
+		</div>
+		<div class="d-flex flex-row flex-wrap justify-content-between px-4">
+			@for (int local = 0; local < selected.characters.Count; local++)
+			{
+				int i = local;
+				if (selected.characters[i].name == "no") // Character Placeholder
+				{
+					<div class="row d-flex flex-wrap justify-content-center col-6 col-sm-6 col-md-3 col-lg-3 d-flex">
+
+						<a id="@i" class="clickable justify-content-center"  @onclick="() => ChangeCharacter(selected.characters[i])">
+							<div class="col-12 d-flex justify-content-center templatecard">
+								<MudIcon Icon="@Icons.Material.Filled.AddCircle" Title="Add" Size="Size.Large" Class="my-auto"/>
+							</div>
+						</a>
+						<h5 class="draggable m-2 text-light" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(selected.characters[i])" @onmousedown="(e) => StartDrag(e, selected.characters[i])" @ondragend="StopDrag"> Click to add a character</h5>
+					</div>
+				}
+				else // Actual character
+				{
+					<div class="row d-flex flex-wrap justify-content-center col-6 col-sm-6 col-md-3 col-lg-3 d-flex">
+						<div>
+							<a class="clickable">
+								<img src="@selected.characters[i].img" class="col-6 d-flex mx-auto" @onclick="() => ChangeCharacter(selected.characters[i])" />
+							</a>
+							<div class="draggable bg-@selected.characters[i].element rounded text-light" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(selected.characters[i])" @ondragstart="(e) => StartDrag(e, selected.characters[i])" @ondragend="StopDrag">
+								<h4 class="col-12 p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> @selected.characters[i].name </h4>
+							</div>
+						</div>
+						<div class="d-flex mt-2 justify-content-center">
+							<MudTooltip class="col-2" Color="Color.Transparent">
+								<ChildContent>
+									@if (selected.characters[i].relative >= 0)
+									{
+										<button class="mx-md-0 mx-lg-auto d-flex col-2 btn bg-highlight text-light" @onclick="() => RelativeDmg(selected.characters[i])" type="submit">r</button>
+									}
+									else
+									{
+										<button class="mx-md-0 mx-lg-auto d-flex col-2 btn bg-highlight text-light" @onclick="() => RelativeDmg(selected.characters[i])" type="submit">R</button>
+									}
+								</ChildContent>
+								<TooltipContent>
+									<div class="text-light darken-95 rounded p-3">
+									@if (selected.characters[i].relative >= 0)
+									{
+										<span>Change Damage Type (current: relative)</span>
+									}
+									else
+									{
+										<span>Change Damage Type (current: raw)</span>
+									}
+									</div>
+								</TooltipContent>
+							</MudTooltip>
+							<input type="number" class="rounded d-flex p-1 flex-fill spinput m-2 text-@selected.characters[i].element" @bind="selected.characters[i].dmg" @bind:after="Update">
+						</div>
+						<div class="d-flex justify-content-center">
+							<MudTooltip class="col-2" Color="Color.Transparent">
+								<ChildContent>
+									<button class="mx-md-0 mx-lg-auto d-flex col-2 btn bg-highlight text-light" @onclick="() => AoeReset(selected.characters[i])" type="submit"><MudIcon Icon="@Icons.Material.Filled.KeyboardReturn" /></button>
+								</ChildContent>
+								<TooltipContent>
+									<div class="text-light darken-95 rounded p-3">
+										Reset to default value of @calc.GetAoe(selected.characters[i])
+									</div>
+								</TooltipContent>
+							</MudTooltip>
+							<input type="number" class="rounded d-flex p-1 flex-fill spinput mx-md-0 mx-lg-auto text-light" @bind="selected.characters[i].aoe" @bind:after="Update">
+						</div>
+						<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@selected.characters[i].element">(Aoe: @Calc.NumberClarity((selected.characters[i].dmg * selected.characters[i].aoe)))</h4>
+					</div>
+				}
+			}
+		</div>
+		<div class="col-12 text-center mx-auto text-light">
+			<h4> @Calc.NumberClarity(selected.som) dmg per rotation </h4>
+			@if (calc.dmgType == "dps")
+			{
+				<h4> @((selected.dps / 1000).ToString("N2"))k dps</h4>
+				<h4> @(Calc.ToDps(selected.dpmAoe / 1000, selected.rotlen).ToString("N2"))k dps in Aoe</h4>
+			}
+			else
+			{
+				<h4> @selected.dpm mi dpm</h4>
+				<h4> @selected.dpmAoe mi dpm in Aoe</h4>
+			}
+		</div>
+		<div class="d-flex justify-content-end m-2 pb-2">
+			<div class="d-flex flex-column flex-fill text-light">
+				<p>You can change the character by clicking their image.</p>
+				<p>You can drag and drop their names to switch their position.</p>
+			</div>
+			<div class="d-flex flex-fill">
+				<button class="my-3 mx-2 col-3 btn bg-highlight text-light" @onclick="Dupe" type="button">Duplicate Team</button>
+				<button class="my-3 col-3 btn btn-danger text-light" @onclick="Yousure" type="button">Remove Team</button>
+			</div>
+		</div>
+		@if (yousure)
+		{
+			<div class="d-flex flex-column text-center justify-content-center">
+				<div class="p-2 darken-95 d-flex rounded text-center flex-column justify-content-center mx-auto text-light col-6">
+					<p> Are you sure you want to permanently remove this team? </p>
+					<div class="d-flex flex-row flex-wrap mx-auto">
+						<MudButton Class="text-light" OnClick="Yousure">No</MudButton>
+						<MudButton Color="Color.Error" OnClick="Delete">Yes, remove it</MudButton>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+}
+
+@code
+{
+	[CascadingParameter(Name = "Selected Team")]
+	public TeamCondensed? selectedcondensed { get; set; }
+
+	CharacterCondensed? selectedRelative;
+	Team? selected;
+	Character? temp;
+	Calc calc;
+	bool characterchange = false;
+	bool relativeChange = false;
+	int dragged = -1;
+	int over = -1;
+	bool yousure = false;
+
+	[Parameter]
+	public EventCallback<TeamCondensed> OnDelete { get; set; }
+	[Parameter]
+	public EventCallback<TeamCondensed> OnDupe { get; set; }
+
+	void Update()
+	{
+		selected.CalcDpm();
+		selectedcondensed.Update(calc);
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+
+		if (selectedcondensed != null)
+		{
+			selected = selectedcondensed.team;
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		calc = await icalc.Start();
+	}
+
+	void ChangeCharacter()
+	{
+		temp = null;
+		characterchange = false;
+	}
+
+	void ChangeCharacter(Character character)
+	{
+		temp = character;
+		characterchange = true;
+	}
+
+	void HandleCharSelected(Character chara)
+	{
+		Logger.LogInformation($"{temp.dmg} {temp.relative}");
+		temp.name = chara.name;
+		temp.element = chara.element;
+		temp.img = chara.img;
+		temp.aoe = chara.aoe;
+		Update();
+		if (temp.dmg < 10)
+		{
+			temp.relative = -1;
+			temp.dmg = 1000;
+		}
+		Logger.LogInformation($"{temp.dmg} {temp.relative}");
+		temp = null;
+	}
+
+	void AoeReset(Character chara)
+	{
+		chara.aoe = calc.GetAoe(chara);
+		Update();
+	}
+
+	void RelativeDmg(Character? chara)
+	{
+		relativeChange = !relativeChange;
+		selectedRelative = new CharacterCondensed(chara);
+	}
+
+	void RelativeChanged(int i)
+	{
+		for (int j = 1; j < selectedcondensed.text.Length; j++)
+		{
+			if (selectedcondensed.text[j].StartsWith(selectedRelative.character.name))
+			{
+				string[] temp = selectedcondensed.text[j].Split('-');
+				string mult;
+				try
+				{
+					mult = temp[2];
+				}
+				catch
+				{
+					mult = "1.00";
+				}
+				if (i >= 0)
+				{
+					temp[1] = $"{i}";
+				}
+				else
+				{
+					temp[1] = $"{selectedRelative.character.dmg}";
+				}
+				string temp2 = $"{temp[0]}-{temp[1]}-{mult}";
+				for (int k = 3; k < temp.Length; k++)
+				{
+					temp2 += $"-{temp[k]}";
+				}
+				selectedcondensed.text[j] = temp2;
+				break;
+			}
+		}
+		Update();
+		RelativeClose();
+	}
+
+	void RelativeClose()
+	{
+		relativeChange = false;
+		selectedRelative = null;
+	}
+
+	void Yousure()
+	{
+		yousure = !yousure;
+	}
+
+	void Dupe()
+	{
+		OnDupe.InvokeAsync(selectedcondensed);
+	}
+
+	void Delete()
+	{
+		OnDelete.InvokeAsync(selectedcondensed);
+	}
+
+	void StartDrag(MouseEventArgs e, Character chara) // Characacter Draggin'
+	{ 
+		Logger.LogInformation($"Started drag with {chara.name}!");
+		dragged = selected.characters.IndexOf(chara);
+		StateHasChanged();
+	}
+
+	void StopDrag(MouseEventArgs e) 
+	{
+		if (over >=0)
+		{
+			if (over != dragged)
+			{
+				Logger.LogInformation($"Switcheroo!");
+				foreach (var character in selected.characters){
+					Logger.LogInformation($"{character.name}");
+				}
+				Character temp = selected.characters[over];
+				selected.characters[over] = selected.characters[dragged];
+				selected.characters[dragged] = temp;
+				string temp2 = selectedcondensed.text[over+1];
+				selectedcondensed.text[over + 1] = selectedcondensed.text[dragged + 1];
+				selectedcondensed.text[dragged + 1] = temp2;
+				foreach (var character in selected.characters)
+				{
+					Logger.LogInformation($"{character.name}");
+				}
+				Update();
+			}
+			over = -1;
+			dragged = -1;
+		}
+		else 
+		{
+			Logger.LogInformation($"Stopped drag!");
+			dragged = -1;
+		}
+		StateHasChanged();
+
+	}
+
+	void OverHere(Character over)
+	{
+		Logger.LogInformation($"Mouse over {over.name}!");
+		this.over = selected.characters.IndexOf(over);
+		StateHasChanged();
+	}
+
+	void OuttaHere(MouseEventArgs e)
+	{
+		Logger.LogInformation($"Mouse out!");
+		over = -1;
+		StateHasChanged();
+	}
+	// End Characacter Draggin'
+}

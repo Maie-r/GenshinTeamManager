@@ -1,0 +1,26 @@
+﻿@page "/"
+@inject NavigationManager Navigation
+@implements IDisposable
+@using Microsoft.Extensions.Logging
+@inject ILogger<Edit> Logger
+
+<div class="p-0 m-0 col-12">
+    <div class="p-0 m-0 mt-3 text-light">
+        <img class="col-3 veryrounded d-flex mx-auto" src="img/icon.png" />
+        <h1 class="col-12 text-center mx-auto p-2"> Welcome to Genshin Team Viewer!</h1>
+    </div>
+</div>
+
+@code 
+{
+
+    private void NavigateToCalcPage()
+    {
+        Navigation.NavigateTo($"/calc");
+    }
+
+    public void Dispose()
+    {
+        Logger.LogInformation("dispose");
+    }
+}

@@ -1,0 +1,263 @@
+﻿@page "/CharacterGrid"
+@using Microsoft.Extensions.Logging
+@using Microsoft.JSInterop
+@using System.Text.RegularExpressions
+@inject IJSRuntime JSRuntime
+@inject ILogger<TeamDetails> Logger
+
+<link rel="stylesheet" href="css/charactercolor.css" />
+
+@if (Everyone is null && editmode is null)
+{
+	<span> Loading Characters </span>
+}
+else
+{
+	<div class="p-2 bordered bg-subtlegrad darken-50 rounded mb-2 scrollable">
+		<div class="d-flex text-end justify-content-end">
+			<button class="text-end" @onclick="Getout">✖</button>
+		</div>
+		<div class="d-flex p-2 justify-content-between text-end text-light nav">
+			<div class="d-flex flex-wrap justify-content-center">
+				@if (filter == "pyro") { <button class="text-light bg-pyro fs-4 p-2" @onclick="() => Toggle(1)">Pyro</button> }
+				else { <button class="text-pyro fs-4 p-2" @onclick="() => Toggle(1)">Pyro</button> }
+				@if (filter == "hydro") { <button class="text-light bg-hydro fs-4 p-2" @onclick="() => Toggle(2)">Hydro</button> }
+				else { <button class="text-hydro fs-4 p-2" @onclick="() => Toggle(2)">Hydro</button> }
+				@if (filter == "anemo") { <button class="text-light bg-anemo fs-4 p-2" @onclick="() => Toggle(3)">Anemo</button> }
+				else { <button class="text-anemo fs-4 p-2" @onclick="() => Toggle(3)">Anemo</button> }
+				@if (filter == "electro") { <button class="text-light bg-electro fs-4 p-2" @onclick="() => Toggle(4)">Electro</button> }
+				else { <button class="text-electro fs-4 p-2" @onclick="() => Toggle(4)">Electro</button> }
+				@if (filter == "dendro") { <button class="text-light bg-dendro fs-4 p-2" @onclick="() => Toggle(5)">Dendro</button> }
+				else { <button class="text-dendro fs-4 p-2" @onclick="() => Toggle(5)">Dendro</button> }
+				@if (filter == "cryo") { <button class="text-light bg-cryo fs-4 p-2" @onclick="() => Toggle(6)">Cryo</button> }
+				else { <button class="text-cryo fs-4 p-2" @onclick="() => Toggle(6)">Cryo</button> }
+				@if (filter == "geo") { <button class="text-light bg-geo fs-4 p-2" @onclick="() => Toggle(7)">Geo</button> }
+				else { <button class="text-geo fs-4 p-2" @onclick="() => Toggle(7)">Geo</button> }
+			</div>
+			<MudTextField  @bind-Value="searchString" Placeholder="Search" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 text-light"></MudTextField>
+		</div>
+		@if (error != null)
+		{
+			<div class="text-danger">
+				@error
+			</div>
+		}
+		<div class="d-flex p-2 m-2 flex-row flex-wrap justify-content-evenly">
+
+			@if (selected != null)
+			{
+				<div class="maiedal">
+					<CascadingValue Value="selected">
+						<CharacterDetail Exit="CloseManager" OnDelete="Delete"/>
+					</CascadingValue>
+				</div>
+			}
+			@if (editmode != null)
+			{
+				@foreach (var chara in Editable.Values)
+				{
+					if (chara.character.element == filter || filter == "")
+					{
+						if (InFilter(chara.character))
+						{
+						<div class="col-sm-4 col-md-3 col-lg-2">
+							<a class="clickable" @onclick="() => Select(chara)">
+								<div class="row d-flex justify-content-center col-10">
+									<img src="@chara.character.img" class="charimg" />
+									<div class="rounded bg-@chara.character.element">
+										<h4 class="text-center mx-auto"> @chara.character.name</h4>
+									</div>
+
+								</div>
+							</a>
+						</div>
+						}
+					}
+				}
+				<a class="clickable templatecard text-center justify-content-center d-flex" @onclick="() => AddChar()">
+					<MudIcon Icon="@Icons.Material.Filled.AddCircle" Title="Add" Size="Size.Large" Class="my-auto" />
+				</a>
+			}
+			else 
+			{
+				@foreach (var chara in Everyone)
+				{
+					if (chara.element == filter || filter == "")
+					{
+						if (InFilter(chara))
+						{
+						<div class="col-sm-4 col-md-3 col-lg-2">
+							<a class="clickable" @onclick="() => Select(chara)">
+								<div class="row d-flex justify-content-center col-10">
+									<img src="@chara.img" class="charimg" />
+									<div class="rounded bg-@chara.element">
+										<h4 class="text-center mx-auto"> @chara.name</h4>
+									</div>
+								</div>
+							</a>
+						</div>
+						}
+					}
+				}
+			}
+		</div>
+		<div class="d-flex my-2" />
+	</div>
+}
+
+@code
+{
+	List<Character> Everyone;
+	Dictionary<string, CharacterCondensed> Editable;
+
+	CharacterCondensed selected;
+
+	Calc calc;
+	string? error;
+
+	[CascadingParameter]
+	bool? editmode { get; set;  }
+	string? filter = "";
+	string searchString = "";
+
+	[Parameter]
+	public EventCallback<Character> OnCharSelected { get; set; }
+
+	[Parameter]
+	public EventCallback Exit { get; set; }
+
+	protected override async void OnInitialized()
+	{
+		calc = await icalc.Start();
+		if (editmode != null)
+		{
+			Editable = calc.GetAllCharactersCondensed();
+		}
+		else 
+		{
+			Everyone = calc.GetAllCharacters();
+		}
+	}
+
+	async void Select(Character chara)
+	{
+		await OnCharSelected.InvokeAsync(chara);
+		Exit.InvokeAsync();
+	}
+
+	async void Select(CharacterCondensed chara)
+	{
+		selected = Editable[chara.innername];
+	}
+
+	void AddChar()
+	{
+		CharacterCondensed template = new CharacterCondensed(new Character($"Character {Editable.Count+1}"));
+		template.innername = template.character.name;
+		Editable.Add(template.innername, template);
+		selected = Editable.Last().Value;
+		JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+	}
+
+	void CloseManager()
+	{
+		if (!File.Exists(calc.DBlocation))
+		{
+			error = "Could not find Characters file.";
+		}
+		else if (!File.Exists(calc.TeamDBlocation))
+		{
+			error = "Could not find Teams file.";
+		}
+		else
+		{
+			if (selected.character.name != selected.innername)
+			{
+				NameUpdate(selected.innername, selected.character.name);
+			}
+			error = null;
+			StreamWriter writer = new StreamWriter(calc.DBlocation, false);
+			int safe = 0;
+			foreach (var pair in Editable)
+			{
+				for (int i = 0; i < pair.Value.text.Count - 1; i++)
+				{
+					writer.Write(pair.Value.text[i] + ",");
+				}
+				writer.Write(pair.Value.text[pair.Value.text.Count-1]);
+				if (safe < Editable.Count - 1)
+				{
+					writer.WriteLine(";");
+				}
+				safe++;
+			}
+			writer.Close();
+			icalc.Reload();
+		}
+		selected = null;
+	}
+
+	void NameUpdate(string old, string neww)
+	{
+		string all = File.ReadAllText(calc.TeamDBlocation);
+		string pattern = $@"{old}";
+		all = Regex.Replace(all, pattern, neww);
+		File.WriteAllText(calc.TeamDBlocation, all);
+	}
+
+	void Getout()
+	{
+		Exit.InvokeAsync();
+	}
+
+	void Toggle(int id)
+	{
+		string element = "";
+		switch (id)
+		{
+			case 1:
+				element = "pyro";
+				break;
+			case 2:
+				element = "hydro";
+				break;
+			case 3:
+				element = "anemo";
+				break;
+			case 4:
+				element = "electro";
+				break;
+			case 5:
+				element = "dendro";
+				break;
+			case 6:
+				element = "cryo";
+				break;
+			case 7:
+				element = "geo";
+				break;
+		}
+		if (element == filter)
+		{
+			filter = "";
+		}
+		else 
+		{
+			filter = element;
+		}
+	}
+
+	bool InFilter(Character element)
+	{
+		if (string.IsNullOrWhiteSpace(searchString))
+			return true;
+		if (element.name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		return false;
+	}
+
+	void Delete(CharacterCondensed chara)
+	{
+		Editable.Remove(chara.innername);
+	}
+}

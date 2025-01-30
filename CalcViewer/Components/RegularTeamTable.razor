@@ -1,0 +1,175 @@
+﻿@page "/RegularTeamTable"
+@using Microsoft.Extensions.Logging
+@using Microsoft.JSInterop
+@using MudBlazor
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@inject ILogger<RegularTeamTable> Logger
+@implements IDisposable
+<link rel="stylesheet" href="css/tableresize.css" @onload="cssLoaded" />
+
+@if (Loading < 2)
+{
+    <span class="m-2"> Loading... </span>
+
+}
+else
+{
+    <h1 class="text-center"> Teams </h1>
+    @if (calc.teams.Count <= 0)
+    {
+        <p class="p-4">No teams registered!</p>
+        <p class="p-4">you can add them in <a class="clickable" @onclick="NavigateToEditPage">(this page)</a></p>
+    }
+    else
+    {
+        <div class="px-md-2 px-lg-4">
+            @if (selected != null)
+            {
+                <CascadingValue Value="selected" Name="Selected Team">
+                    <CascadingValue Value="compaired" Name="Team to compare">
+                        <TeamDetails />
+                    </CascadingValue>
+                </CascadingValue>
+            }
+            @if (MultipleAccount)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" @onchange="ToggleSeparateAccounts">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Separate Accounts
+                    </label>
+                </div>
+            }
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" @onchange="ToggleCompare">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Compare
+                </label>
+            </div>
+            @if (AccountSeparate)
+            {
+                foreach (List<Team> account in accountteams)
+                {
+                    <a class="clickable text-center" @onclick="() => Collapse(account[0].server)"><div><h2>@account[0].server</h2></div></a>
+                    <div class="@svtablestate[account[0].server] mb-2">
+                        <CascadingValue Value="@account.AsEnumerable()">
+                            <TeamTable OnTeamSelected="HandleTeamSelected"></TeamTable>
+                        </CascadingValue>
+                    </div>
+                }
+            }
+            else 
+            {
+                <CascadingValue Value="@calc.teams.AsEnumerable()">
+                    <TeamTable OnTeamSelected="HandleTeamSelected"></TeamTable>
+                </CascadingValue>
+            }
+        </div>
+    }
+}
+
+@code
+{
+    Calc calc;
+    Dictionary<string, string> svtablestate = new Dictionary<string, string>();
+    Team? selected;
+    Team? compaired;
+    Team? compairmem;
+    bool AccountSeparate = false;
+    bool MultipleAccount = false;
+    bool Compare = false;
+    int Loading = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        calc = await icalc.Start();
+        if (calc.GetAcountAmount(calc.teams) > 1)
+        {
+            MultipleAccount = true;
+            accountteams = calc.AccountSeparate(calc.teams, null);
+            foreach (var account in accountteams)
+            {
+                svtablestate.Add(account[0].server, "shown");
+            }
+        }
+        Loading++;
+    }
+
+    List<List<Team>> accountteams;
+
+    void ToggleSeparateAccounts()
+    {
+        AccountSeparate = !AccountSeparate;
+    }
+    void ToggleCompare()
+    {
+        if (Compare){
+            compairmem = compaired;
+            compaired = null;
+        }
+        else {
+            compaired = compairmem;
+        }
+        Compare = !Compare;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Logic to run after the first render
+            StateHasChanged(); // Ensures any updates are reflected in the UI
+        }
+    }
+
+    async void HandleTeamSelected(Team team)
+    {
+        if (Compare)
+        {
+            compaired = team;
+        }
+        else
+        {
+            if (team == selected)
+            {
+                selected = null;
+            }
+            else
+            {
+                selected = team;
+                await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+            }
+        }
+
+    }
+
+    async void cssLoaded()
+    {
+        Loading++;
+    }
+
+    void NavigateToEditPage()
+    {
+        Navigation.NavigateTo($"/edit");
+    }
+
+    async void Collapse(string server)
+    {
+        if (svtablestate[server] == "shown")
+        {
+            svtablestate[server] = "hidden";
+        }
+        else
+        {
+            svtablestate[server] = "shown";
+        }
+    }
+
+
+    public void Dispose()
+    {
+        // Cleanup logic
+    }
+}

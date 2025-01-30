@@ -1,0 +1,51 @@
+.mud-table {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.mud-table-cell {
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    border-bottom: none;
+    color: white!important;
+}
+
+.mud-select-input {
+    color: white !important;
+}
+.mud-input-label {
+    color: white!important;
+}
+
+.quickgrid[theme=default] .col-title {
+    gap: 0.4rem; /* Separate the sort indicator from title text */
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+tr:nth-child(even) {
+    background: rgba(0,0,0,0.5);
+}
+
+@media (max-width: 800px) {
+    .quickgrid {
+        th {
+            text-align: center;
+        }
+        td {
+            text-align: center;
+            padding: 0px!important;
+        }
+
+    }
+    .quickgrid[theme=default] .col-title {
+
+    }
+    .quickgrid[theme=default] td {
+
+    }
+}
+
+.smol {
+    width: 8vw;
+}

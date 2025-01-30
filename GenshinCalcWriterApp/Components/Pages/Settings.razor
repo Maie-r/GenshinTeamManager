@@ -1,0 +1,174 @@
+﻿@page "/settings"
+@using System.Diagnostics
+@using MudBlazor
+@inject ICalc icalc
+
+
+@if (calc == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h1 class="text-light text-center"> Settings </h1>
+    <div class="m-3 p-3 darken-50 rounded">
+        <div class="p-3 text-light btn-group btn-group-toggle" data-toggle="buttons">
+            <h3> Damage Type: </h3>
+            <MudTooltip Class="veryrounded darken-75">
+                <ChildContent>
+                    <label class="mx-2 rounded btn text-light @((dmgType == "dps") ? "active btn-selected" : "bg-highlight")">
+                        <input type="radio" name="options" id="option1" autocomplete="off" @onclick="ToggleDmgTypedps" > Damage per Second (DPS)
+                    </label>
+                </ChildContent>
+                <TooltipContent>
+                    <MudText Typo="Typo.subtitle2"> Damage per Rotation / Rotation length (seconds) </MudText>
+                </TooltipContent>
+            </MudTooltip>
+            <MudTooltip Class="veryrounded darken-75">
+                <ChildContent>
+                    <label class="mx-2 rounded btn text-light @((dmgType == "dpm") ? "active btn-selected" : "bg-highlight")">
+                        <input type="radio" name="options" id="option2" autocomplete="off" @onclick="ToggleDmgTypedpm"> Damage per Minute (DPM)
+                    </label>
+                </ChildContent>
+                <TooltipContent>
+                    <MudText Typo="Typo.button"> Damage per Rotation / (Rotation length (seconds)/60) </MudText>
+                </TooltipContent>
+            </MudTooltip>
+        </div>
+        
+        <div class="@advancedop d-flex m-2 flex-column col-10">
+            <label for="dbloc" class="form-label text-light">Character DB:<span class="text-body-secondary"></span></label>
+            <input type="text" class="form-control" id="dbloc" @bind="db">
+            <button class="m-3 btn bg-highlight text-light" @onclick="OpenDB" type="submit">Open Character Database</button>
+            <label for="teamloc" class="form-label text-light">Teams DB:<span class="text-body-secondary"></span></label>
+            <input type="text" class="form-control" id="teamloc" @bind="teamdb">
+            <button class="m-3 btn bg-highlight text-light" @onclick="OpenTeams" type="submit">Open Teams Database</button>
+            <p class="text-light"> Be sure to backup these files if you want to change them manually! </p>
+            @if (error != null)
+            {
+                <h4 class=" m-2 text-danger"> @error </h4>
+                if (errorfix)
+                {
+                    <button class="m-3 col-4 btn bg-highlight" @onclick="CopyFiles" type="submit">Yes</button>
+                }
+            }
+        </div>
+        <button class="m-3 btn bg-highlight text-light" @onclick="EditChar" type="submit">Manage Characters</button>
+        @if (EditOn)
+        {
+            <div class="maiedal">
+                <CascadingValue Value="true">
+                    <CharacterGrid Exit="EditChar" />
+                </CascadingValue>
+            </div>
+        }
+        <button class="m-3 btn btn-anemo text-light" @onclick="Save" type="submit">Save and Reload</button>
+    </div>
+}
+
+@code 
+{
+    Calc calc;
+    string error;
+    bool errorfix = false;
+    bool EditOn = false;
+    string advancedop = "shown";
+    string db, teamdb, product, dmgType;
+
+    protected override async Task OnInitializedAsync()
+    {
+        calc = await icalc.Start();
+        dmgType = calc.dmgType;
+        db = calc.DBlocation;
+        teamdb = calc.TeamDBlocation;
+        product = calc.OUTlocation;
+        File.Delete($"{calc.configlocation}.bkp");
+        File.Copy(calc.configlocation, $"{calc.configlocation}.bkp");
+    }
+
+    void OpenDB()
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = db,
+                UseShellExecute = true
+            });
+            error = null;
+        }
+        catch
+        {
+            error = "Couldn't find Character database file.";
+        }
+    }
+
+    void OpenTeams()
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = teamdb,
+                UseShellExecute = true
+            });
+            error = null;
+        }
+        catch
+        {
+            error = "Couldn't find Team database file.";
+        }
+    }
+
+    void ToggleDmgTypedps()
+    {
+        dmgType = "dps";
+        Save();
+    }
+    void ToggleDmgTypedpm()
+    {
+        dmgType = "dpm";
+        Save();
+    }
+
+    void Save()
+    {
+        if (!File.Exists(db))
+        {
+            error = "Could not find altered Character file. Do you wish to copy current file to altered location?";
+            errorfix = true;
+        }
+        else if (!File.Exists(teamdb))
+        {
+            error = "Could not find altered Teams file. Do you wish to copy current file to altered location?";
+            errorfix = true;
+        }
+        else
+        {
+            error = null;
+            StreamWriter writer = new StreamWriter(calc.configlocation, false);
+            writer.Write($"DB;{db};\nTeamDB;{teamdb};\nOutput;{product};\ndmgtype;{dmgType}");
+            writer.Close();
+            icalc.Reload();
+        }
+    }
+
+    void CopyFiles()
+    {
+        if (!File.Exists(db))
+        {
+            File.Copy(calc.DBlocation, db);
+        }
+        if (!File.Exists(teamdb))
+        {
+            File.Copy(calc.TeamDBlocation, teamdb);
+        }
+        errorfix = false;
+        Save();
+    }
+
+    void EditChar()
+    {
+        EditOn = !EditOn;
+    }
+}

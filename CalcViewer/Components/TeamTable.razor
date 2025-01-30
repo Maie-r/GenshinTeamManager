@@ -1,0 +1,104 @@
+﻿<MudTable Items="@teams" Hover="true" SortLabel="Sort by" MultiSort="true" Class="darken-50">
+    <ToolBarContent>
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 text-light"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh> <MudTableSortLabel SortBy="new Func<Team, object>(x => x.name)">Team</MudTableSortLabel></MudTh>
+        <MudTh>Character 1</MudTh>
+        <MudTh>Character 2</MudTh>
+        <MudTh>Character 3</MudTh>
+        <MudTh>Character 4</MudTh>
+        @if (calc.dmgType == "dps")
+        {
+            <MudTh> <MudTableSortLabel SortBy="new Func<Team, object>(x => -x.dpm)">DPS </MudTableSortLabel></MudTh>
+            <MudTh> <MudTableSortLabel SortBy="new Func<Team, object>(x => -x.dpmAoe)">DPS AOE</MudTableSortLabel></MudTh>
+        }
+        else
+        {
+            <MudTh> <MudTableSortLabel SortBy="new Func<Team, object>(x => -x.dpm)">DPM </MudTableSortLabel></MudTh>
+            <MudTh> <MudTableSortLabel SortBy="new Func<Team, object>(x => -x.dpmAoe)">DPM AOE</MudTableSortLabel></MudTh>
+        }
+    </HeaderContent>
+    <RowTemplate>
+        @if (InFilter(context))
+        {
+            <MudTd DataLabel="Team">
+                <a class="clickable" id="@context.name" @onclick="() => Selected(context)"> @context.name</a>
+            </MudTd>
+            <MudTd DataLabel="Character 1" class="char">
+                <div class="text-@context.characters[0].element">
+                    @context.characters[0].name
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Character 2" class="char">
+                <div class="text-@context.characters[1].element">
+                    @context.characters[1].name
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Character 3" class="char">
+                <div class="text-@context.characters[2].element">
+                    @context.characters[2].name
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Character 4" class="char">
+                <div class="text-@context.characters[3].element">
+                    @context.characters[3].name
+                </div>
+            </MudTd>
+            @if (calc.dmgType == "dps")
+            {
+                <MudTd DataLabel="DPS" Class="text-light">
+                    @((context.dps / 1000).ToString("N2"))k
+                </MudTd>
+                <MudTd DataLabel="DPS AOE" Class="text-light">
+                    @((Calc.ToDps(context.dpmAoe, context.rotlen) / 1000).ToString("N2"))k
+                </MudTd>
+            }
+            else
+            {
+                <MudTd DataLabel="DPM">
+                    @context.dpm mi
+                </MudTd>
+                <MudTd DataLabel="DPM AOE">
+                    @context.dpmAoe mi
+                </MudTd>
+            }
+        }
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [CascadingParameter]
+    IEnumerable<Team> teams { get; set; }
+
+    Calc calc;
+    string searchString = "";
+
+    [Parameter]
+    public EventCallback<Team> OnTeamSelected { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        calc = await icalc.Start();
+    }
+
+    async void Selected(Team team)
+    {
+        await OnTeamSelected.InvokeAsync(team);
+        icalc.Setlect(team);
+    }
+
+    private string GetRowClass(Team item, int rowIndex)
+    {
+        return rowIndex % 2 == 0 ? "darken-50" : "";
+    }
+
+    bool InFilter(Team element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}

@@ -1,0 +1,227 @@
+﻿@page "/edit"
+@using Microsoft.Extensions.Logging
+@inject ILogger<Edit> Logger
+@using MudBlazor
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+<link rel="stylesheet" href="css/tableresize.css" />
+
+<h1 class="text-light text-center">DB Edit page</h1>
+
+@if (teams == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	if (error != "")
+	{
+		<h1 class="m-2 text-danger"> @error </h1>
+	}
+	<div class="m-2 darken-50 veryrounded p-2">
+		@if (!newteam)
+		{
+			<button class="d-flex my-3 mx-auto col-10 btn bg-highlight text-light" @onclick="NewTeam" type="submit">New Team</button>
+		}
+		else
+		{
+			<CascadingValue Value="template" Name="Selected Team">
+				<TeamManage OnDelete="DeleteTeam" OnDupe="DupeTeam" />
+			</CascadingValue>
+		}
+		<button class="d-flex my-3 mx-auto col-6 btn btn-anemo text-light" @onclick="Save" type="submit">Save and Reload</button>
+		@if (teams.Count <= 0)
+		{
+			<div class="m-2 darken-50">
+				<h2> No teams yet added!</h2>
+			</div>
+		}
+		else
+		{
+			if (selected != null)
+			{
+				<CascadingValue Value="@selected" Name="Selected Team">
+					<TeamManage OnDelete="DeleteTeam" OnDupe="DupeTeam" />
+				</CascadingValue>
+			}
+			<div class="d-flex justify-content-center">
+				<MudTable Items="@teams.AsEnumerable()" Hover="true" SortLabel="Sort by" Class="darken-50">
+					<ToolBarContent>
+						<MudText Class="text-light" Typo="Typo.h6">Teams</MudText>
+						<MudSpacer />
+						<MudTextField  @bind-Value="searchString" Placeholder="Search" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 text-light"></MudTextField>
+					</ToolBarContent>
+					<HeaderContent>
+						<MudTooltip class="col-2">
+							<ChildContent>
+								<MudTh> Active </MudTh>
+							</ChildContent>
+							<TooltipContent>
+								If the team will be used or shown in other pages.
+							</TooltipContent>
+						</MudTooltip>
+						<MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<string, TeamCondensed>, object>(x => x.Key)">Team</MudTableSortLabel></MudTh>
+						<MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<string, TeamCondensed>, object>(x => x.Value.team.server)">Account </MudTableSortLabel></MudTh>
+					</HeaderContent>
+					<RowTemplate>
+						@if (InFilter(context.Value.team))
+						{
+							<MudTd DataLabel="Active">
+								<div class="form-check text-center">
+									<input class="form-check-input" type="checkbox" checked="@context.Value.active" @onchange="() => Toggle(context.Key)">
+								</div>
+							</MudTd>
+							<MudTd DataLabel="Team">
+								<MudTooltip Class="col-6 veryrounded bg-subtlegrad">
+									<ChildContent>
+										<a class="clickable" @onclick="() => Select(context.Value)"> @context.Value.team.name</a>
+									</ChildContent>
+									<TooltipContent>
+										<CascadingValue Value="@context.Value.team" Name="Selected Team">
+											<TeamDetails />
+										</CascadingValue>
+									</TooltipContent>
+								</MudTooltip>
+							</MudTd>
+							<MudTd DataLabel="Account" Class="es">
+								@context.Value.team.server
+							</MudTd>
+						}
+					</RowTemplate>
+				</MudTable>
+			</div>
+		}
+	</div>
+}
+
+@code 
+{
+	Dictionary<string, TeamCondensed> teams;
+	Calc calc;
+	TeamCondensed? selected;
+	TeamCondensed template;
+	bool MultipleAccount = false;
+	bool newteam = false;
+	string searchString = "";
+
+	string error = "";
+	protected override async Task OnInitializedAsync()
+	{
+		calc = await icalc.Start();
+		teams = new Dictionary<string, TeamCondensed>();
+		List<Team>? teamlist = new List<Team>();
+		List<string[]> teamtext = calc.ALLTeams(teamlist);
+		if (calc.GetAcountAmount(teamlist) > 1)
+		{
+			MultipleAccount = true;
+		}
+		if (teamlist.Count != teamtext.Count)
+		{
+			throw new Exception("Wha?");
+		}
+		for (int i = 0; i < teamlist.Count; i++)
+		{
+			TeamCondensed temp = new TeamCondensed(teamlist[i], teamtext[i], i);
+			teams.Add(teamlist[i].name, temp);
+		}
+	}
+
+	void Save()
+	{
+		if (!File.Exists(calc.DBlocation))
+		{
+			error = "Could not find Characters file.";
+		}
+		else if (!File.Exists(calc.TeamDBlocation))
+		{
+			error = "Could not find Teams file.";
+		}
+		else
+		{
+			error = "";
+			StreamWriter writer = new StreamWriter(calc.TeamDBlocation, false);
+			int safe = 0;
+			foreach (var pair in teams)
+			{
+				if (!pair.Value.active)
+				{
+					writer.WriteLine("//");
+				}
+				for (int i = 0; i < pair.Value.text.Length - 1; i++)
+				{
+					writer.WriteLine(pair.Value.text[i] + ";");
+				}
+				writer.WriteLine(pair.Value.text[4]);
+				if (safe < teams.Count - 1)
+				{
+					writer.WriteLine(",");
+				}
+				safe++;
+			}
+			writer.Close();
+			calc.Reload();
+			newteam = false;
+		}
+	}
+
+	async void Select(TeamCondensed team)
+	{
+		if (team == selected)
+		{
+			selected = null;
+		}
+		else
+		{
+			selected = team;
+			await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+		}
+	}
+
+	void Toggle(string teamname)
+	{
+		Logger.LogInformation($"Toggling team {teamname}");
+		teams[teamname].active = !teams[teamname].active;
+	}
+
+	void NewTeam()
+	{
+		template = new TeamCondensed(new Team(calc));
+		template.team.name += $" {teams.Count+1}";
+		template.innername = template.team.name;
+		teams.Add(template.innername, template);
+		newteam = true;
+	}
+
+	void DupeTeam(TeamCondensed team)
+	{
+		Team dupeteam = new Team(team.team);
+		dupeteam.name += " Copy";
+		string[] text = new string[team.text.Length];
+		for ( int i = 0; i < text.Length; i++)
+		{
+			text[i] = team.text[i];
+		}
+		TeamCondensed dupe = new TeamCondensed(dupeteam, text, teams.Count);
+		dupe.active = team.active;
+		dupe.innername += " Copy";
+		teams.Add(dupe.innername, dupe);
+		Save();
+	}
+
+	void DeleteTeam(TeamCondensed team)
+	{
+		Logger.LogInformation($"Deleting team {team.innername}");
+		teams.Remove(team.innername);
+		selected = null;
+		Save();
+	}
+
+	bool InFilter(Team element)
+	{
+		if (string.IsNullOrWhiteSpace(searchString))
+			return true;
+		if (element.name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		return false;
+	}
+}
