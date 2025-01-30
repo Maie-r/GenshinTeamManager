@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\GenshinCalcWriter\GenshinCalcWriter\GenshinTeamCalc.csproj" />
+    <ProjectReference Include="..\GenshinCalcWriter\GenshinCalcWriter\GenshinTeamCalc.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenshinCalcWriterApp", "Gen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalcViewer", "CalcViewer\CalcViewer.csproj", "{B52098E0-928E-47CB-A667-95CAA6676B84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenshinTeamCalc", "..\GenshinCalcWriter\GenshinCalcWriter\GenshinTeamCalc.csproj", "{AB259D99-E44C-477E-999D-7615ABA81CC8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenshinTeamCalc", "GenshinCalcWriter\GenshinCalcWriter\GenshinTeamCalc.csproj", "{AB259D99-E44C-477E-999D-7615ABA81CC8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
