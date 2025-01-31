@@ -4,7 +4,7 @@ A Tool for viewing and compairing teams, or team pairs from Genshin Impact.
 
 **The data required for using this tool must be collected manually, either by theorycrafting or using tools like [Genshin Optimizer](https://frzyc.github.io/genshin-optimizer/)**
 
-(Glossary:)
+(Glossary:) <br>
 *DPM*: Damage per Minute, the average output the team deals in one minute <br>
 *DPS*: Damage per Second, the average output the team deals in one second <br>
 *Single Target*: Used for considering a situation where only one enemy is being fought <br>
@@ -61,9 +61,19 @@ If you instead click the button labled "R" you will be brought to more details o
 This way you can choose to use **relative damage**, as in, a *multiple of that value*. This can be used to cut off on manually changing the damage values for many teams, if you get an upgrade for that character **in a similar build**, changing the base value will also raise the damage in all teams that use that damage profile.
 Additionally, Here you can change the global AoE (will change the AoE for every team that uses the default AoE value of this character)
 
+## Additional Things
+
+You can choose between DPM or DPS to be used throughout the tool.  
+You can customize the image displayed for characters.  
+If the tool is outdated, you can add missing characters manually.
+
 ---
 
-This was made to improve my knowledge of C# and MAUI Blazor Hybrid, and is my first project using the latter.
+This tool was created to enhance my knowledge in C# and MAUI Blazor Hybrid, being my first project using the latter.  
+It also makes use of [Mudblazor](https://mudblazor.com/) and [Drag and Drop Polyfill](https://gist.github.com/iain-fraser/01d35885477f4e29a5a638364040d4f2).  
+
+Credits to [wanderer.moe](https://wanderer.moe/) for the default character icons.
+
 
 ### Versions
   0.8 - First added to GitHub. Release not yet available
