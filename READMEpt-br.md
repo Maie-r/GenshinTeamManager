@@ -4,13 +4,13 @@ Uma ferramenta para ver e comparar times, ou pares de times de Genshin Impact.
 
 **Os dados necessários para usar essa ferramenta devem ser coletados manualmente, seja por cálculo manual ou usando ferramentas como [Genshin Optimizer](https://frzyc.github.io/genshin-optimizer/)**
 
-(Glossário:)
+(Glossário:)<br>
 *DPM*: Dano por Minuto, a quantidade média de dano dado pelo time em um minuto <br>
 *DPS*: Dano por Segundo, a quantidade média de dano dado pelo time em um segundo <br>
 *Alvo Único*: Usado para considerar uma situação onde se luta com apenas um inimigo <br>
 *AoE*: Área de Efeito, usado para considerar uma situação onde se luta com vários inimigos <br>
 
-# Recursos
+# Funções
 
 ## Página de Times
 
