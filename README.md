@@ -34,10 +34,13 @@ If you check the *Compare* checkbox, you can select another team to compare them
 ### This is the page for viewing and compairing **Team Pairs**, as in, two teams that have no overlapping members, in a way that they can always be used in Spiral Abyss
 
 It will display a table of all possible team pairings from the registered teams, along with their output in Single Target, AoE, and the average between the two. Can be sorted and searched.
+
 ![SeG9uOGxcV](https://github.com/user-attachments/assets/2dc59868-8be5-46b3-af5a-795992aa3378)
+
 With the sort function, you can look up what is the theoretical best team pair for Abyss (disregarding enemies), if the abyss has more Single Target content, pick the pair with highest single target damage, if the abyss has more enemies in waves, pick the pair with highest AoE damage, if the abyss has both, pick the average.
 
 You can also compare two pairs
+
 ![image](https://github.com/user-attachments/assets/f147a870-7f7e-4baa-b05b-612b21e5f830)
 
 ## Team Edit Page
