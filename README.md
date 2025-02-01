@@ -20,7 +20,7 @@ It will display a table of all of your registered teams, their members, and the 
 
 ![uTKdG0QTPM](https://github.com/user-attachments/assets/f56be58c-c863-40e6-9fad-29825bf779c9)
 
-You can click on the name of a team to show it's details, each team member along with their damage contribution to the total team output.
+You can click on the name of a team to show its details, each team member along with their damage contribution to the total team output.
 
 ![image](https://github.com/user-attachments/assets/e28f5bd7-2633-4433-8105-efbc4fe5e8a6)
 
@@ -31,7 +31,7 @@ If you check the *Compare* checkbox, you can select another team to compare them
 
 ## Team Pair Page
 
-### This is the page for viewing and compairing **Team Pairs**, as in, two teams that have no overlapping members, in a way that they can always be used in Spiral Abyss
+### This is the page for viewing and comparing *Team Pairs*, as in, two teams that have no overlapping members, in a way that they can always be used in Spiral Abyss
 
 It will display a table of all possible team pairings from the registered teams, along with their output in Single Target, AoE, and the average between the two. Can be sorted and searched.
 
@@ -55,7 +55,7 @@ When you try to add or change a character, you will be able to choose it from a 
 
 ![GMsGYuP2gc](https://github.com/user-attachments/assets/928b8554-242d-4061-a8fa-8fb0071b8475)
 
-When you first add a character, it will use it's default AoE multiplier and will use a "Raw" value of damage (an independant value). 
+When you first add a character, it will use its default AoE multiplier and will use a "Raw" value of damage (an independant value). 
 
 If you instead click the button labled "R" you will be brought to more details of that character.
 
