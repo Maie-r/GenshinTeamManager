@@ -20,7 +20,7 @@ else
 				{
 					var local = i;
 					<div class="row d-flex flex-column justify-content-center col-6 col-sm-6 col-md-3 col-lg-3 d-flex">
-						<img src="@selected.characters[i].img" class="charimg" />
+						<img draggable="false" src="@selected.characters[i].img" class="charimg" />
 						<h4 class="col-11 p-0 mx-2 fs-md-3 fs-lg-2 lh-sm m-0 bg-@selected.characters[i].element text-center"> @selected.characters[i].name </h4>
 						<div class="hole mx-0 p-0">
 							<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-1 text-center text-@selected.characters[i].element">@Calc.NumberClarity(selected.characters[i].dmg) </h4>
@@ -73,22 +73,26 @@ else
 				{
 					int i = local;
 					<div class="row d-flex justify-content-center col-6 col-sm-6 col-md-3 col-lg-3 d-flex">
-						<img src="@selected.characters[i].img" class="charimg col-6" />
-						<h4 class="draggable col-11 p-0 fs-md-3 fs-lg-3 lh-sm m-0 text-center bg-@selected.characters[i].element" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(selected.characters[i], 0)" @ondragstart="(e) => StartDrag(e, selected.characters[i], 0)" @ondragend="StopDrag"> @selected.characters[i].name </h4>
+						<a class="text-center text-light" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(selected.characters[i], 0)" @ondragstart="(e) => StartDrag(e, selected.characters[i], 0)" @ondragend="StopDrag">
+							<img draggable="false" src="@selected.characters[i].img" class="charimg mx-auto col-6" />
+							<h4 class="draggable col-11 p-0 fs-md-3 fs-lg-3 lh-sm m-0 text-center bg-@selected.characters[i].element" draggable="true"> @selected.characters[i].name </h4>
+						</a>
 						<h4 class="hole p-0 fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor(compare.characters[i].dmg, selected.characters[i].dmg)">@Calc.NumberClarity(selected.characters[i].dmg) (@GetDiffPercent(compare.characters[i].dmg, selected.characters[i].dmg))</h4>
 						<h4 class="hole p-0 fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor((compare.characters[i].dmg * compare.characters[i].aoe), (selected.characters[i].dmg * selected.characters[i].aoe))">@Calc.NumberClarity((selected.characters[i].dmg * selected.characters[i].aoe)) (@GetDiffPercent((compare.characters[i].dmg * compare.characters[i].aoe), (selected.characters[i].dmg * selected.characters[i].aoe))) </h4>
 					</div>
 				}
 				<div class="my-2 col-12 divideer darken-50"></div>
-				for (int local = 0; local < compare.characters.Count; local++) // from compair
+				for (int local = 0; local < compare.characters.Count; local++) // from compare
 				{
 					int i = local;
 					<div class="row d-flex justify-content-center col-6 col-sm-6 col-md-3 col-lg-3 d-flex">
 						<h4 class="hole p-0 d-sm-none d-md-block fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor(selected.characters[i].dmg, compare.characters[i].dmg)">@Calc.NumberClarity(compare.characters[i].dmg) (@GetDiffPercent(selected.characters[i].dmg, compare.characters[i].dmg))</h4>
 						<h4 class="hole p-0 d-sm-none d-md-block fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor((selected.characters[i].dmg * selected.characters[i].aoe), (compare.characters[i].dmg * compare.characters[i].aoe))">@Calc.NumberClarity((compare.characters[i].dmg * compare.characters[i].aoe)) (@GetDiffPercent((selected.characters[i].dmg * selected.characters[i].aoe), (compare.characters[i].dmg * compare.characters[i].aoe))) </h4>
-						<img src="@compare.characters[i].img" class="charimg col-6 d-sm-block d-md-none" />
-						<h4 class="draggable col-11 p-0 fs-md-3 fs-lg-3 lh-sm m-0 text-center bg-@compare.characters[i].element" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(compare.characters[i], 1)" @ondragstart="(e) => StartDrag(e, compare.characters[i], 1)" @ondragend="StopDrag"> @compare.characters[i].name </h4>
-						<img src="@compare.characters[i].img" class="charimg col-6 d-sm-none d-md-block" />
+						<a class="text-light" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(compare.characters[i], 1)" @ondragstart="(e) => StartDrag(e, compare.characters[i], 1)" @ondragend="StopDrag">
+							<img draggable="false" src="@compare.characters[i].img" class="charimg col-6 mx-auto d-sm-block d-md-none" />
+							<h4 class="draggable col-11 p-0 fs-md-3 fs-lg-3 lh-sm m-0 text-center bg-@compare.characters[i].element" draggable="true"> @compare.characters[i].name </h4>
+							<img draggable="false" src="@compare.characters[i].img" class="charimg col-6 mx-auto d-sm-none d-md-block" />
+						</a>
 						<h4 class="hole p-0 d-sm-block d-md-none fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor(selected.characters[i].dmg, compare.characters[i].dmg)">@Calc.NumberClarity(compare.characters[i].dmg) (@GetDiffPercent(selected.characters[i].dmg, compare.characters[i].dmg))</h4>
 						<h4 class="hole p-0 d-sm-block d-md-none fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor((selected.characters[i].dmg * selected.characters[i].aoe), (compare.characters[i].dmg * compare.characters[i].aoe))">@Calc.NumberClarity((compare.characters[i].dmg * compare.characters[i].aoe)) (@GetDiffPercent((selected.characters[i].dmg * selected.characters[i].aoe), (compare.characters[i].dmg * compare.characters[i].aoe))) </h4>
 					</div>
@@ -127,7 +131,7 @@ else
 					<h4 class="hole text-@GetDiffColor(selected.dpmAoe, compare.dpmAoe)"> @compare.dpmAoe mi dpm in Aoe (@GetDiffPercent(selected.dpmAoe, compare.dpmAoe))</h4>
 				}
 			</div>
-			<p> * You can drag and drop the character's name from the same team to change their position</p>
+			<p> * You can drag and drop the characters from the same team to change their position</p>
 		}
 	</div>
 }

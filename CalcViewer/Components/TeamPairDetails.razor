@@ -21,7 +21,7 @@ else
 					@for (int i = 0; i < selected[j].characters.Count; i++)
 					{
 						<div class="row d-flex justify-content-center col-3 col-sm-3 col-md-3 col-lg-3 d-flex">
-							<img src="@selected[j].characters[i].img" class="charimg" />
+							<img src="@selected[j].characters[i].img" class="charimg" draggable="false"/>
 							<h5 class="col-11 p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center bg-@selected[j].characters[i].element">@selected[j].characters[i].name </h5>
 							<h5 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@selected[j].characters[i].element">@Calc.NumberClarity(selected[j].characters[i].dmg) </h5>
 							<h5 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center">(@selectpercentages[j][i]%)</h5>
@@ -75,9 +75,11 @@ else
 								{
 									int i = local2;
 									<div class="row d-flex justify-content-center col-3">
-										<img src="@selected[j].characters[i].img" class="charimg" />
-										<h5 class="draggable col-11 p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center bg-@selected[j].characters[i].element" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(selected[j].characters[i], j)" @ondragstart="(e) => StartDrag(e, selected[j].characters[i], j)" @ondragend="StopDrag">
+										<a class="text-light text-center" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(selected[j].characters[i], j)" @ondragstart="(e) => StartDrag(e, selected[j].characters[i], j)" @ondragend="StopDrag">
+											<img src="@selected[j].characters[i].img" draggable="false" class="charimg col-12" />
+											<h5 class="col-11 p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center bg-@selected[j].characters[i].element">
 											@selected[j].characters[i].name </h5>
+										</a>
 										<MudTooltip class="col-2" Color="Color.Transparent">
 											<ChildContent>
 												<h5 class="hole p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center text-@GetDiffColor(compaired[j].characters[i].dmg, selected[j].characters[i].dmg)">
@@ -175,9 +177,11 @@ else
 								{
 									int i = local2;
 									<div class="row d-flex justify-content-center col-3">
-										<img src="@compaired[j].characters[i].img" class="charimg" />
-										<h5 class="draggable col-11 p-0 fs-md-4 fs-lg-3 lh-sm m-0 text-center bg-@compaired[j].characters[i].element" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(compaired[j].characters[i], j + 2)" @ondragstart="(e) => StartDrag(e, compaired[j].characters[i], j + 2)" @ondragend="StopDrag">
+										<a class="text-light text-center" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(compaired[j].characters[i], j + 2)" @ondragstart="(e) => StartDrag(e, compaired[j].characters[i], j + 2)" @ondragend="StopDrag">
+											<img src="@compaired[j].characters[i].img" draggable="false" class="charimg col-12"/>
+											<h5 class="draggable col-11 p-0 fs-md-4 fs-lg-3 lh-sm m-0 text-center bg-@compaired[j].characters[i].element">
 											@compaired[j].characters[i].name </h5>
+										</a>
 										<MudTooltip class="col-2" Color="Color.Transparent">
 											<ChildContent>
 												<h5 class="hole p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center text-@GetDiffColor(selected[j].characters[i].dmg, compaired[j].characters[i].dmg)">
@@ -255,7 +259,7 @@ else
 						(@GetDiffPercent(((selected[0].dpm + selected[1].dpm + selected[0].dpmAoe + selected[1].dpmAoe)/2), ((compaired[0].dpm + compaired[1].dpm + compaired[0].dpmAoe + compaired[1].dpmAoe)/2)))</h4>
 				}
 			</div>
-			<p> * You can drag and drop the character's names from the same team to change their position </p>
+			<p> * You can drag and drop the characters from the same team to change their position </p>
 			<p> * You can drag and drop the Team's name from the same pair to change their position </p>
 		}
 	</div>
