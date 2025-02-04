@@ -79,6 +79,10 @@ Credits to [wanderer.moe](https://wanderer.moe/) for the default character icons
 
 
 ### Versions
-  0.8 - First added to GitHub. Release not yet available
+  * 0.8.1
+        - Fixed app freezing on dragging images
+        - You can now drag characters by their image in all pages except in the Team Edit page
+        - Pre-release of this version available
+  * 0.8 - First added to GitHub. Release not yet available
 
 
