@@ -1,6 +1,6 @@
 # Genshin Team Manager
 
-A Tool for viewing and compairing teams, or team pairs from Genshin Impact.
+A Tool for viewing and compairing teams, and team pairs from Genshin Impact.
 
 **The data required for using this tool must be collected manually, either by theorycrafting or using tools like [Genshin Optimizer](https://frzyc.github.io/genshin-optimizer/)**
 
@@ -79,6 +79,11 @@ Credits to [wanderer.moe](https://wanderer.moe/) for the default character icons
 
 
 ### Versions
-  0.8 - First added to GitHub. Release not yet available
+  * 0.8.1 <br>
+        - Fixed app freezing on dragging images <br>
+        - You can now drag characters by their image in all pages except in the Team Edit page <br>
+        - Pre-release of this version available <br>
+  * 0.8 <br>
+        - First added to GitHub. Release not yet available <br>
 
 
