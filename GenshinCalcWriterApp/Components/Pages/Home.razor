@@ -7,16 +7,164 @@
 <div class="p-0 m-0 col-12">
     <div class="p-0 m-0 mt-3 text-light">
         <img class="col-3 veryrounded d-flex mx-auto" src="img/icon.png" />
-        <h1 class="col-12 text-center mx-auto p-2"> Welcome to Genshin Team Viewer!</h1>
+        <h1 class="col-12 text-center mx-auto p-2"> Welcome to Genshin Team Manager!</h1>
+        <h4 class="col-12 text-center mx-auto p-2"> A Tool for viewing and compairing teams, and team pairs from Genshin Impact.</h4>
+    </div>
+    <div class="text-light d-flex flex-column text-center mx-auto mt-4 pt-4 col-10">
+        <h1 class="mt-4 pt-4"> Guide </h1>
+        <div>
+            <div class="separator rounded col-8 d-flex bg-dark border-2 mx-auto my-4" />
+            <h2>Creating Teams</h2>
+            <h5>To be able to view them, you must register them in the app</h5>
+        </div>
+        <div class="container col-10">
+            <div class="separator rounded col-8 d-flex bg-dark border-2 mx-auto my-4" />
+            <h2>Aquiring the Data</h2>
+            <h5>This is the tough part. There are many ways to aquire the damage values and rotation lengths, I will list off some of them:</h5>
+            <div>
+                <div class="separator rounded col-7 d-flex bg-dark border-2 mx-auto my-4" />
+                <a class="clickable" @onclick="() => Toggle(ref throughcalc)"><h3>Through a Calculator</h3></a>
+                @if (throughcalc)
+                {
+                    <p>Genshin Impact has many tools to theorycraft more easily. Theres <a class="text-decoration-underline" href="https://gidmgcalculator.web.app/">GI Damage Calculator</a>, 
+                    <a class="text-decoration-underline" href="https://genshin.aspirine.su/">Genshin Impact Calculator</a>, 
+                    and my personal choice, <a class="text-decoration-underline" href="https://frzyc.github.io/genshin-optimizer/">Genshin Optimizer</a>.
+                    </p>
+                    <p> I will use Genshin Optimizer in these examples.</p>
+                    <p class="py-2"> Select the Team tab and create a add a new team </p>
+                    <img src="/img/Guide/op1.png" class="d-flex col-12" />
+                    <p class="py-2"> Scroll down and add a new team member </p>
+                    <img src="/img/Guide/op2.png" class="d-flex col-12" />
+                    <br />
+                    <img src="/img/Guide/op3.png" class="d-flex col-12" />
+                    <p class="py-2">Once you did, click the card of that character</p>
+                    <img src="/img/Guide/op4.png" class="d-flex col-12" />
+                    <p class="py-2">You will be brought to a page of all information from that character in that team</p>
+                    <img src="/img/Guide/op5.png" class="d-flex col-12" />
+                    <p class="py-2">You can click Edit to change the character level, talent level and constellation level</p>
+                    <img src="/img/Guide/op6.png" class="d-flex col-12" />
+                    <br />
+                    <img src="/img/Guide/op7.png" class="d-flex col-6 mx-auto" />
+                    <p class="py-2">In the bottom of the page, you will be shown the character equipment</p>
+                    <img src="/img/Guide/op8.png" class="d-flex col-12" />
+                    <p class="py-2">You can click this button to change the weapon</p>
+                    <img src="/img/Guide/op9.png" class="d-flex col-12" />
+                    <p class="py-2">You can click this button to add a weapon</p>
+                    <img src="/img/Guide/op10.png" class="d-flex col-8 mx-auto" />
+                    <br />
+                    <img src="/img/Guide/op11.png" class="d-flex col-12" />
+                    <p class="py-2">Then you can edit the stats of the weapon</p>
+                    <img src="/img/Guide/op12.png" class="d-flex col-6 mx-auto" />
+                    <p class="py-2">Then you can select and equip the weapon</p>
+                    <img src="/img/Guide/op13.png" class="d-flex col-8 mx-auto" />
+                    <br />
+                    <img src="/img/Guide/op14.png" class="d-flex col-12" />
+                    <p class="py-2">Then you can click any of the highlighted buttons to add an artifact</p>
+                    <img src="/img/Guide/op15.png" class="d-flex col-12" />
+                    <p class="py-2">Then you will start building your artifacts, ideally copying the same artifacts you have equiped to your character in game</p>
+                    <p class="py-2">You start by adding a new artifact</p>
+                    <img src="/img/Guide/op16.png" class="d-flex col-12" />
+                    <p class="py-2">Then select the artifact set</p>
+                    <img src="/img/Guide/op17.png" class="d-flex col-8 mx-auto" />
+                    <p class="py-2">If needed change the main stat</p>
+                    <img src="/img/Guide/op18.png" class="d-flex col-8 mx-auto" />
+                    <p class="py-2">Then change the artifact level to what you need</p>
+                    <img src="/img/Guide/op19.png" class="d-flex col-8 mx-auto" />
+                    <p class="py-2">Then add each substat and set their level</p>
+                    <img src="/img/Guide/op20.png" class="d-flex col-8 mx-auto" />
+                    <p class="py-2">(You can use this bar to change the value more easily)</p>
+                    <img src="/img/Guide/op21.png" class="d-flex col-8 mx-auto" />
+                    <p class="py-2">Finally, save and equip the artifact</p>
+                    <img src="/img/Guide/op22.png" class="d-flex col-8 mx-auto" />
+                    <br />
+                    <img src="/img/Guide/op23.png" class="d-flex col-12" />
+                    <p class="py-2">You should do that for every artifact slot</p>
+                    <br />
+                    <p class="py-2">Then check if your weapon or artifact set has any passive that can be activated, and do so if needed</p>
+                    <img src="/img/Guide/op24.png" class="d-flex col-12" />
+                    <br />
+                    <img src="/img/Guide/op25.png" class="d-flex col-12" />
+                    <p class="py-2">Then you can scroll back up and click the "Talents" tab</p>
+                    <img src="/img/Guide/op26.png" class="d-flex col-12" />
+                    <p class="py-2">Here you should check for any passive effect of a talent that would be used in the team.</p>
+                    <p class="py-2">In this example, Itto will be in his burst state for this calculation, so I will activate it to get the extra damage and conversion</p>
+                    <img src="/img/Guide/op27.png" class="d-flex col-12" />
+                    <br />
+                    <img src="/img/Guide/op28.png" class="d-flex col-12" />
+                    <p>To finish this character, and actually get the total damage value, you can to create a "Multi-Optimization Target", starting by clicking the character's name</p>
+                    <img src="/img/Guide/op29.png" class="d-flex col-12" />
+                    <br />
+                    <img src="/img/Guide/op30.png" class="d-flex col-8 mx-auto" />
+                    <p>Be sure to check if there is already any pre-made profile available at <a class="text-decoration-underline" href="https://keqingmains.com/misc/multi-optimization/#3_KQMs_Config_Collection">Keqing Mains' Website</a> to save time. If that's the case, you can import it with the Import Multi-Opt button</p>
+                    <img src="/img/Guide/op31.png" class="d-flex col-8 mx-auto" />
+                    <p>If not, create a new Multi-Opt, where you'll have to add all the ways the character deals damage in a rotation. You can watch gameplay of this character, or record your own to better know what attacks and how many are dealt in the rotation</p>
+                    <img src="/img/Guide/op32.png" class="d-flex col-8 mx-auto" />
+                    <p class="py-2">For this example, Itto's rotation goes Q N1 E N2 C4F N4 C4F E F, so i'll use these values</p>
+                    <img src="/img/Guide/op33.png" class="d-flex col-12" />
+                    <p class="py-2">Then I'll change the amount of times those types of damages occur</p>
+                    <img src="/img/Guide/op34.png" class="d-flex col-12" />
+                    <br />
+                    <img src="/img/Guide/op35.png" class="d-flex col-12" />
+                    <p class="py-2">With that done you can return to the character's details, where that calculation will now be shown. <b>THIS WILL BE THE VALUE YOU WILL USE</b></p>
+                    <img src="/img/Guide/op36.png" class="d-flex col-12" />
+                    <p class="py-2">
+                        Of course, we're not quite done yet, this is only Itto, we need to add the other characters, following the same steps. You don't really need to be as precise with support characters,
+                        since most of the time their damage is not very significant to the team, what's important is how they can buff the team, like so:
+                    </p>
+                    <img src="/img/Guide/op37.png" class="d-flex col-12" />
+                    <p class="py-2">Then make sure any important buffs are active</p>
+                    <img src="/img/Guide/op38.png" class="d-flex col-12" />
+                    <p class="py-2">Elemental resonance is at the top of the page</p>
+                    <img src="/img/Guide/op39.png" class="d-flex col-12" />
+
+                    <p class="py-2">Then FINALLY you can actually take the damage values and put them in the tool</p>
+                    <img src="/img/Guide/op40.png" class="d-flex col-12" />
+                    <img src="/img/Guide/op41.png" class="d-flex col-12" />
+                }
+            </div>
+            <div>
+                <div class="separator rounded col-7 d-flex bg-dark border-2 mx-auto my-4" />
+                <h3>Through Theorycrafting</h3>
+                <p>
+                    You may also use any data already available by Theorycrafters like <a class="text-decoration-underline" href="@tgs">TGS</a>, <a class="text-decoration-underline" href="@jstern">jstern</a>, <a class="text-decoration-underline" href="https://www.youtube.com/c/zajef77">Zajeff</a>.
+                    <br/> Although this will only get you generic damage values for certain teams, which can be not ideal if you wish to manage your own teams from your account.
+                </p>
+                <p>If you are a theorycrafter or know how to theorycraft via other means, you can use that data as well.</p>
+            </div>
+        </div>
     </div>
 </div>
 
 @code 
 {
+    string tgs = "https://www.youtube.com/@TheGenshinScientist";
+    string jstern = "https://www.youtube.com/@jstern25";
+
+    bool throughcalc = true;
+
+	void Toggle(ref bool toggle)
+	{
+		toggle = !toggle;
+	}
+
+    private void NavigateToEditPage()
+    {
+        Navigation.NavigateTo($"/edit");
+    }
+
+    private void NavigateToSettingsPage()
+    {
+        Navigation.NavigateTo($"/settings");
+    }
 
     private void NavigateToCalcPage()
     {
         Navigation.NavigateTo($"/calc");
+    }
+
+    private void NavigateToPairsPage()
+    {
+        Navigation.NavigateTo($"/pair");
     }
 
     public void Dispose()
