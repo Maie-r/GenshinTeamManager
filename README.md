@@ -1,6 +1,6 @@
 # Genshin Team Manager
 
-A Tool for viewing and compairing teams, or team pairs from Genshin Impact.
+A Tool for viewing and compairing teams, and team pairs from Genshin Impact.
 
 **The data required for using this tool must be collected manually, either by theorycrafting or using tools like [Genshin Optimizer](https://frzyc.github.io/genshin-optimizer/)**
 
