@@ -17,8 +17,8 @@ else
     <h1 class="text-center m-2"> Team Pairings </h1>
     @if (calc.teams.Count <= 0)
     {
-        <p class="p-4">No teams registered!</p>
-        <p class="p-4">you can add them in <a class="clickable" @onclick="NavigateToEditPage">(this page)</a></p>
+        <h4 class="p-4">No teams registered!</h4>
+        <h4 class="p-4">you can add them in <a class="clickable" @onclick="NavigateToEditPage">(this page)</a></h4>
     }
     else
     {
@@ -41,7 +41,7 @@ else
             {
                 @if (MultipleAccount)
                 {
-                    <a class="clickable text-center" @onclick="() => Collapse(server.Key)"><div><h2>@server.Key</h2></div></a>
+                    <a class="clickable d-flex justify-content-center flex-row flex-nowrap text-center" @onclick="() => Collapse(server.Key)"><h2>@server.Key</h2> <MudIcon class="text-center" Size="Size.Large" Icon="@(svtablestate[server.Key] == "shown" ? Icons.Material.Filled.KeyboardArrowUp : Icons.Material.Filled.KeyboardArrowDown)"></MudIcon></a>
                 }
                 <div id="@server.Key" class="@svtablestate[server.Key]">
                     <MudTable Items="@server.Value[0].AsEnumerable()" Hover="true" SortLabel="Sort by" MultiSort="true" Class="darken-50">

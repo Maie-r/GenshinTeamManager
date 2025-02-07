@@ -51,7 +51,7 @@ else
             {
                 foreach (List<Team> account in accountteams)
                 {
-                    <a class="clickable text-center" @onclick="() => Collapse(account[0].server)"><div><h2>@account[0].server</h2></div></a>
+                    <a class="clickable d-flex flex-row flex-nowrap justify-content-center text-center" @onclick="() => Collapse(account[0].server)"><h2>@account[0].server</h2> <MudIcon class="text-center" Size="Size.Large" Icon="@(svtablestate[account[0].server] == "shown" ? Icons.Material.Filled.KeyboardArrowUp : Icons.Material.Filled.KeyboardArrowDown)"></MudIcon></a>
                     <div class="@svtablestate[account[0].server] mb-2">
                         <CascadingValue Value="@account.AsEnumerable()">
                             <TeamTable OnTeamSelected="HandleTeamSelected"></TeamTable>
