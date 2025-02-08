@@ -79,6 +79,9 @@ Credits to [wanderer.moe](https://wanderer.moe/) for the default character icons
 
 
 ### Versions
+  * 0.8.2 <br>
+        - Added a guide in the Home page, to help navigate and get the necessary resources
+        - Minor changes to the character details page.
   * 0.8.1 <br>
         - Fixed app freezing on dragging images <br>
         - You can now drag characters by their image in all pages except in the Team Edit page <br>
