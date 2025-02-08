@@ -29,7 +29,7 @@
                 @if (creatingteams)
                 {
                     <h5>To be able to view them, you must register them in the app</h5>
-                    <h5>This is done in the <a @onclick="NavigateToEditPage" class="clickable text-decoration-underline">Edit Page</a></h5>
+                    <h5>This is done in the <a @onclick='() => NavigateToPage("/edit")' class="clickable text-decoration-underline">Edit Page</a></h5>
                     <img src="/img/Guide/Manage/link.png" class="d-flex col-3 mx-auto" />
                     <p class="py-2">Where you can click the "New Team" button</p>
                     <img src="/img/Guide/Manage/1.png" class="data-flex col-8 mx-auto" />
@@ -219,10 +219,10 @@
     string tgs = "https://www.youtube.com/@TheGenshinScientist";
     string jstern = "https://www.youtube.com/@jstern25";
 
-    bool teammanage = true;
-    bool creatingteams = true;
-    bool editteams = true;
-    bool data = true;
+    bool teammanage = false;
+    bool creatingteams = false;
+    bool editteams = false;
+    bool data = false;
     bool throughcalc = true;
     
 
@@ -231,24 +231,9 @@
 		toggle = !toggle;
 	}
 
-    private void NavigateToEditPage()
+    private void NavigateToPage(string page)
     {
-        Navigation.NavigateTo($"/edit");
-    }
-
-    private void NavigateToSettingsPage()
-    {
-        Navigation.NavigateTo($"/settings");
-    }
-
-    private void NavigateToCalcPage()
-    {
-        Navigation.NavigateTo($"/calc");
-    }
-
-    private void NavigateToPairsPage()
-    {
-        Navigation.NavigateTo($"/pair");
+        Navigation.NavigateTo(page);
     }
 
     public void Dispose()
