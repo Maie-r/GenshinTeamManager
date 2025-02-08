@@ -81,17 +81,17 @@ else
 						}
 						@if (selected.damages.Count < 10)
 						{
-							<div class="row col-6 mx-0 my-1 d-flex p-0 flex-wrap">
-								<h5 class="clickable p-0 m-0 rounded template" @onclick="NewDmg"> Add damage </h5>
+							<div class="row col-6 mx-0 my-1 d-flex p-0 text-center flex-wrap">
+								<p class="clickable p-0 py-2 m-0 text-center my-auto rounded template" @onclick="NewDmg"> Add damage </p>
 							</div>
 						}
-
+						<p class="text-light">* You can add comments between (parentheses) to identify the damage.</p>
 					</div>
 					@if (dmgonly)
 					{
-						<button class="bg-highlight col-6 text-light rounded border-@IsUsed(-1) p-2 clickable" @onclick="() => SelectDmg(-1)">Use Raw Damage</button>
+						<button class="bg-highlight col-6 text-light rounded m-1 mx-4 py-1 border-@IsUsed(-1) clickable" @onclick="() => SelectDmg(-1)">Use Raw Damage</button>
 					}
-					<p class="text-light">* You can add comments between (parentheses) to identify the damage.</p>
+					
 					<div class="col-sm-12 col-lg-4 text-light mx-2 mt-2 flex-column justify-content-center d-flex flex-fill">
 						<h5> Global AoE: </h5>
 						<input type="number" class="spinput rounded text-light p-2" @bind="@selected.character.aoe" @bind:after="Update">

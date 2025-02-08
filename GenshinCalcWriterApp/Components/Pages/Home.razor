@@ -15,123 +15,201 @@
         <h1 class="mt-4 pt-4"> Guide </h1>
         <div>
             <div class="separator rounded col-8 d-flex bg-dark border-2 mx-auto my-4" />
-            <h2>Creating Teams</h2>
-            <h5>To be able to view them, you must register them in the app</h5>
+            <a class="clickable d-flex flex-row flex-nowrap justify-content-center text-center mx-auto" @onclick="() => Toggle(ref teammanage)">
+                <h2>Creating and Editing Teams</h2>
+                <MudIcon class="text-center" Size="Size.Large" Icon="@(teammanage ? Icons.Material.Filled.KeyboardArrowUp : Icons.Material.Filled.KeyboardArrowDown)"></MudIcon>
+            </a>
+            @if (teammanage)
+            {
+                <div class="separator rounded col-7 d-flex bg-dark border-2 mx-auto my-4" />
+                <a class="clickable d-flex flex-row flex-nowrap justify-content-center text-center mx-auto" @onclick="() => Toggle(ref creatingteams)">
+                    <h3>Creating a team</h3>
+                    <MudIcon class="text-center" Size="Size.Large" Icon="@(creatingteams ? Icons.Material.Filled.KeyboardArrowUp : Icons.Material.Filled.KeyboardArrowDown)"></MudIcon>
+                </a>
+                @if (creatingteams)
+                {
+                    <h5>To be able to view them, you must register them in the app</h5>
+                    <h5>This is done in the <a @onclick="NavigateToEditPage" class="clickable text-decoration-underline">Edit Page</a></h5>
+                    <img src="/img/Guide/Manage/link.png" class="d-flex col-3 mx-auto" />
+                    <p class="py-2">Where you can click the "New Team" button</p>
+                    <img src="/img/Guide/Manage/1.png" class="data-flex col-8 mx-auto" />
+                    <p class="py-2">You will then be shown a team template to fill, you can alter name, rotation length, account (if you use more than one) and the characters</p>
+                    <img src="/img/Guide/Manage/2.png" class="data-flex col-8 mx-auto" />
+                    <p class="py-2">By clicking any character slot you will be shown a grid of character to choose, you can filter elements or search the character's name</p>
+                    <img src="/img/Guide/Manage/3.png" class="data-flex col-8 mx-auto" />
+                    <br/>
+                    <img src="/img/Guide/Manage/4.png" class="data-flex col-8 mx-auto" />
+                    <p class="py-2">By default, the character will have 1000 RAW damage, raw damage meaning it is independent of any other value and will not change unless you change it here.<br />
+                        Below it is that character's AoE coefficient, as in, how many enemies on average can this character hit at once (dealing full damage to each, unlike navia). <br />
+                        Changing the value in this page will only change it for this specific team. This can be useful if by playstyle, team buff or constellation, the AoE changes only for this team.<br /><br />
+                        If you don't know what damage to put here, go to the "Aquiring the Data" part of the guide.<br /><br />
+                        Do this for every character on the team and click save!</p>
+                    <img src="/img/Guide/Manage/5.png" class="data-flex col-8 mx-auto" />
+                }
+
+                <div class="separator rounded col-7 d-flex bg-dark border-2 mx-auto my-4" />
+                <a class="clickable d-flex flex-row flex-nowrap justify-content-center text-center mx-auto" @onclick="() => Toggle(ref editteams)">
+                    <h3>Editing teams</h3>
+                    <MudIcon class="text-center" Size="Size.Large" Icon="@(editteams ? Icons.Material.Filled.KeyboardArrowUp : Icons.Material.Filled.KeyboardArrowDown)"></MudIcon>
+                </a>
+                @if (editteams)
+                {
+                    <p class="py-2">The team should now show in the table, you can click it to manage it</p>
+                    <img src="/img/Guide/Manage/6.png" class="d-flex col-8 mx-auto" />
+                    <p class="py-2">This will bring you to the same window to edit the values. I will go in depth for each function now:</p>
+
+                    <h5 class="py-2">Characters</h5>
+                    <p class="py-2">You can click the character's image to change the character. The damage will remain the same if it is RAW.</p>
+                    <img src="/img/Guide/Manage/7.png" class="data-flex col-8 mx-auto" />
+                    <p class="py-2">You can drag the character's name to another character's to switch their places.</p>
+                    <img src="/img/Guide/Manage/8.gif" class="data-flex col-8 mx-auto" />
+                    <br/>
+                    <p class="py-2">If you click the "R" labeled button you'll be brought to another page</p>
+                    <img src="/img/Guide/Manage/9.png" class="data-flex col-8 mx-auto" />
+                    <p class="py-2">Here you can change the default AoE for this Character (it will change for every instance of this character that uses default AoE)</p>
+                    <img src="/img/Guide/Manage/10.png" class="data-flex col-8 mx-auto" />
+                    <p class="py-2">You can click the "Use Raw Damage" button to change the profile to Raw.</p>
+                    <img src="/img/Guide/Manage/11.png" class="data-flex col-8 mx-auto" />
+                    <p class="py-2">If instead, you would like to use <b>Relative Damage</b>, as in, a multiple of a specific damage value, 
+                        that once changed, will change the damage for every instance that uses the same profile, you can click "Add damage"</p>
+                    <img src="/img/Guide/Manage/12.png" class="data-flex col-8 mx-auto" />
+                    <p class="py-2">Then you can add a base damage value, and click the "Use" button above it.</p>
+                    <img src="/img/Guide/Manage/13.png" class="data-flex col-8 mx-auto" />
+                    <p class="py-2">From then on, if you change the damage value from this outer page, it will in reality be (base damage * multiplier)<br/> In this example, it will be (870045 * 1.057) = ~920000</p>
+                    <img src="/img/Guide/Manage/14.png" class="data-flex col-8 mx-auto" />
+                    <p class="py-2">Now if you decide to change the base value, in this case, 870045 to 900000</p>
+                    <img src="/img/Guide/Manage/15.png" class="data-flex col-8 mx-auto" />
+                    <p class="py-2">The damage will also increase, due to keeping the multiplier.<br/> So it bacame (900000 * 1.057) = ~951674</p>
+                    <img src="/img/Guide/Manage/16.png" class="data-flex col-8 mx-auto" />
+                }
+
+            }
         </div>
         <div class="container col-10">
             <div class="separator rounded col-8 d-flex bg-dark border-2 mx-auto my-4" />
-            <h2>Aquiring the Data</h2>
-            <h5>This is the tough part. There are many ways to aquire the damage values and rotation lengths, I will list off some of them:</h5>
-            <div>
-                <div class="separator rounded col-7 d-flex bg-dark border-2 mx-auto my-4" />
-                <a class="clickable d-flex flex-row flex-nowrap justify-content-center text-center mx-auto" @onclick="() => Toggle(ref throughcalc)"><h3>Through a Calculator</h3> <MudIcon class="text-center" Size="Size.Large" Icon="@(throughcalc ? Icons.Material.Filled.KeyboardArrowUp : Icons.Material.Filled.KeyboardArrowDown)"></MudIcon></a>
-                @if (throughcalc)
-                {
-                    <p>Genshin Impact has many tools to theorycraft more easily. Theres <a class="text-decoration-underline" href="https://gidmgcalculator.web.app/">GI Damage Calculator</a>, 
-                    <a class="text-decoration-underline" href="https://genshin.aspirine.su/">Genshin Impact Calculator</a>, 
-                    and my personal choice, <a class="text-decoration-underline" href="https://frzyc.github.io/genshin-optimizer/">Genshin Optimizer</a>.
-                    </p>
-                    <p> I will use Genshin Optimizer in these examples.</p>
-                    <p class="py-2"> Select the Team tab and create a add a new team </p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op1.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2"> Scroll down and add a new team member </p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op2.png?raw=true" class="d-flex col-12" />
-                    <br />
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op3.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">Once you did, click the card of that character</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op4.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">You will be brought to a page of all information from that character in that team</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op5.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">You can click Edit to change the character level, talent level and constellation level</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op6.png?raw=true" class="d-flex col-12" />
-                    <br />
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op7.png?raw=true" class="d-flex col-6 mx-auto" />
-                    <p class="py-2">In the bottom of the page, you will be shown the character equipment</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op8.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">You can click this button to change the weapon</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op9.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">You can click this button to add a weapon</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op10.png?raw=true" class="d-flex col-8 mx-auto" />
-                    <br />
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op11.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">Then you can edit the stats of the weapon</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op12.png?raw=true" class="d-flex col-6 mx-auto" />
-                    <p class="py-2">Then you can select and equip the weapon</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op13.png?raw=true" class="d-flex col-8 mx-auto" />
-                    <br />
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op14.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">Then you can click any of the highlighted buttons to add an artifact</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op15.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">Then you will start building your artifacts, ideally copying the same artifacts you have equiped to your character in game</p>
-                    <p class="py-2">You start by adding a new artifact</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op16.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">Then select the artifact set</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op17.png?raw=true" class="d-flex col-8 mx-auto" />
-                    <p class="py-2">If needed change the main stat</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op18.png?raw=true" class="d-flex col-8 mx-auto" />
-                    <p class="py-2">Then change the artifact level to what you need</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op19.png?raw=true" class="d-flex col-8 mx-auto" />
-                    <p class="py-2">Then add each substat and set their level</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op20.png?raw=true" class="d-flex col-8 mx-auto" />
-                    <p class="py-2">(You can use this bar to change the value more easily)</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op21.png?raw=true" class="d-flex col-8 mx-auto" />
-                    <p class="py-2">Finally, save and equip the artifact</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op22.png?raw=true" class="d-flex col-8 mx-auto" />
-                    <br />
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op23.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">You should do that for every artifact slot</p>
-                    <br />
-                    <p class="py-2">Then check if your weapon or artifact set has any passive that can be activated, and do so if needed</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op24.png?raw=true" class="d-flex col-12" />
-                    <br />
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op25.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">Then you can scroll back up and click the "Talents" tab</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op26.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">Here you should check for any passive effect of a talent that would be used in the team.</p>
-                    <p class="py-2">In this example, Itto will be in his burst state for this calculation, so I will activate it to get the extra damage and conversion</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op27.png?raw=true" class="d-flex col-12" />
-                    <br />
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op28.png?raw=true" class="d-flex col-12" />
-                    <p>To finish this character, and actually get the total damage value, you can to create a "Multi-Optimization Target", starting by clicking the character's name</p>
-                    <img src="/img/Guide/op29.png" class="d-flex col-12" />
-                    <br />
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op30.png?raw=true" class="d-flex col-8 mx-auto" />
-                    <p>Be sure to check if there is already any pre-made profile available at <a class="text-decoration-underline" href="https://keqingmains.com/misc/multi-optimization/#3_KQMs_Config_Collection">Keqing Mains' Website</a> to save time. If that's the case, you can import it with the Import Multi-Opt button</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op31.png?raw=true" class="d-flex col-8 mx-auto" />
-                    <p>If not, create a new Multi-Opt, where you'll have to add all the ways the character deals damage in a rotation. You can watch gameplay of this character, or record your own to better know what attacks and how many are dealt in the rotation</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op32.png?raw=true" class="d-flex col-8 mx-auto" />
-                    <p class="py-2">For this example, Itto's rotation goes Q N1 E N2 C4F N4 C4F E F, so i'll use these values</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op33.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">Then I'll change the amount of times those types of damages occur</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op34.png?raw=true" class="d-flex col-12" />
-                    <br />
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op35.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">With that done you can return to the character's details, where that calculation will now be shown. <b>THIS WILL BE THE VALUE YOU WILL USE</b></p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op36.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">
-                        Of course, we're not quite done yet, this is only Itto, we need to add the other characters, following the same steps. You don't really need to be as precise with support characters,
-                        since most of the time their damage is not very significant to the team, what's important is how they can buff the team, like so:
-                    </p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op37.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">Then make sure any important buffs are active</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op38.png?raw=true" class="d-flex col-12" />
-                    <p class="py-2">Elemental resonance is at the top of the page</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op39.png?raw=true" class="d-flex col-12" />
+            <a class="clickable d-flex flex-row flex-nowrap justify-content-center text-center mx-auto" @onclick="() => Toggle(ref data)">
+                <h2>Aquiring the Data</h2>
+                <MudIcon class="text-center" Size="Size.Large" Icon="@(data ? Icons.Material.Filled.KeyboardArrowUp : Icons.Material.Filled.KeyboardArrowDown)"></MudIcon>
+            </a>
+            @if (data)
+            {
+                <h5>This is the tough part. There are many ways to aquire the damage values and rotation lengths, I will list off some of them:</h5>
+                <div>
+                    <div class="separator rounded col-7 d-flex bg-dark border-2 mx-auto my-4" />
+                    <a class="clickable d-flex flex-row flex-nowrap justify-content-center text-center mx-auto" @onclick="() => Toggle(ref throughcalc)">
+                        <h3>Through a Calculator</h3>
+                        <MudIcon class="text-center" Size="Size.Large" Icon="@(throughcalc ? Icons.Material.Filled.KeyboardArrowUp : Icons.Material.Filled.KeyboardArrowDown)"></MudIcon>
+                    </a>
+                    @if (throughcalc)
+                    {
+                        <p>
+                            Genshin Impact has many tools to theorycraft more easily. Theres <a class="text-decoration-underline" href="https://gidmgcalculator.web.app/">GI Damage Calculator</a>,
+                            <a class="text-decoration-underline" href="https://genshin.aspirine.su/">Genshin Impact Calculator</a>,
+                            and my personal choice, <a class="text-decoration-underline" href="https://frzyc.github.io/genshin-optimizer/">Genshin Optimizer</a>.
+                        </p>
+                        <p> I will use Genshin Optimizer in these examples.</p>
+                        <p class="py-2"> Select the Team tab and create a add a new team </p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op1.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2"> Scroll down and add a new team member </p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op2.png?raw=true" class="d-flex col-12" />
+                        <br />
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op3.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">Once you did, click the card of that character</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op4.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">You will be brought to a page of all information from that character in that team</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op5.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">You can click Edit to change the character level, talent level and constellation level</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op6.png?raw=true" class="d-flex col-12" />
+                        <br />
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op7.png?raw=true" class="d-flex col-6 mx-auto" />
+                        <p class="py-2">In the bottom of the page, you will be shown the character equipment</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op8.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">You can click this button to change the weapon</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op9.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">You can click this button to add a weapon</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op10.png?raw=true" class="d-flex col-8 mx-auto" />
+                        <br />
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op11.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">Then you can edit the stats of the weapon</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op12.png?raw=true" class="d-flex col-6 mx-auto" />
+                        <p class="py-2">Then you can select and equip the weapon</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op13.png?raw=true" class="d-flex col-8 mx-auto" />
+                        <br />
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op14.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">Then you can click any of the highlighted buttons to add an artifact</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op15.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">Then you will start building your artifacts, ideally copying the same artifacts you have equiped to your character in game</p>
+                        <p class="py-2">You start by adding a new artifact</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op16.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">Then select the artifact set</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op17.png?raw=true" class="d-flex col-8 mx-auto" />
+                        <p class="py-2">If needed change the main stat</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op18.png?raw=true" class="d-flex col-8 mx-auto" />
+                        <p class="py-2">Then change the artifact level to what you need</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op19.png?raw=true" class="d-flex col-8 mx-auto" />
+                        <p class="py-2">Then add each substat and set their level</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op20.png?raw=true" class="d-flex col-8 mx-auto" />
+                        <p class="py-2">(You can use this bar to change the value more easily)</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op21.png?raw=true" class="d-flex col-8 mx-auto" />
+                        <p class="py-2">Finally, save and equip the artifact</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op22.png?raw=true" class="d-flex col-8 mx-auto" />
+                        <br />
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op23.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">You should do that for every artifact slot</p>
+                        <br />
+                        <p class="py-2">Then check if your weapon or artifact set has any passive that can be activated, and do so if needed</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op24.png?raw=true" class="d-flex col-12" />
+                        <br />
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op25.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">Then you can scroll back up and click the "Talents" tab</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op26.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">Here you should check for any passive effect of a talent that would be used in the team.</p>
+                        <p class="py-2">In this example, Itto will be in his burst state for this calculation, so I will activate it to get the extra damage and conversion</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op27.png?raw=true" class="d-flex col-12" />
+                        <br />
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op28.png?raw=true" class="d-flex col-12" />
+                        <p>To finish this character, and actually get the total damage value, you can to create a "Multi-Optimization Target", starting by clicking the character's name</p>
+                        <img src="/img/Guide/op29.png" class="d-flex col-12" />
+                        <br />
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op30.png?raw=true" class="d-flex col-8 mx-auto" />
+                        <p>Be sure to check if there is already any pre-made profile available at <a class="text-decoration-underline" href="https://keqingmains.com/misc/multi-optimization/#3_KQMs_Config_Collection">Keqing Mains' Website</a> to save time. If that's the case, you can import it with the Import Multi-Opt button</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op31.png?raw=true" class="d-flex col-8 mx-auto" />
+                        <p>If not, create a new Multi-Opt, where you'll have to add all the ways the character deals damage in a rotation. You can watch gameplay of this character, or record your own to better know what attacks and how many are dealt in the rotation</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op32.png?raw=true" class="d-flex col-8 mx-auto" />
+                        <p class="py-2">For this example, Itto's rotation goes Q N1 E N2 C4F N4 C4F E F, so i'll use these values</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op33.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">Then I'll change the amount of times those types of damages occur</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op34.png?raw=true" class="d-flex col-12" />
+                        <br />
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op35.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">With that done you can return to the character's details, where that calculation will now be shown. <b>THIS WILL BE THE VALUE YOU WILL USE</b></p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op36.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">
+                            Of course, we're not quite done yet, this is only Itto, we need to add the other characters, following the same steps. You don't really need to be as precise with support characters,
+                            since most of the time their damage is not very significant to the team, what's important is how they can buff the team, like so:
+                        </p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op37.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">Then make sure any important buffs are active</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op38.png?raw=true" class="d-flex col-12" />
+                        <p class="py-2">Elemental resonance is at the top of the page</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op39.png?raw=true" class="d-flex col-12" />
 
-                    <p class="py-2">Then FINALLY you can actually take the damage values and put them in the tool</p>
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op40.png?raw=true" class="d-flex col-12" />
-                    <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op41.png?raw=true" class="d-flex col-12" />
-                }
-            </div>
-            <div>
-                <div class="separator rounded col-7 d-flex bg-dark border-2 mx-auto my-4" />
-                <h3>Through Theorycrafting</h3>
-                <p>
-                    You may also use any data already available by Theorycrafters like <a class="text-decoration-underline" href="@tgs">TGS</a>, <a class="text-decoration-underline" href="@jstern">jstern</a>, <a class="text-decoration-underline" href="https://www.youtube.com/c/zajef77">Zajeff</a>.
-                    <br/> Although this will only get you generic damage values for certain teams, which can be not ideal if you wish to manage your own teams from your account.
-                </p>
-                <p>If you are a theorycrafter or know how to theorycraft via other means, you can use that data as well.</p>
-            </div>
+                        <p class="py-2">Then FINALLY you can actually take the damage values and put them in the tool</p>
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op40.png?raw=true" class="d-flex col-12" />
+                        <img src="https://github.com/Maie-r/GenshinTeamManager/blob/master/GenshinCalcWriterApp/wwwroot/img/Guide/op41.png?raw=true" class="d-flex col-12" />
+                    }
+                </div>
+                <div>
+                    <div class="separator rounded col-7 d-flex bg-dark border-2 mx-auto my-4" />
+                    <h3>Through Theorycrafting</h3>
+                    <p>
+                        You may also use any data already available by Theorycrafters like <a class="text-decoration-underline" href="@tgs">TGS</a>, <a class="text-decoration-underline" href="@jstern">jstern</a>, <a class="text-decoration-underline" href="https://www.youtube.com/c/zajef77">Zajeff</a>.
+                        <br /> Although this will only get you generic damage values for certain teams, which can be not ideal if you wish to manage your own teams from your account.
+                    </p>
+                    <p>If you are a theorycrafter or know how to theorycraft via other means, you can use that data as well.</p>
+                </div>
+            }
+            
         </div>
     </div>
 </div>
@@ -141,7 +219,12 @@
     string tgs = "https://www.youtube.com/@TheGenshinScientist";
     string jstern = "https://www.youtube.com/@jstern25";
 
+    bool teammanage = true;
+    bool creatingteams = true;
+    bool editteams = true;
+    bool data = true;
     bool throughcalc = true;
+    
 
 	void Toggle(ref bool toggle)
 	{

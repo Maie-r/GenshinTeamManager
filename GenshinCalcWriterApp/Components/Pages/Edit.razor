@@ -6,7 +6,7 @@
 @inject IJSRuntime JSRuntime
 <link rel="stylesheet" href="css/tableresize.css" />
 
-<h1 class="text-light text-center">DB Edit page</h1>
+<h1 class="text-light pt-5 mt-5 text-center">DB Edit page</h1>
 
 @if (teams == null)
 {
@@ -18,7 +18,7 @@ else
 	{
 		<h1 class="m-2 text-danger"> @error </h1>
 	}
-	<div class="m-2 darken-50 veryrounded p-2">
+	<div class="m-2  darken-50 veryrounded p-2">
 		@if (!newteam)
 		{
 			<button class="d-flex my-3 mx-auto col-10 btn bg-highlight text-light" @onclick="NewTeam" type="submit">New Team</button>
@@ -32,8 +32,8 @@ else
 		<button class="d-flex my-3 mx-auto col-6 btn btn-anemo text-light" @onclick="Save" type="submit">Save and Reload</button>
 		@if (teams.Count <= 0)
 		{
-			<div class="m-2 darken-50">
-				<h2> No teams yet added!</h2>
+			<div class="m-2 p-2 text-light text-center darken-50">
+				<h3> No teams yet added!</h3>
 			</div>
 		}
 		else
