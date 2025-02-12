@@ -68,14 +68,14 @@ else
 							int i = local;
 							<div class="row col-6 mx-0 my-1 d-flex flex-fill flex-wrap">
 								<div class="row p-0 col-12 d-flex flex-column">
-								@if (dmgonly)
-								{
-									<button class="bg-highlight text-light p-2 rounded clickable" @onclick="() => SelectDmg(i)">Use</button>
-								}
-								<div class="d-flex p-0 flex-nowrap flex-row">
-									<input type="text" class="spinput rounded flex-fill border-@IsUsed(i) text-light p-2" @bind="@selected.damages[i]" @bind:after="Update">
-									<button class="text-light p-2 ms-1 bg-pyro clickable rounded flex-nowrap" @onclick="() => RemoveDmg(i)">✖</button>
-								</div>
+									@if (dmgonly)
+									{
+										<button class="bg-highlight text-light p-2 rounded clickable" @onclick="() => SelectDmg(i)">Use</button>
+									}
+									<div class="d-flex p-0 flex-nowrap flex-row">
+										<input type="text" class="spinput rounded flex-fill border-@IsUsed(i) text-light p-2" @bind="@selected.damages[i]" @bind:after="() => Update(i)">
+										<button class="text-light p-2 ms-1 bg-pyro clickable rounded flex-nowrap" @onclick="() => RemoveDmg(i)">✖</button>
+									</div>
 								</div>
 							</div>
 						}
@@ -91,7 +91,7 @@ else
 					{
 						<button class="bg-highlight col-6 text-light rounded m-1 mx-4 py-1 border-@IsUsed(-1) clickable" @onclick="() => SelectDmg(-1)">Use Raw Damage</button>
 					}
-					
+
 					<div class="col-sm-12 col-lg-4 text-light mx-2 mt-2 flex-column justify-content-center d-flex flex-fill">
 						<h5> Global AoE: </h5>
 						<input type="number" class="spinput rounded text-light p-2" @bind="@selected.character.aoe" @bind:after="Update">
@@ -207,7 +207,7 @@ else
 	}
 	void NewDmg()
 	{
-		selected.damages.Add("10");
+		selected.damages.Add("1");
 	}
 
 	void RemoveDmg(int i)
@@ -229,6 +229,21 @@ else
 			return "anemo";
 		}
 		return "";
+	}
+
+	void Update(int i)
+	{
+		string[] fix = selected.damages[i].Split(')');
+		if (double.Parse(fix[fix.Length-1]) <= 0)
+		{
+			fix[fix.Length - 1] = "1";
+		}
+		selected.damages[i] = fix[0];
+		if (fix.Length > 1)
+		{
+			selected.damages[i] += $"){fix[1]}";
+		}
+		Update();
 	}
 
 	void Update()
@@ -300,6 +315,7 @@ else
 
 	void Getout()
 	{
+		Update();
 		Exit.InvokeAsync();
 	}
 }

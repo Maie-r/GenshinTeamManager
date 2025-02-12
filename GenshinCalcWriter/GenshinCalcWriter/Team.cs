@@ -39,28 +39,20 @@ namespace GenshinTeamCalc
                 else
                 {
                     Character tempchar = new Character(temp);
-                    if (stuff[1, i].Length > 1) // for raw damage // || double.Parse(stuff[1, i]) < 0
+                    if (stuff[1, i].Contains("!")) // for relative damage
                     {
+                        stuff[1, i] = stuff[1, i].Replace("!", "");
                         if (stuff[2, i] == null) // no offset multiplier
-                        {
-                            tempchar.dmg = Math.Round(double.Parse(stuff[1, i], CultureInfo.InvariantCulture));
-                        }
-                        else // with offset multiplier
-                        {
-                            tempchar.dmg = Math.Round(double.Parse(stuff[1, i], CultureInfo.InvariantCulture) * double.Parse(stuff[2, i], CultureInfo.InvariantCulture));
-                        }
-                    }
-                    else // for relative damage
-                    {
-                        if (stuff[2, i] == null) // no offset multiplier
-                        {
                             tempchar.dmg = calc.GetDmg(tempchar, int.Parse(stuff[1, i]));
-                        }
                         else // with offset multiplier
-                        {
                             tempchar.dmg = Math.Round(calc.GetDmg(tempchar, int.Parse(stuff[1, i])) * double.Parse(stuff[2, i], CultureInfo.InvariantCulture));
-                        }
-                       
+                    }
+                    else // for raw damage
+                    {
+                        if (stuff[2, i] == null) // no offset multiplier
+                            tempchar.dmg = Math.Round(double.Parse(stuff[1, i], CultureInfo.InvariantCulture));
+                        else // with offset multiplier
+                            tempchar.dmg = Math.Round(double.Parse(stuff[1, i], CultureInfo.InvariantCulture) * double.Parse(stuff[2, i], CultureInfo.InvariantCulture));
                     }
                     if (stuff[3, i] == null) // no AOE override
                     {
@@ -197,10 +189,11 @@ namespace GenshinTeamCalc
                 temp2[0] = team.characters[i - 1].name;
                 if (calc.CharacterExists(temp2[0]))
                 {
-                    if (temp2[1].Length <= 1) // uses relative damage
+                    if (temp2[1].Contains("!")) // uses relative damage
                     {
-                        double mult = team.characters[i - 1].dmg / calc.GetDmg(team.characters[i - 1], int.Parse(temp2[1])); // problem lies here
-                        Debug.WriteLine($"ITS RELATIVE {team.characters[i - 1].dmg} / {calc.GetDmg(team.characters[i - 1], int.Parse(temp2[1]))} {mult}");
+                        int index = int.Parse(temp2[1].Replace("!", ""));
+                        double mult = team.characters[i - 1].dmg / calc.GetDmg(team.characters[i - 1], index);
+                        Debug.WriteLine($"ITS RELATIVE {team.characters[i - 1].dmg} / {calc.GetDmg(team.characters[i - 1], index)} {mult}");
                         if (temp2.Count <= 2) // no offset multiplier
                         {
                             if (mult != 1)
@@ -321,32 +314,22 @@ public class CharacterCondensed
         {
             if (damages.Count > text.Count - 4)
             {
-                if (damages[i - 2].Length <= 1) // to not conflict with relative
-                {
-                    text.Insert(i, damages[i - 2] + "0");
-                }
-                else
-                {
-                    text.Insert(i, damages[i - 2]);
-                }
+                //if (damages[i - 2].Length <= 1) // to not conflict with relative
+                    //text.Insert(i, damages[i - 2] + "0");
+                text.Insert(i, damages[i - 2]);
             }
             else
             {
-                if (damages[i - 2] == "" || damages[i - 2] == "0")
+                if (damages[i - 2] == "")
                 {
                     text.RemoveAt(i);
                     damages.RemoveAt(i - 2);
                 }
                 else
                 {
-                    if (damages[i - 2].Length <= 1) // to not conflict with relative
-                    {
-                        text[i] = damages[i - 2] + "0";
-                    }
-                    else
-                    {
-                        text[i] = damages[i - 2];
-                    }
+                    //if (damages[i - 2].Length <= 1) // to not conflict with relative
+                        //text[i] = damages[i - 2] + "0";
+                    text[i] = damages[i - 2];
                 }
             }
         }
