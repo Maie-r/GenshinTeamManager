@@ -77,6 +77,8 @@ It also makes use of [Mudblazor](https://mudblazor.com/) and [Drag and Drop Poly
 
 Credits to [wanderer.moe](https://wanderer.moe/) for the default character icons.
 
+This tool is in no way associated to Hoyoverse
+
 
 ### Versions
   * 0.8.2 <br>
