@@ -94,8 +94,11 @@ namespace GenshinTeamCalc
             dpm = team.dpm;
             dpmAoe = team.dpmAoe;
             dps = team.dps;
-        } 
+        }
 
+        /// <summary>
+        /// Calculates the DPM and DPS of the team and stores it in the atributes.
+        /// </summary>
         public void CalcDpm()
         {
             double som = 0;
@@ -121,6 +124,9 @@ namespace GenshinTeamCalc
             }
         }
 
+        /// <summary>
+        /// Returns a list of the percentages of the damage each character does in the team, with the same order.
+        /// </summary>
         public List<double> GetPercentages()
         {
             List<double> result = new List<double>();
@@ -245,9 +251,32 @@ namespace GenshinTeamCalc
         public string name;
         public string element;
         public string img;
-        public double dmg;
+        private double _dmg;
         public double aoe;
         public int relative = -1;
+
+        public double dmg
+        {
+            get { return _dmg; }
+            set
+            {
+                if (value < 0)
+                {
+                    Debug.WriteLine(name + " has invalid damage in some team!");
+                    _dmg = 0;
+                }
+                else
+                {
+                    _dmg = value;
+                }
+            }
+        }
+
+        public double dmgAoe         
+        {
+            get { return _dmg * aoe; }
+        }
+
         public Character(string name, string element, string img, double aoe)
         {
             this.name = name;

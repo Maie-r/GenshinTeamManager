@@ -25,7 +25,7 @@ else
 							<h5 class="col-11 p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center bg-@selected[j].characters[i].element">@selected[j].characters[i].name </h5>
 							<h5 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@selected[j].characters[i].element">@Calc.NumberClarity(selected[j].characters[i].dmg) </h5>
 							<h5 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center">(@selectpercentages[j][i]%)</h5>
-							<h5 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@selected[j].characters[i].element">(Aoe: @Calc.NumberClarity((selected[j].characters[i].dmg * selected[j].characters[i].aoe)))</h5>
+							<h5 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@selected[j].characters[i].element">(Aoe: @Calc.NumberClarity(selected[j].characters[i].dmgAoe))</h5>
 						</div>
 					}
 				</div>
@@ -92,13 +92,13 @@ else
 										</MudTooltip>
 										<MudTooltip class="col-2" Color="Color.Transparent">
 											<ChildContent>
-												<h5 class="hole p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center text-@GetDiffColor((compaired[j].characters[i].dmg * compaired[j].characters[i].aoe), (selected[j].characters[i].dmg * selected[j].characters[i].aoe))">
-													(@Calc.NumberClarity((selected[j].characters[i].dmg * selected[j].characters[i].aoe)))
+												<h5 class="hole p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center text-@GetDiffColor(compaired[j].characters[i].dmgAoe, selected[j].characters[i].dmgAoe)">
+													(@Calc.NumberClarity((selected[j].characters[i].dmgAoe)))
 												</h5>
 											</ChildContent>
 											<TooltipContent>
-												<span class="ts-3 darken-95 p-3 veryrounded text-@GetDiffColor((compaired[j].characters[i].dmg * compaired[j].characters[i].aoe), (selected[j].characters[i].dmg * selected[j].characters[i].aoe))">
-													@GetDiffPercent((compaired[j].characters[i].dmg * compaired[j].characters[i].aoe), (selected[j].characters[i].dmg * selected[j].characters[i].aoe))
+												<span class="ts-3 darken-95 p-3 veryrounded text-@GetDiffColor(compaired[j].characters[i].dmgAoe, selected[j].characters[i].dmgAoe)">
+													@GetDiffPercent(compaired[j].characters[i].dmgAoe, selected[j].characters[i].dmgAoe)
 												</span>
 											</TooltipContent>
 										</MudTooltip>
@@ -194,13 +194,13 @@ else
 										</MudTooltip>
 										<MudTooltip class="col-2" Color="Color.Transparent">
 											<ChildContent>
-												<h5 class="hole p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center text-@GetDiffColor((selected[j].characters[i].dmg * selected[j].characters[i].aoe), (compaired[j].characters[i].dmg * compaired[j].characters[i].aoe))">
-													(@Calc.NumberClarity((compaired[j].characters[i].dmg * compaired[j].characters[i].aoe)))
+												<h5 class="hole p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center text-@GetDiffColor(selected[j].characters[i].dmgAoe, compaired[j].characters[i].dmgAoe)">
+													(@Calc.NumberClarity((compaired[j].characters[i].dmgAoe)))
 												</h5>
 											</ChildContent>
 											<TooltipContent>
-												<span class="ts-3 darken-95 p-3 veryrounded text-@GetDiffColor((selected[j].characters[i].dmg * selected[j].characters[i].aoe), (compaired[j].characters[i].dmg * compaired[j].characters[i].aoe))">
-													@GetDiffPercent((selected[j].characters[i].dmg * selected[j].characters[i].aoe), (compaired[j].characters[i].dmg * compaired[j].characters[i].aoe))
+												<span class="ts-3 darken-95 p-3 veryrounded text-@GetDiffColor(selected[j].characters[i].dmgAoe, compaired[j].characters[i].dmgAoe)">
+													@GetDiffPercent(selected[j].characters[i].dmgAoe, compaired[j].characters[i].dmgAoe)
 												</span>
 											</TooltipContent>
 										</MudTooltip>

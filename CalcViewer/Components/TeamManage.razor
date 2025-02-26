@@ -112,7 +112,7 @@ else
 							</MudTooltip>
 							<input type="number" class="rounded d-flex p-1 flex-fill spinput mx-md-0 mx-lg-auto text-light" @bind="selected.characters[i].aoe" @bind:after="Update">
 						</div>
-						<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@selected.characters[i].element">(Aoe: @Calc.NumberClarity((selected.characters[i].dmg * selected.characters[i].aoe)))</h4>
+						<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@selected.characters[i].element">(Aoe: @Calc.NumberClarity(selected.characters[i].dmgAoe))</h4>
 					</div>
 				}
 			}

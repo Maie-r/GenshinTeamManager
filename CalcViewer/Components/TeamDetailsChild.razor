@@ -20,8 +20,7 @@ else
 				{
 					var local = i;
 					<div class="row d-flex flex-column justify-content-center col-6 col-sm-6 col-md-3 col-lg-3 d-flex">
-						<img draggable="false" src="@selected.characters[i].img" class="charimg" />
-						<h4 class="col-11 p-0 mx-2 fs-md-3 fs-lg-2 lh-sm m-0 bg-@selected.characters[i].element text-center"> @selected.characters[i].name </h4>
+						@CharacterCard
 						<div class="hole mx-0 p-0">
 							<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-1 text-center text-@selected.characters[i].element">@Calc.NumberClarity(selected.characters[i].dmg) </h4>
 						</div>
@@ -32,7 +31,7 @@ else
 								</ChildContent>
 								<TooltipContent>
 									<div class="text-light darken-95 rounded">
-									What percentage of the total damage is being done by this character (in single target)
+										What percentage of the total damage is being done by this character (in single target)
 									</div>
 								</TooltipContent>
 							</MudTooltip>
@@ -44,7 +43,7 @@ else
 								</ChildContent>
 								<TooltipContent>
 									<div class="text-light darken-95 rounded p-3">
-									@selected.characters[local].dmgAoe
+										@selected.characters[local].dmgAoe
 									</div>
 								</TooltipContent>
 							</MudTooltip>
@@ -143,6 +142,9 @@ else
 	[CascadingParameter(Name = "Team to compare")]
 	public Team? compare { get; set; }
 
+	string CharacterCard;
+	string imgparam;
+
 	Calc calc;
 
 	int[] dragged = new int[] { -1, -1 };
@@ -151,7 +153,20 @@ else
 	List<double> selectpercentages;
 	bool ShowAoe = false;
 
-	protected override async void OnInitialized(){
+	protected override async void OnInitialized()
+	{
+		if (compare == null)
+		{
+			CharacterCard = @"<img draggable='false' src='@selected.characters[i].img' class='charimg'/> 
+							<h4 class='col-11 p-0 mx-2 fs-md-3 fs-lg-2 lh-sm m-0 bg-@selected.characters[i].element text-center'> @selected.characters[i].name </h4>";
+		}
+		else 
+		{
+			CharacterCard = @"<a class='text-center text-light' draggable='true' @ondragleave='OuttaHere' @ondragover='() => OverHere(selected.characters[i], 0)' @ondragstart='(e) => StartDrag(e, selected.characters[i], 0)' @ondragend='StopDrag'>
+							<img draggable='false' src='@selected.characters[i].img' class='charimg mx-auto col-6' />
+							<h4 class='draggable col-11 p-0 fs-md-3 fs-lg-3 lh-sm m-0 text-center bg-@selected.characters[i].element' draggable='true'> @selected.characters[i].name </h4>
+							</a>";
+		}
 		selectpercentages = selected.GetPercentages();
 		calc = await icalc.Start();
 	}

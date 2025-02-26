@@ -69,6 +69,10 @@ namespace GenshinTeamCalc
             }
             return order;
         }
+
+        /// <summary>
+        /// Returns amount of unique accounts or servers registered in the database
+        /// </summary>
         public int GetAcountAmount(List<Team> teams)
         {
             Dictionary<string, int> servers = new Dictionary<string, int>();
@@ -81,7 +85,11 @@ namespace GenshinTeamCalc
             }
             return servers.Count;
         }
-        public int Teams() // Loads Teams from TeamDB
+
+        /// <summary>
+        /// Loads all the active teams from the TeamDB file, and stores those teams in the teams list
+        /// </summary>
+        public int Teams()
         {
             StreamReader r = new StreamReader(TeamDBlocation);
             if (r.Peek() <= -1)
@@ -128,8 +136,13 @@ namespace GenshinTeamCalc
             Debug.WriteLine("Teams loaded!");
             return teamamount;
         }
-        public List<string[]> ALLTeams(List<Team> result) // Returns all Teams from TeamDB in result, and all text as return value, even the ignored ones
+
+        /// <summary>
+        /// Loads all teams from the TeamDB file, even if inactive, stores them in the parameter list, and returns all the text from the file
+        /// </summary>
+        public List<string[]> ALLTeams(List<Team> result)
         {
+            
             if (result == null)
             {
                 throw new Exception("Team List reference is not instantialized!");
@@ -173,6 +186,10 @@ namespace GenshinTeamCalc
             }
             return resultraw;
         }
+
+        /// <summary>
+        /// Returns a list of all the characters in the DB.
+        /// </summary>
         public List<Character> GetAllCharacters()
         {
             List<Character> result = new List<Character>();
@@ -184,6 +201,10 @@ namespace GenshinTeamCalc
             }
             return result;
         }
+
+        /// <summary>
+        /// Returns a dictionary of all the characters in the DB, with their name as the key. Used for GUI.
+        /// </summary>
         public Dictionary<string, CharacterCondensed> GetAllCharactersCondensed()
         {
             Dictionary<string, CharacterCondensed> result = new Dictionary<string, CharacterCondensed>();
@@ -216,7 +237,11 @@ namespace GenshinTeamCalc
             }
             return result;
         }
-        public double GetDmg(Character character, int v) // Gets Damage from the Dictionary stored DB
+
+        /// <summary>
+        /// Returns the relative damage of a character from an index, from the DB.
+        /// </summary>
+        public double GetDmg(Character character, int v)
         {
             try
             {
@@ -232,7 +257,11 @@ namespace GenshinTeamCalc
                 throw new Exception($"Hey! it seems {character.name} is NOT in the DB! or doesn't have dmg in pos {v}\n");
             }
         }
-        public double GetAoe(Character character) // Gets Aoe from the Dictionary stored DB
+
+        /// <summary>
+        /// Returns the Aoe coefficient of a character, from the DB.
+        /// </summary>
+        public double GetAoe(Character character) /// Gets Aoe from the Dictionary stored DB
         {
             try
             {
@@ -250,7 +279,11 @@ namespace GenshinTeamCalc
                 throw new Exception($"Hey! {character.name} is NOT in the DB or has an invalid value!\n");
             }
         }
-        public void AddCosmetic(Character character) // Gets element and image from the Dictionary stored DB
+
+        /// <summary>
+        /// Applies the cosmetic atributes of the character class, for visuals in GUI.
+        /// </summary>
+        public void AddCosmetic(Character character)
         {
             try
             {
@@ -269,7 +302,11 @@ namespace GenshinTeamCalc
                 throw new Exception($"Hey! {character.name} is NOT in the DB or has an invalid value!\n");
             }
         }
-        public void LoadStuff(bool auto) // Loads all info from DB into a Dictionary
+
+        /// <summary>
+        /// Loads all data from database files, configuration files, and stores them in the DB dictionary (for relative damages and aoe), and the CosmeticDB dictionary (element and icon).
+        /// </summary>
+        public void LoadStuff(bool auto)
         {
             string cfg;
             string folder = "";
@@ -536,6 +573,10 @@ namespace GenshinTeamCalc
                 }
             }
         }
+
+        /// <summary>
+        /// Returns a list of lists of teams, separated by account.
+        /// </summary>
         public List<List<Team>> AccountSeparate(List<Team> teams, Team special)
         {
             List<List<Team>> accounts = new List<List<Team>>();
@@ -576,10 +617,18 @@ namespace GenshinTeamCalc
         {
             return number.ToString("N0");
         }
+
+        /// <summary>
+        /// Transforms Damage per Minute to Damage per Second.
+        /// </summary>
         public static double ToDps(double dpm, double rotlen)
         {
             return ((dpm * 1000000) * (rotlen / 60)) / rotlen;
         }
+
+        /// <summary>
+        /// Checks if the character is registered in the database.
+        /// </summary>
         public bool CharacterExists(string name)
         {
             return DB.ContainsKey(name);
@@ -600,6 +649,10 @@ namespace GenshinTeamCalc
             LoadStuff(yeah);
             Teams();
         }
+
+        /// <summary>
+        /// Refreshes the databases.
+        /// </summary>
         public void Reload()
         {
             teams.Clear();
