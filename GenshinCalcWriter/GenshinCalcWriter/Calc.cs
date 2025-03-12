@@ -10,19 +10,19 @@ using System.Security.Policy;
 
 namespace GenshinTeamCalc
 {
-    public class Calc
+    public static class Calc
     {
-        public List<Team> teams = new List<Team>();
-        readonly Dictionary<string, List<double>> DB = new Dictionary<string, List<double>>(); // dmg, dmg, dmg, dmg, aoe
-        readonly Dictionary<string, string[]> CosmeticDB = new Dictionary<string, string[]>(); // element, img
-        public string dmgType;
-        public string TeamDBlocation;
-        public string DBlocation;
-        public string OUTlocation;
-        public string configlocation;
-        string desktoppath;
-        
-        public List<Team>[] TeamRank(List<Team> teams)
+        public static List<Team> teams = new List<Team>();
+        static Dictionary<string, List<double>> DB = new Dictionary<string, List<double>>(); // dmg, dmg, dmg, dmg, aoe
+        static Dictionary<string, string[]> CosmeticDB = new Dictionary<string, string[]>(); // element, img
+        public static string dmgType;
+        public static string TeamDBlocation;
+        public static string DBlocation;
+        public static string OUTlocation;
+        public static string configlocation;
+        static string desktoppath;
+
+        public static List<Team>[] TeamRank(List<Team> teams)
         {
             SortedDictionary<double, Team> Ordered = new SortedDictionary<double, Team>();
             SortedDictionary<double, Team> OrderedAoe = new SortedDictionary<double, Team>();
@@ -73,7 +73,7 @@ namespace GenshinTeamCalc
         /// <summary>
         /// Returns amount of unique accounts or servers registered in the database
         /// </summary>
-        public int GetAcountAmount(List<Team> teams)
+        public static int GetAcountAmount(List<Team> teams)
         {
             Dictionary<string, int> servers = new Dictionary<string, int>();
             foreach (Team team in teams)
@@ -89,7 +89,7 @@ namespace GenshinTeamCalc
         /// <summary>
         /// Loads all the active teams from the TeamDB file, and stores those teams in the teams list
         /// </summary>
-        public int Teams()
+        public static int Teams()
         {
             StreamReader r = new StreamReader(TeamDBlocation);
             if (r.Peek() <= -1)
@@ -106,7 +106,7 @@ namespace GenshinTeamCalc
             r.Close();
             string[] teaminfo = full.Split(',');
             int teamamount = 0;
-            
+
             for (int i = 0; i < teaminfo.Length; i++)
             {
                 string[,] everything = new string[4, 5]; // name, char1, char2, char3, char4
@@ -128,7 +128,7 @@ namespace GenshinTeamCalc
                             everything[k, j] = uhh[k];
                         }
                     }
-                    Team tempteam = new Team(everything, this);
+                    Team tempteam = new Team(everything);
                     teams.Add(tempteam);
                     teamamount++;
                 }
@@ -140,9 +140,9 @@ namespace GenshinTeamCalc
         /// <summary>
         /// Loads all teams from the TeamDB file, even if inactive, stores them in the parameter list, and returns all the text from the file
         /// </summary>
-        public List<string[]> ALLTeams(List<Team> result)
+        public static List<string[]> ALLTeams(List<Team> result)
         {
-            
+
             if (result == null)
             {
                 throw new Exception("Team List reference is not instantialized!");
@@ -165,24 +165,24 @@ namespace GenshinTeamCalc
             int teamamount = 0;
             for (int i = 0; i < teaminfo.Length; i++)
             {
-                
+
                 string[,] everything = new string[4, 5]; // name, char1, char2, char3, char4
                                                          // rot,  index, index, index, index
                                                          // serv, mult,   mult, mult,  mult
                                                          // pos,  aoeO,  aoeO,  aoeO,  aoeO
-                    string[] teaminfo2 = teaminfo[i].Split(';');
-                    resultraw.Add(teaminfo2);
-                    for (int j = 0; j < teaminfo2.Length; j++)
+                string[] teaminfo2 = teaminfo[i].Split(';');
+                resultraw.Add(teaminfo2);
+                for (int j = 0; j < teaminfo2.Length; j++)
+                {
+                    string[] uhh = teaminfo2[j].Split('-');
+                    for (int k = 0; k < uhh.Length; k++)
                     {
-                        string[] uhh = teaminfo2[j].Split('-');
-                        for (int k = 0; k < uhh.Length; k++)
-                        {
-                            everything[k, j] = uhh[k];
-                        }
+                        everything[k, j] = uhh[k];
                     }
-                    Team tempteam = new Team(everything, this);
-                    result.Add(tempteam);
-                    teamamount++;
+                }
+                Team tempteam = new Team(everything);
+                result.Add(tempteam);
+                teamamount++;
             }
             return resultraw;
         }
@@ -190,7 +190,7 @@ namespace GenshinTeamCalc
         /// <summary>
         /// Returns a list of all the characters in the DB.
         /// </summary>
-        public List<Character> GetAllCharacters()
+        public static List<Character> GetAllCharacters()
         {
             List<Character> result = new List<Character>();
             foreach (KeyValuePair<string, List<double>> kv in DB)
@@ -205,7 +205,7 @@ namespace GenshinTeamCalc
         /// <summary>
         /// Returns a dictionary of all the characters in the DB, with their name as the key. Used for GUI.
         /// </summary>
-        public Dictionary<string, CharacterCondensed> GetAllCharactersCondensed()
+        public static Dictionary<string, CharacterCondensed> GetAllCharactersCondensed()
         {
             Dictionary<string, CharacterCondensed> result = new Dictionary<string, CharacterCondensed>();
             StreamReader r = new StreamReader(DBlocation);
@@ -227,12 +227,12 @@ namespace GenshinTeamCalc
                 Debug.WriteLine(character);
                 List<string> text = character.Replace(" ", "").Split(',').ToList();
                 List<string> damages = new List<string>();
-                for (int i = 2; i < text.Count -2; i++)
+                for (int i = 2; i < text.Count - 2; i++)
                 {
                     damages.Add(text[i]);
                 }
                 result.Add(text[0], new CharacterCondensed(
-                    new Character(text[0], text[1], text[text.Count - 1], (double.Parse(text[text.Count - 2])/100)),
+                    new Character(text[0], text[1], text[text.Count - 1], (double.Parse(text[text.Count - 2]) / 100)),
                     damages, text[0], text));
             }
             return result;
@@ -241,7 +241,7 @@ namespace GenshinTeamCalc
         /// <summary>
         /// Returns the relative damage of a character from an index, from the DB.
         /// </summary>
-        public double GetDmg(Character character, int v)
+        public static double GetDmg(Character character, int v)
         {
             try
             {
@@ -261,13 +261,13 @@ namespace GenshinTeamCalc
         /// <summary>
         /// Returns the Aoe coefficient of a character, from the DB.
         /// </summary>
-        public double GetAoe(Character character) /// Gets Aoe from the Dictionary stored DB
+        public static double GetAoe(Character character) /// Gets Aoe from the Dictionary stored DB
         {
             try
             {
                 try
                 {
-                    return DB[character.name][DB[character.name].Count-1];
+                    return DB[character.name][DB[character.name].Count - 1];
                 }
                 catch
                 {
@@ -283,7 +283,7 @@ namespace GenshinTeamCalc
         /// <summary>
         /// Applies the cosmetic atributes of the character class, for visuals in GUI.
         /// </summary>
-        public void AddCosmetic(Character character)
+        public static void AddCosmetic(Character character)
         {
             try
             {
@@ -306,8 +306,10 @@ namespace GenshinTeamCalc
         /// <summary>
         /// Loads all data from database files, configuration files, and stores them in the DB dictionary (for relative damages and aoe), and the CosmeticDB dictionary (element and icon).
         /// </summary>
-        public void LoadStuff(bool auto)
+        public static void LoadStuff(bool auto)
         {
+            desktoppath = AppDomain.CurrentDomain.BaseDirectory + @"DB\";//AppContext.BaseDirectory;//.Replace(" ", "");
+            Directory.CreateDirectory(desktoppath);
             string cfg;
             string folder = "";
             if (auto)
@@ -348,7 +350,7 @@ namespace GenshinTeamCalc
             }
             cfg = cfg.Replace("\n", "").Replace("\r", "").Replace("\n\r", "");//.Replace(" ", "")
             string[] cfg2 = cfg.Split(';');
-            if (cfg2.Length <=7)
+            if (cfg2.Length <= 7)
             {
                 throw new FileNotFoundException("invalid config!");
             }
@@ -389,7 +391,7 @@ namespace GenshinTeamCalc
                 int start = sep[i].IndexOf('(');
                 while (start >= 0)
                 {
-                    
+
                     int end = sep[i].IndexOf(')');
                     sep[i] = sep[i].Remove(start, (end - start + 1));
                     start = sep[i].IndexOf('(');
@@ -401,7 +403,7 @@ namespace GenshinTeamCalc
                     throw new Exception($"{individual[0]} has invalid amount of data in the database");
                 }
                 List<double> stuff = new List<double>();
-                for (int j = 2; j < individual.Length-2; j++) // to store relative damage
+                for (int j = 2; j < individual.Length - 2; j++) // to store relative damage
                 {
                     try
                     {
@@ -420,13 +422,14 @@ namespace GenshinTeamCalc
                 }
                 else
                 {
-                    stuff.Add(double.Parse(individual[individual.Length-2], CultureInfo.InvariantCulture));
+                    stuff.Add(double.Parse(individual[individual.Length - 2], CultureInfo.InvariantCulture));
                 }
                 DB.Add(individual[0], stuff);
-                CosmeticDB.Add(individual[0], new string[] { individual[1], individual[individual.Length - 1]});
+                CosmeticDB.Add(individual[0], new string[] { individual[1], individual[individual.Length - 1] });
             }
+            Teams();
         }
-        public Dictionary<string, SortedDictionary<double, Team[]>[]> AccountTeamRanker(List<Team> teams, Team special)// Teams, Team to use. RETURN: Returns dictionary based on server, with 3 sorted dictionaries of pairing ranked in each category
+        public static Dictionary<string, SortedDictionary<double, Team[]>[]> AccountTeamRanker(List<Team> teams, Team special)// Teams, Team to use. RETURN: Returns dictionary based on server, with 3 sorted dictionaries of pairing ranked in each category
         {
             Dictionary<string, SortedDictionary<double, Team[]>[]> Everything = new Dictionary<string, SortedDictionary<double, Team[]>[]>(); // jesus christ..
             // Server, Array of Pairings (one for reach type of calc)
@@ -442,7 +445,7 @@ namespace GenshinTeamCalc
             }
             return Everything;
         }
-        SortedDictionary<double, Team[]> TeamPairer(List<Team> teams, int type, Team special) // type 0- single target, type 1- Aoe, type 2- Average, full rank or nah
+        private static SortedDictionary<double, Team[]> TeamPairer(List<Team> teams, int type, Team special) // type 0- single target, type 1- Aoe, type 2- Average, full rank or nah
         {
             SortedDictionary<double, Team[]> result = new SortedDictionary<double, Team[]>();
             Dictionary<double, Team> joker = new Dictionary<double, Team>();
@@ -527,7 +530,7 @@ namespace GenshinTeamCalc
             }
             return result;
         }
-        void InnerPair(KeyValuePair<double, Team> kv1, Dictionary<double, Team> joker, SortedDictionary<double, Team[]> result, bool special)
+        private static void InnerPair(KeyValuePair<double, Team> kv1, Dictionary<double, Team> joker, SortedDictionary<double, Team[]> result, bool special)
         {
             bool startAdding;
             if (special) { startAdding = true; } else { startAdding = false; }
@@ -577,7 +580,7 @@ namespace GenshinTeamCalc
         /// <summary>
         /// Returns a list of lists of teams, separated by account.
         /// </summary>
-        public List<List<Team>> AccountSeparate(List<Team> teams, Team special)
+        public static List<List<Team>> AccountSeparate(List<Team> teams, Team special)
         {
             List<List<Team>> accounts = new List<List<Team>>();
             if (special != null)
@@ -629,16 +632,18 @@ namespace GenshinTeamCalc
         /// <summary>
         /// Checks if the character is registered in the database.
         /// </summary>
-        public bool CharacterExists(string name)
+        public static bool CharacterExists(string name)
         {
             return DB.ContainsKey(name);
         }
 
-        string GetTemplate()
+        static string GetTemplate()
         {
             return "Amber, pyro,1.40, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-1-12.png;\r\nArlecchino, pyro,2.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-32-8.png;\r\nBennett, pyro,3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-20-13.png;\r\nChevreuse, pyro,1.20, https://cdn3.emoji.gg/emojis/2257-chevreuse-delicious.png;\r\nDehya, pyro, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-22-5.png;\r\nDiluc, pyro, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-31-3.png;\r\nKlee, pyro, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-25-1.png;\r\nGaming, pyro, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-30-1.png;\r\nHutao, pyro, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-5-6.png;\r\nLyney, pyro, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings--set-26-5.png;\r\nMavuika, pyro, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-35-11.png;\r\nPmc, pyro, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/dancing-beasts-and-soaring-kites--series-emojis-13.png;\r\nThoma, pyro, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-10-11.png;\r\nXiangling, pyro, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-9-16.png;\r\nXinyan, pyro, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-3-11.png;\r\nYanfei, pyro, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-6-8.png;\r\nYoimiya, pyro, 1.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-24-5.png;\r\nAyato, hydro, 2.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-14-2.png;\r\nBarbara, hydro, 1.30, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-7-11.png;\r\nCandace, hydro, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-18-11.png;\r\nChilde,\thydro, 2.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings--set-26-8.png;\r\nFurina, hydro, 1.75, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-28-6.png;\r\nHmc, hydro, 1.30, https://cdn.wanderer.moe/genshin-impact/emotes/dancing-beasts-and-soaring-kites--series-emojis-13.png;\r\nKokomi, hydro, 2.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-9-8.png;\r\nMona, hydro, 4.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-20-12.png;\r\nMualani, hydro, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-35-15.png;\r\nNeuvillette, hydro, 4.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings--set-26-15.png;\r\nNilou, hydro, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-18-1.png;\r\nSigewinne, hydro, 2.25, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-33-8.png;\r\nXingqiu, hydro,\t1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-14-16.png;\r\nYelan, hydro, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-15-1.png;\r\nAmc, anemo, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/dancing-beasts-and-soaring-kites--series-emojis-13.png;\r\nChasca,\tanemo, 1.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-35-5.png;\r\nFaruzan, anemo, 2.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-23-16.png;\r\nHeizou, anemo, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-16-4.png;\r\nJean, anemo, 2.30, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-7-16.png;\r\nKazuha,\tanemo, 4.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-7-8.png;\r\nLynette, anemo, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-28-11.png;\r\nSayu, anemo, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-8-9.png;\r\nSucrose, anemo, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-22-12.png;\r\nVenti, anemo, 4.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-14-12.png;\r\nWanderer, anemo, 2.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-20-3.png;\r\nXianyun, anemo, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-30-12.png;\r\nXiao, anemo, 4.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-12-14.png;\r\nBeidou,\telectro, 2.30, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-8-15.png;\r\nClorinde, electro, 2.70, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-33-13.png;\r\nCyno, electro,\t2.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-18-5.png;\r\nDori, electro, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-17-9.png;\r\nEmc, electro, 1.40, https://cdn.wanderer.moe/genshin-impact/emotes/dancing-beasts-and-soaring-kites--series-emojis-13.png;\r\nFischl,\telectro, 1.30, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-4-16.png;\r\nKeqing,\telectro, 2.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-2-7.png;\r\nKuki, electro,\t1.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-15-11.png;\r\nLisa, electro, 1.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-13-2.png;\r\nOroron, electro, 4.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-36-4.png;\r\nRaiden, electro, 1.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-9-4.png;\r\nRazor, electro, 1.30, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-18-14.png;\r\nSara, electro, 2.25, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-9-9.png;\r\nSethos, electro, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-33-14.png;\r\nYae, electro, 1.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-13-9.png;\r\nAlhaitham, dendro, 2.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-21-13.png;\r\nBaizhu, dendro, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-23-3.png;\r\nCollei, dendro, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-25-13.png;\r\nDmc, dendro, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/dancing-beasts-and-soaring-kites--series-emojis-13.png;\r\nEmilie, dendro, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-34-15.png;\r\nKaveh, dendro, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-23-7.png;\r\nKinich,\tdendro, 2.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-35-13.png;\r\nKirara, dendro, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-24-3.png;\r\nNahida, dendro,\t4.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-19-5.png;\r\nTighnari, dendro, 1.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-23-15.png;\r\nYaoyao,\tdendro, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-21-2.png;\r\nAyaka, cryo, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-8-3.png;\r\nCharlotte, cryo, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-28-16.png;\r\nChongyun, cryo, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-20-14.png;\r\nCitlali, cryo, 1.40, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-36-11.png;\r\nDiona, cryo, 1.40, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-20-11.png;\r\nEula, cryo, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-25-2.png;\r\nFreminet, cryo, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-28-1.png;\r\nGanyu, cryo, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-4-9.png;\r\nKaeya, cryo, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-25-4.png;\r\nLayla, cryo, 1.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-23-13.png;\r\nMika, cryo, 1.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-22-16.png;\r\nQiqi, cryo, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-2-9.png;\r\nRosaria, cryo, 2.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-6-13.png;\r\nShenhe, cryo, 2.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-30-4.png;\r\nWriothesley, cryo, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintingsset-27-1.png;\r\nAlbedo,\tgeo, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-11-9.png;\r\nChiori, geo, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-31-16.png;\r\nGmc, geo, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/dancing-beasts-and-soaring-kites--series-emojis-13.png;\r\nGorou, geo, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-11-5.png;\r\nKachina, geo, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-35-3.png;\r\nItto, geo, 2.70, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-11-2.png;\r\nNavia, geo, 1.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-34-8.png;\r\nNingguang, geo, 1.20, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-21-10.png;\r\nNoelle, geo, 3.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintingsset-27-2.png;\r\nXilonen, geo, 2.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-36-12.png;\r\nYunjin, geo, 1.50, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-12-6.png;\r\nZhongli, geo, 3.00, https://cdn.wanderer.moe/genshin-impact/emotes/paimon-s-paintings-set-12-9.png\r\n";
         }
-        public Calc() 
+
+        /*
+        public static Calc()
         {
             LoadStuff(false);
         }
@@ -648,18 +653,19 @@ namespace GenshinTeamCalc
             Directory.CreateDirectory(desktoppath);
             LoadStuff(yeah);
             Teams();
-        }
+        }*/
 
         /// <summary>
         /// Refreshes the databases.
         /// </summary>
-        public void Reload()
+        public static void Reload()
         {
             teams.Clear();
             DB.Clear();
             CosmeticDB.Clear();
             LoadStuff(true);
-            Teams();
+            //Teams();
+            Debug.Write($"({teams.Count})");
         }
     }
 }

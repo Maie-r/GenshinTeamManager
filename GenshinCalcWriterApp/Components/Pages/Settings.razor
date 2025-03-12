@@ -1,10 +1,10 @@
 ﻿@page "/settings"
 @using System.Diagnostics
 @using MudBlazor
-@inject ICalc icalc
+@*@inject ICalc icalc*@
 
 
-@if (calc == null)
+@if (false)
 {
     <p><em>Loading...</em></p>
 }
@@ -68,7 +68,6 @@ else
 
 @code 
 {
-    Calc calc;
     string error;
     bool errorfix = false;
     bool EditOn = false;
@@ -77,13 +76,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        calc = await icalc.Start();
-        dmgType = calc.dmgType;
-        db = calc.DBlocation;
-        teamdb = calc.TeamDBlocation;
-        product = calc.OUTlocation;
-        File.Delete($"{calc.configlocation}.bkp");
-        File.Copy(calc.configlocation, $"{calc.configlocation}.bkp");
+        dmgType = Calc.dmgType;
+        db = Calc.DBlocation;
+        teamdb = Calc.TeamDBlocation;
+        product = Calc.OUTlocation;
+        File.Delete($"{Calc.configlocation}.bkp");
+        File.Copy(Calc.configlocation, $"{Calc.configlocation}.bkp");
     }
 
     void OpenDB()
@@ -146,10 +144,10 @@ else
         else
         {
             error = null;
-            StreamWriter writer = new StreamWriter(calc.configlocation, false);
+            StreamWriter writer = new StreamWriter(Calc.configlocation, false);
             writer.Write($"DB;{db};\nTeamDB;{teamdb};\nOutput;{product};\ndmgtype;{dmgType}");
             writer.Close();
-            icalc.Reload();
+            Calc.Reload();
         }
     }
 
@@ -157,11 +155,11 @@ else
     {
         if (!File.Exists(db))
         {
-            File.Copy(calc.DBlocation, db);
+            File.Copy(Calc.DBlocation, db);
         }
         if (!File.Exists(teamdb))
         {
-            File.Copy(calc.TeamDBlocation, teamdb);
+            File.Copy(Calc.TeamDBlocation, teamdb);
         }
         errorfix = false;
         Save();

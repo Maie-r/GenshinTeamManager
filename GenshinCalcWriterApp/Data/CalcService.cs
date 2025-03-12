@@ -7,6 +7,7 @@ using GenshinTeamCalc;
 
 namespace CalcViewer.Data
 {
+    /*
     public class CalcService : ICalc
     {
         private Calc _calc;
@@ -31,7 +32,7 @@ namespace CalcViewer.Data
                 {
                     throw new FileNotFoundException("Files not found", db);
                 }
-        }*/
+        }*//*
         }
 
         public Task<Calc> Start()
@@ -55,4 +56,5 @@ namespace CalcViewer.Data
             return _selected;
         }
     }
+    */
 }

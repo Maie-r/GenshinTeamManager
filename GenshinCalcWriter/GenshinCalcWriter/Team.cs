@@ -20,6 +20,7 @@ namespace GenshinTeamCalc
         public double dpmAoe;
         public double som;
 
+        /*
         public Team(string[,] stuff, Calc calc) // from DB
         {
             name = stuff[0, 0];
@@ -67,8 +68,58 @@ namespace GenshinTeamCalc
                 }
             }
             CalcDpm();
-        } 
-        public Team(Calc calc) // Template
+        }
+        */
+
+        public Team(string[,] stuff) // from DB
+        {
+            name = stuff[0, 0];
+            rotlen = double.Parse(stuff[1, 0], CultureInfo.InvariantCulture);
+            server = stuff[2, 0];
+            for (int i = 1, j = 0; j < 4; i++, j++)
+            {
+                string temp = stuff[0, i];
+                if (!Calc.CharacterExists(temp))
+                {
+                    //i--; // skips empty or ignored characters
+                    Character tempchar = new Character("no");
+                    tempchar.dmg = 0;
+                    tempchar.aoe = 1;
+                    characters.Add(tempchar);
+                }
+                else
+                {
+                    Character tempchar = new Character(temp);
+                    if (stuff[1, i].Contains("!")) // for relative damage
+                    {
+                        stuff[1, i] = stuff[1, i].Replace("!", "");
+                        if (stuff[2, i] == null) // no offset multiplier
+                            tempchar.dmg = Calc.GetDmg(tempchar, int.Parse(stuff[1, i]));
+                        else // with offset multiplier
+                            tempchar.dmg = Math.Round(Calc.GetDmg(tempchar, int.Parse(stuff[1, i])) * double.Parse(stuff[2, i], CultureInfo.InvariantCulture));
+                    }
+                    else // for raw damage
+                    {
+                        if (stuff[2, i] == null) // no offset multiplier
+                            tempchar.dmg = Math.Round(double.Parse(stuff[1, i], CultureInfo.InvariantCulture));
+                        else // with offset multiplier
+                            tempchar.dmg = Math.Round(double.Parse(stuff[1, i], CultureInfo.InvariantCulture) * double.Parse(stuff[2, i], CultureInfo.InvariantCulture));
+                    }
+                    if (stuff[3, i] == null) // no AOE override
+                    {
+                        tempchar.aoe = Calc.GetAoe(tempchar);
+                    }
+                    else // AOE override
+                    {
+                        tempchar.aoe = double.Parse(stuff[3, i], CultureInfo.InvariantCulture);
+                    }
+                    Calc.AddCosmetic(tempchar);
+                    characters.Add(tempchar);
+                }
+            }
+            CalcDpm();
+        }
+        public Team() // Template
         {
             name = "Team Name";
             server = "Default";
@@ -79,7 +130,6 @@ namespace GenshinTeamCalc
                 characters[i].dmg = 1000;
             }
         } 
-        public Team() { } // quick calc
 
         public Team(Team team) // Dupe
         {
@@ -177,7 +227,7 @@ namespace GenshinTeamCalc
             return result;
         }
 
-        public void Update(Calc calc)
+        public void Update()
         {
             Debug.WriteLine("updating!");
             string[] temp = text[0].Split('-'); // Team info
@@ -193,13 +243,13 @@ namespace GenshinTeamCalc
             {
                 List<string> temp2 = text[i].Split('-').ToList();
                 temp2[0] = team.characters[i - 1].name;
-                if (calc.CharacterExists(temp2[0]))
+                if (Calc.CharacterExists(temp2[0]))
                 {
                     if (temp2[1].Contains("!")) // uses relative damage
                     {
                         int index = int.Parse(temp2[1].Replace("!", ""));
-                        double mult = team.characters[i - 1].dmg / calc.GetDmg(team.characters[i - 1], index);
-                        Debug.WriteLine($"ITS RELATIVE {team.characters[i - 1].dmg} / {calc.GetDmg(team.characters[i - 1], index)} {mult}");
+                        double mult = team.characters[i - 1].dmg / Calc.GetDmg(team.characters[i - 1], index);
+                        Debug.WriteLine($"ITS RELATIVE {team.characters[i - 1].dmg} / {Calc.GetDmg(team.characters[i - 1], index)} {mult}");
                         if (temp2.Count <= 2) // no offset multiplier
                         {
                             if (mult != 1)
@@ -227,7 +277,7 @@ namespace GenshinTeamCalc
                     {
                         temp2[3] = team.characters[i - 1].aoe.ToString(CultureInfo.InvariantCulture);
                     }
-                    else if (team.characters[i - 1].aoe != calc.GetAoe(team.characters[i - 1]))
+                    else if (team.characters[i - 1].aoe != Calc.GetAoe(team.characters[i - 1]))
                         {
                             if (temp2.Count == 2)
                             {
@@ -248,6 +298,7 @@ namespace GenshinTeamCalc
 
     public class Character
     {
+        public Team Team;
         public string name;
         public string element;
         public string img;
@@ -335,7 +386,7 @@ public class CharacterCondensed
         }
         text.Add(character.img);
     }
-    public void Update(Calc calc)
+    public void Update()
     {
         text[0] = character.name;
         text[1] = character.element;

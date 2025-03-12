@@ -8,7 +8,7 @@
         <MudTh>Character 2</MudTh>
         <MudTh>Character 3</MudTh>
         <MudTh>Character 4</MudTh>
-        @if (calc.dmgType == "dps")
+        @if (Calc.dmgType == "dps")
         {
             <MudTh> <MudTableSortLabel SortBy="new Func<Team, object>(x => -x.dpm)">DPS </MudTableSortLabel></MudTh>
             <MudTh> <MudTableSortLabel SortBy="new Func<Team, object>(x => -x.dpmAoe)">DPS AOE</MudTableSortLabel></MudTh>
@@ -45,7 +45,7 @@
                     @context.characters[3].name
                 </div>
             </MudTd>
-            @if (calc.dmgType == "dps")
+            @if (Calc.dmgType == "dps")
             {
                 <MudTd DataLabel="DPS" Class="text-light">
                     @((context.dps / 1000).ToString("N2"))k
@@ -71,21 +71,15 @@
     [CascadingParameter]
     IEnumerable<Team> teams { get; set; }
 
-    Calc calc;
     string searchString = "";
 
     [Parameter]
     public EventCallback<Team> OnTeamSelected { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        calc = await icalc.Start();
-    }
-
     async void Selected(Team team)
     {
         await OnTeamSelected.InvokeAsync(team);
-        icalc.Setlect(team);
+        //icalc.Setlect(team);
     }
 
     private string GetRowClass(Team item, int rowIndex)

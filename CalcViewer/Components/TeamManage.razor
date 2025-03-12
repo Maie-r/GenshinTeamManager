@@ -106,7 +106,7 @@ else
 								</ChildContent>
 								<TooltipContent>
 									<div class="text-light darken-95 rounded p-3">
-										Reset to default value of @calc.GetAoe(selected.characters[i])
+										Reset to default value of @Calc.GetAoe(selected.characters[i])
 									</div>
 								</TooltipContent>
 							</MudTooltip>
@@ -119,7 +119,7 @@ else
 		</div>
 		<div class="col-12 text-center mx-auto text-light">
 			<h4> @Calc.NumberClarity(selected.som) dmg per rotation </h4>
-			@if (calc.dmgType == "dps")
+			@if (Calc.dmgType == "dps")
 			{
 				<h4> @((selected.dps / 1000).ToString("N2"))k dps</h4>
 				<h4> @(Calc.ToDps(selected.dpmAoe / 1000, selected.rotlen).ToString("N2"))k dps in Aoe</h4>
@@ -163,7 +163,6 @@ else
 	CharacterCondensed? selectedRelative;
 	Team? selected;
 	Character? temp;
-	Calc calc;
 	bool characterchange = false;
 	bool relativeChange = false;
 	int dragged = -1;
@@ -178,7 +177,7 @@ else
 	void Update()
 	{
 		selected.CalcDpm();
-		selectedcondensed.Update(calc);
+		selectedcondensed.Update();
 	}
 
 	protected override async Task OnParametersSetAsync()
@@ -188,11 +187,6 @@ else
 		{
 			selected = selectedcondensed.team;
 		}
-	}
-
-	protected override async Task OnInitializedAsync()
-	{
-		calc = await icalc.Start();
 	}
 
 	void ChangeCharacter()
@@ -226,7 +220,7 @@ else
 
 	void AoeReset(Character chara)
 	{
-		chara.aoe = calc.GetAoe(chara);
+		chara.aoe = Calc.GetAoe(chara);
 		Update();
 	}
 

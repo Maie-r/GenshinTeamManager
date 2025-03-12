@@ -97,7 +97,6 @@ else
 @code 
 {
 	Dictionary<string, TeamCondensed> teams;
-	Calc calc;
 	TeamCondensed? selected;
 	TeamCondensed template;
 	bool MultipleAccount = false;
@@ -107,11 +106,10 @@ else
 	string error = "";
 	protected override async Task OnInitializedAsync()
 	{
-		calc = await icalc.Start();
 		teams = new Dictionary<string, TeamCondensed>();
 		List<Team>? teamlist = new List<Team>();
-		List<string[]> teamtext = calc.ALLTeams(teamlist);
-		if (calc.GetAcountAmount(teamlist) > 1)
+		List<string[]> teamtext = Calc.ALLTeams(teamlist);
+		if (Calc.GetAcountAmount(teamlist) > 1)
 		{
 			MultipleAccount = true;
 		}
@@ -128,18 +126,18 @@ else
 
 	void Save()
 	{
-		if (!File.Exists(calc.DBlocation))
+		if (!File.Exists(Calc.DBlocation))
 		{
 			error = "Could not find Characters file.";
 		}
-		else if (!File.Exists(calc.TeamDBlocation))
+		else if (!File.Exists(Calc.TeamDBlocation))
 		{
 			error = "Could not find Teams file.";
 		}
 		else
 		{
 			error = "";
-			StreamWriter writer = new StreamWriter(calc.TeamDBlocation, false);
+			StreamWriter writer = new StreamWriter(Calc.TeamDBlocation, false);
 			int safe = 0;
 			foreach (var pair in teams)
 			{
@@ -159,7 +157,7 @@ else
 				safe++;
 			}
 			writer.Close();
-			calc.Reload();
+			Calc.Reload();
 			newteam = false;
 		}
 	}
@@ -185,7 +183,7 @@ else
 
 	void NewTeam()
 	{
-		template = new TeamCondensed(new Team(calc));
+		template = new TeamCondensed(new Team());
 		template.team.name += $" {teams.Count+1}";
 		template.innername = template.team.name;
 		teams.Add(template.innername, template);

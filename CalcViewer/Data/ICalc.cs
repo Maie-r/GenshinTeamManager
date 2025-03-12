@@ -7,6 +7,7 @@ using GenshinTeamCalc;
 
 namespace CalcViewer.Data
 {
+    /*
     public interface ICalc
     {
         Task<Calc>? Start();
@@ -14,4 +15,5 @@ namespace CalcViewer.Data
         void Setlect(Team team);
         Team Getlect();
     }
+    */
 }

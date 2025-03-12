@@ -21,12 +21,22 @@ namespace GenshinCalcWriterApp
             builder.Services.AddMudServices();
             try
             {
+                Calc.LoadStuff(true);
+            }
+            catch
+            {
+                throw new Exception("Couldn't load data");
+            }
+            /*
+            try
+            {
                 builder.Services.AddSingleton<ICalc, CalcService>();
             }
             catch
             {
                 throw new Exception("Couldn't load data");
             }
+            */
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

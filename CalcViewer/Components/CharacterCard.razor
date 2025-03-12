@@ -1,0 +1,126 @@
+﻿@using Microsoft.Extensions.Logging
+@inject ILogger<CharacterCard> Logger
+
+<div class="row d-flex flex-column justify-content-center col-6 col-sm-6 col-md-3 col-lg-3 d-flex">
+	@if (AllowDrag)
+	{
+		<a class="text-center text-light" draggable="true" @ondragleave="OuttaHere" @ondragover="OverHere" @ondragstart="(e) => StartDrag(e)" @ondragend="StopDrag">
+			<img draggable="false" src="@character.img" class="charimg mx-auto @ImageSize" />
+			<h4 class="draggable col-11 mx-2 p-0 fs-md-3 fs-lg-3 lh-sm m-0 text-center bg-@character.element" draggable="true"> @character.name </h4>
+		</a>
+	}
+	else 
+	{
+		<img draggable="false" src="@character.img" class="charimg @ImageSize" />
+		<h4 class="col-11 mx-2 p-0 fs-md-3 fs-lg-3 lh-sm m-0 text-center bg-@character.element"> @character.name </h4>
+	}
+
+	<div class="hole mx-0 p-0">
+		<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-1 text-center text-@(comparasion != null ? GetDiffColor(comparasion.dmg, character.dmg) : character.element)">@Calc.NumberClarity(character.dmg) @(comparasion != null ? $"({@GetDiffPercent(comparasion.dmgAoe, character.dmgAoe)})" : "")</h4>
+	</div>
+	<div class="hole mx-0 p-0 text-center">
+		@if (percentage >= 0)
+		{
+			<MudTooltip class="col-2" Color="Color.Transparent">
+				<ChildContent>
+					<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-1 text-center">(@(percentage)%) </h4>
+				</ChildContent>
+				<TooltipContent>
+					<div class="text-light darken-95 rounded">
+						What percentage of the total damage is being done by this character (in single target)
+					</div>
+				</TooltipContent>
+			</MudTooltip>
+		}
+	</div>
+	<div class="hole mx-0 p-0 text-center text-nowrap">
+		<MudTooltip class="col-2" Color="Color.Transparent">
+			<ChildContent>
+				<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-1 text-center text-@(comparasion != null ? GetDiffColor(comparasion.dmgAoe, character.dmgAoe) : character.element)">(@Calc.NumberClarity(character.dmgAoe)) @(comparasion != null ? $"({@GetDiffPercent(comparasion.dmg, character.dmg)})" : "")</h4>
+			</ChildContent>
+			<TooltipContent>
+				<div class="text-light darken-95 rounded p-3">
+					Damage in AOE cenarios, for this character, hitting @character.aoe enemies. (@character.dmg * @character.aoe)
+				</div>
+			</TooltipContent>
+		</MudTooltip>
+	</div>
+
+</div>
+
+@code {
+	[Parameter]
+	public Character character { get; set; }
+
+	[Parameter]
+	public Character? comparasion { get; set; }
+
+	[Parameter]
+	public bool AllowDrag { get; set; }
+
+	[Parameter]
+	public double percentage { get; set; } = -1;
+
+	[Parameter]
+	public string ImageSize { get; set; } = "col-11";
+
+	[Parameter]
+	public EventCallback<Character> OnDragStart { get; set; }
+	[Parameter]
+	public EventCallback OnDragEnd { get; set; }
+	[Parameter]
+	public EventCallback<Character> OnMouseOver { get; set; }
+	[Parameter]
+	public EventCallback OnMouseOut { get; set; }
+
+	string GetDiffColor(double selected, double compare)
+	{
+		if (selected < compare)
+		{
+			return "better";
+		}
+		else if (selected > compare)
+		{
+			return "danger";
+		}
+		else
+		{
+			return "same";
+		}
+	}
+
+	string GetDiffPercent(double selected, double compare)
+	{
+		if (compare - selected > 0)
+		{
+			return "+" + (((compare / selected) - 1) * 100).ToString("N1") + "%";
+		}
+		else
+		{
+			return (((compare / selected) - 1) * 100).ToString("N1") + "%";
+		}
+	}
+
+	void StartDrag(MouseEventArgs e) // (0 for select, 1 for compare) Characacter Draggin'
+	{
+		Logger.LogInformation($"Started drag with {character.name}!");
+		OnDragStart.InvokeAsync(character);
+	}
+
+	void StopDrag(MouseEventArgs e)
+	{
+		OnDragEnd.InvokeAsync();
+	}
+
+	void OverHere()
+	{
+		Logger.LogInformation($"Mouse over {character.name}!");
+		OnMouseOver.InvokeAsync(character);
+	}
+
+	void OuttaHere()
+	{
+		Logger.LogInformation($"Mouse out!");
+		OnMouseOut.InvokeAsync();
+	}
+}

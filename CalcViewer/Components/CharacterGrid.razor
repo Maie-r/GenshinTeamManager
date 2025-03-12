@@ -112,7 +112,6 @@ else
 
 	CharacterCondensed selected;
 
-	Calc calc;
 	string? error;
 
 	[CascadingParameter]
@@ -128,14 +127,13 @@ else
 
 	protected override async void OnInitialized()
 	{
-		calc = await icalc.Start();
 		if (editmode != null)
 		{
-			Editable = calc.GetAllCharactersCondensed();
+			Editable = Calc.GetAllCharactersCondensed();
 		}
 		else 
 		{
-			Everyone = calc.GetAllCharacters();
+			Everyone = Calc.GetAllCharacters();
 		}
 	}
 
@@ -161,11 +159,11 @@ else
 
 	void CloseManager()
 	{
-		if (!File.Exists(calc.DBlocation))
+		if (!File.Exists(Calc.DBlocation))
 		{
 			error = "Could not find Characters file.";
 		}
-		else if (!File.Exists(calc.TeamDBlocation))
+		else if (!File.Exists(Calc.TeamDBlocation))
 		{
 			error = "Could not find Teams file.";
 		}
@@ -176,7 +174,7 @@ else
 				NameUpdate(selected.innername, selected.character.name);
 			}
 			error = null;
-			StreamWriter writer = new StreamWriter(calc.DBlocation, false);
+			StreamWriter writer = new StreamWriter(Calc.DBlocation, false);
 			int safe = 0;
 			foreach (var pair in Editable)
 			{
@@ -192,17 +190,17 @@ else
 				safe++;
 			}
 			writer.Close();
-			icalc.Reload();
+			Calc.Reload();
 		}
 		selected = null;
 	}
 
 	void NameUpdate(string old, string neww)
 	{
-		string all = File.ReadAllText(calc.TeamDBlocation);
+		string all = File.ReadAllText(Calc.TeamDBlocation);
 		string pattern = $@"{old}";
 		all = Regex.Replace(all, pattern, neww);
-		File.WriteAllText(calc.TeamDBlocation, all);
+		File.WriteAllText(Calc.TeamDBlocation, all);
 	}
 
 	void Getout()

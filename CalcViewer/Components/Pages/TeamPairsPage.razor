@@ -15,7 +15,7 @@
 else
 {
     <h1 class="text-center m-2"> Team Pairings </h1>
-    @if (calc.teams.Count <= 0)
+    @if (Calc.teams.Count <= 0)
     {
         <h4 class="p-4">No teams registered!</h4>
         <h4 class="p-4">you can add them in <a class="clickable" @onclick="NavigateToEditPage">(this page)</a></h4>
@@ -50,7 +50,7 @@ else
                         </ToolBarContent>
                         <HeaderContent>
                             <MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<double, Team[]>, object>(x => x.Value[0].name)">Team Pair</MudTableSortLabel></MudTh>
-                            @if (calc.dmgType == "dps")
+                            @if (Calc.dmgType == "dps")
                             {
                                 <MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<double, Team[]>, object>(x => -(x.Value[0].dpm + x.Value[1].dpm))">TOTAL DPS </MudTableSortLabel></MudTh>
                                 <MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<double, Team[]>, object>(x => -(x.Value[0].dpmAoe + x.Value[1].dpmAoe))">TOTAL DPS AOE</MudTableSortLabel></MudTh>
@@ -71,7 +71,7 @@ else
                                         <a class="clickable" @onclick="() => Select(context)">@context.Value[0].name and @context.Value[1].name </a>
                                     </div>
                                 </MudTd>
-                                @if (calc.dmgType == "dps")
+                                @if (Calc.dmgType == "dps")
                                 {
                                     <MudTd DataLabel="DPS" Class="text-light">
                                         @(Math.Round((context.Value[0].dps + context.Value[1].dps) / 1000, 2))k
@@ -108,7 +108,6 @@ else
 {
     Dictionary<string, SortedDictionary<double, Team[]>[]> everything;
     Dictionary<string, string> svtablestate = new Dictionary<string, string>();
-    Calc calc;
     Team[] selected;
     Team[]? compaired;
     Team[]? compairmem;
@@ -119,8 +118,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        calc = await icalc.Start();
-        everything = calc.AccountTeamRanker(calc.teams, null);
+        everything = Calc.AccountTeamRanker(Calc.teams, null);
         if (everything.Count > 1)
         {
             MultipleAccount = true;

@@ -130,8 +130,6 @@ else
 	[CascadingParameter(Name = "dmgonly")]
 	bool dmgonly { get; set; }
 
-	Calc calc;
-
 	bool yousure = false;
 	string dropdown = "hidden";
 
@@ -146,10 +144,9 @@ else
 
 	protected override async void OnInitialized()
 	{
-		calc = await icalc.Start();
 		if (dmgonly)
 		{
-			StreamReader reader = new StreamReader(calc.DBlocation);
+			StreamReader reader = new StreamReader(Calc.DBlocation);
 			string temp = reader.ReadLine();
 			while (!temp.Split(',')[0].Equals(selected.character.name))
 			{
@@ -234,10 +231,18 @@ else
 	void Update(int i)
 	{
 		string[] fix = selected.damages[i].Split(')');
-		if (double.Parse(fix[fix.Length-1]) <= 0)
+		try 
+		{
+			if (double.Parse(fix[fix.Length-1]) <= 0)
+			{
+				fix[fix.Length - 1] = "1";
+			}
+		}
+		catch 
 		{
 			fix[fix.Length - 1] = "1";
 		}
+		
 		selected.damages[i] = fix[0];
 		if (fix.Length > 1)
 		{
@@ -248,10 +253,10 @@ else
 
 	void Update()
 	{
-		selected.Update(calc);
+		selected.Update();
 		if (dmgonly)
 		{
-			StreamReader reader = new StreamReader(calc.DBlocation);
+			StreamReader reader = new StreamReader(Calc.DBlocation);
 			string temp = reader.ReadLine();
 			string full = "";
 			while (!temp.Split(',')[0].Equals(selected.character.name))
@@ -272,7 +277,7 @@ else
 			temp = reader.ReadToEnd();
 			full += temp;
 			reader.Close();
-			File.WriteAllText(calc.DBlocation, full);
+			File.WriteAllText(Calc.DBlocation, full);
 			double mult;
 			if (selected.character.relative < 0)
 			{
@@ -280,9 +285,9 @@ else
 			}
 			else 
 			{
-				mult = selected.character.dmg / calc.GetDmg(selected.character, selected.character.relative);
+				mult = selected.character.dmg / Calc.GetDmg(selected.character, selected.character.relative);
 			}
-			calc.Reload();
+			Calc.Reload();
 			if (selected.character.relative >= 0)
 			{
 				int start = selected.damages[selected.character.relative].IndexOf('(');
@@ -299,7 +304,7 @@ else
 				selected.character.dmg = Math.Floor(selected.character.dmg);
 			}
 		}
-		selected.Update(calc);
+		selected.Update();
 	}
 
 	void Yousure()

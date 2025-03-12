@@ -14,8 +14,14 @@ else
 	<div class="p-2 dontscrollman justify-content-center darken-50 veryrounded">
 		@if (compaired == null) // Regular Team Pair 
 		{
+			<div class="col-12 text-center d-flex mx-auto">
 			@for (int j = 0; j < 2; j++)
 			{
+				int local = j;
+				<CascadingValue Value="selected[local]" Name="Selected Team">
+					<TeamDetails ImageSize="col-6"/>
+				</CascadingValue>
+				@*
 				<h3 class="col-12 text-center mx-auto"> @selected[j].name </h3>
 				<div class="d-flex col-10 mx-auto flex-row flex-wrap justify-content-evenly">
 					@for (int i = 0; i < selected[j].characters.Count; i++)
@@ -31,7 +37,7 @@ else
 				</div>
 				<br />
 				<div class="col-12 text-center mx-auto">
-					@if (calc.dmgType == "dps")
+					@if (Calc.dmgType == "dps")
 					{
 						<h5 class="hole"> @((selected[j].dps / 1000).ToString("N2"))k dps | @(Calc.ToDps(selected[j].dpmAoe / 1000, selected[j].rotlen).ToString("N2"))k dps in Aoe</h5>
 					}
@@ -40,8 +46,10 @@ else
 						<h5 class="hole"> @selected[j].dpm mi dpm | @selected[j].dpmAoe mi dpm in Aoe</h5>
 					}
 				</div>
+				*@
 			}
-			if (calc.dmgType == "dps")
+			</div>
+			if (Calc.dmgType == "dps")
 			{
 				<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> Total: @Math.Round((selected[0].dps + selected[1].dps)/1000, 2)k dps</h4>
 				<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> Total: @Math.Round((Calc.ToDps(selected[0].dpmAoe, selected[0].rotlen) + Calc.ToDps(selected[1].dpmAoe, selected[1].rotlen)) / 1000, 2)k dps in Aoe</h4>
@@ -69,11 +77,18 @@ else
 					@for (int local1 = 0; local1 < 2; local1++) // For Selected Pair
 					{
 						int j = local1;
+
 						<div class="col-md-12 col-lg-6 ">
 							<div class="d-flex justify-content-evenly">
+								@*<CascadingValue Value="selected[j]" Name="Selected Team">
+									<CascadingValue Value="compaired[j]" Name="Team to compare">
+										<TeamDetails ImageSize="col-6" />
+									</CascadingValue>
+								</CascadingValue>*@
 								@for (int local2 = 0; local2 < selected[j].characters.Count; local2++)
 								{
 									int i = local2;
+									
 									<div class="row d-flex justify-content-center col-3">
 										<a class="text-light text-center" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(selected[j].characters[i], j)" @ondragstart="(e) => StartDrag(e, selected[j].characters[i], j)" @ondragend="StopDrag">
 											<img src="@selected[j].characters[i].img" draggable="false" class="charimg col-12" />
@@ -105,7 +120,8 @@ else
 									</div>
 								}
 							</div>
-							@if (calc.dmgType == "dps")
+							
+							@if (Calc.dmgType == "dps")
 							{
 								<div class="col-12 hole text-center mx-auto">
 									<p class="fs-3">
@@ -131,7 +147,7 @@ else
 						</div>
 					}
 				</div>
-				@if (calc.dmgType == "dps")
+				@if (Calc.dmgType == "dps")
 				{
 					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor((compaired[0].dpm + compaired[1].dpm), (selected[0].dpm + selected[1].dpm))">
 						Total: @Math.Round((selected[0].dps + selected[1].dps)/1000, 2)k dps (@GetDiffPercent((compaired[0].dpm + compaired[1].dpm), (selected[0].dpm + selected[1].dpm)))
@@ -173,9 +189,18 @@ else
 						int j = local1;
 						<div class="col-md-12 col-lg-6 ">
 							<div class="d-flex justify-content-evenly">
+								@*<CascadingValue Value="compaired[j]" Name="Selected Team">
+									<CascadingValue Value="selected[j]" Name="Team to compare">
+										<TeamDetails ImageSize="col-6" />
+									</CascadingValue>
+								</CascadingValue>*@
+								
 								@for (int local2 = 0; local2 < compaired[j].characters.Count; local2++)
 								{
 									int i = local2;
+									
+									
+
 									<div class="row d-flex justify-content-center col-3">
 										<a class="text-light text-center" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(compaired[j].characters[i], j + 2)" @ondragstart="(e) => StartDrag(e, compaired[j].characters[i], j + 2)" @ondragend="StopDrag">
 											<img src="@compaired[j].characters[i].img" draggable="false" class="charimg col-12"/>
@@ -206,8 +231,9 @@ else
 										</MudTooltip>
 									</div>
 								}
+								
 							</div>
-							@if (calc.dmgType == "dps")
+							@if (Calc.dmgType == "dps")
 							{
 								<div class="col-12 hole text-center mx-auto">
 									<p class="fs-4">
@@ -236,7 +262,7 @@ else
 						</div>
 					}
 				</div>
-				@if (calc.dmgType == "dps")
+				@if (Calc.dmgType == "dps")
 				{
 					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor((selected[0].dpm + selected[1].dpm), (compaired[0].dpm + compaired[1].dpm))">
 						Total: @Math.Round((compaired[0].dps + compaired[1].dps)/1000, 2)k dps (@GetDiffPercent((selected[0].dpm + selected[1].dpm), (compaired[0].dpm + compaired[1].dpm)))</h4>
@@ -271,7 +297,6 @@ else
 	public required Team[] selected { get; set; }
 	[CascadingParameter(Name = "Pair to Compare")]
 	public Team[]? compaired { get; set; }
-	Calc calc;
 
 	int[] draggedteam = new int[] { -1, -1 };
 	int[] overteam = new int[] { -1, -1 };
@@ -282,7 +307,6 @@ else
 	bool ShowAoe = false;
 
 	protected override async void OnInitialized(){
-		calc = await icalc.Start();
 		selectpercentages[0] = selected[0].GetPercentages();
 		selectpercentages[1] = selected[1].GetPercentages();
 	}
