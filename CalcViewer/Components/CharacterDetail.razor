@@ -127,8 +127,8 @@ else
 	[CascadingParameter]
 	CharacterCondensed selected { get; set;  }
 
-	[CascadingParameter(Name = "dmgonly")]
-	bool dmgonly { get; set; }
+	[Parameter]
+	public bool dmgonly { get; set; }
 
 	bool yousure = false;
 	string dropdown = "hidden";
@@ -163,7 +163,7 @@ else
 
 	void Element(int i)
 	{
-		Logger.LogInformation($"Element {i}");
+		//Logger.LogInformation($"Element {i}");
 		switch (i)
 		{
 			case 1:
@@ -219,7 +219,7 @@ else
 		OnSelected.InvokeAsync(i);
 	}
 
-	string IsUsed(int i)
+	string IsUsed(int i) // to indicate the used damage
 	{
 		if (selected.character.relative == i)
 		{
@@ -228,7 +228,7 @@ else
 		return "";
 	}
 
-	void Update(int i)
+	void Update(int i) // bro idk what this does anymore D:
 	{
 		string[] fix = selected.damages[i].Split(')');
 		try 
@@ -242,7 +242,7 @@ else
 		{
 			fix[fix.Length - 1] = "1";
 		}
-		
+
 		selected.damages[i] = fix[0];
 		if (fix.Length > 1)
 		{
@@ -253,12 +253,14 @@ else
 
 	void Update()
 	{
+		Logger.LogInformation(selected.character.aoe.ToString());
 		selected.Update();
 		if (dmgonly)
 		{
 			StreamReader reader = new StreamReader(Calc.DBlocation);
 			string temp = reader.ReadLine();
 			string full = "";
+			
 			while (!temp.Split(',')[0].Equals(selected.character.name))
 			{
 				full += temp + "\r\n";

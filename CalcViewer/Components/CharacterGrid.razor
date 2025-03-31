@@ -60,17 +60,17 @@ else
 					{
 						if (InFilter(chara.character))
 						{
-						<div class="col-sm-4 col-md-3 col-lg-2">
-							<a class="clickable" @onclick="() => Select(chara)">
-								<div class="row d-flex justify-content-center col-10">
-									<img src="@chara.character.img" draggable="false" class="charimg" />
-									<div class="rounded bg-@chara.character.element">
-										<h4 class="text-center mx-auto"> @chara.character.name</h4>
-									</div>
+							<div class="col-sm-4 col-md-3 col-lg-2">
+								<a class="clickable" @onclick="() => Select(chara)">
+									<div class="row d-flex justify-content-center col-10">
+										<img src="@chara.character.img" draggable="false" class="charimg" />
+										<div class="rounded bg-@chara.character.element">
+											<h4 class="text-center mx-auto"> @chara.character.name</h4>
+										</div>
 
-								</div>
-							</a>
-						</div>
+									</div>
+								</a>
+							</div>
 						}
 					}
 				}
@@ -86,16 +86,16 @@ else
 					{
 						if (InFilter(chara))
 						{
-						<div class="col-sm-4 col-md-3 col-lg-2">
-							<a class="clickable" @onclick="() => Select(chara)">
-								<div class="row d-flex justify-content-center col-10">
-									<img src="@chara.img" class="charimg" />
-									<div class="rounded bg-@chara.element">
-										<h4 class="text-center mx-auto"> @chara.name</h4>
+							<div class="col-sm-4 col-md-3 col-lg-2">
+								<a class="clickable" @onclick="() => Select(chara)">
+									<div class="row d-flex justify-content-center col-10">
+										<img src="@chara.img" class="charimg" />
+										<div class="rounded bg-@chara.element">
+											<h4 class="text-center mx-auto"> @chara.name</h4>
+										</div>
 									</div>
-								</div>
-							</a>
-						</div>
+								</a>
+							</div>
 						}
 					}
 				}
@@ -118,6 +118,7 @@ else
 	bool? editmode { get; set;  }
 	string? filter = "";
 	string searchString = "";
+	bool newcharacter = false;
 
 	[Parameter]
 	public EventCallback<Character> OnCharSelected { get; set; }
@@ -127,11 +128,16 @@ else
 
 	protected override async void OnInitialized()
 	{
+		LoadCharacters();
+	}
+
+	void LoadCharacters()
+	{
 		if (editmode != null)
 		{
 			Editable = Calc.GetAllCharactersCondensed();
 		}
-		else 
+		else
 		{
 			Everyone = Calc.GetAllCharacters();
 		}
@@ -152,8 +158,9 @@ else
 	{
 		CharacterCondensed template = new CharacterCondensed(new Character($"Character {Editable.Count+1}"));
 		template.innername = template.character.name;
-		Editable.Add(template.innername, template);
-		selected = Editable.Last().Value;
+		//Editable.Add(template.innername, template);
+		selected = template;
+		newcharacter = true;
 		JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
 	}
 
@@ -176,23 +183,77 @@ else
 			error = null;
 			StreamWriter writer = new StreamWriter(Calc.DBlocation, false);
 			int safe = 0;
+			bool inelement = false;
+			KeyValuePair<string, CharacterCondensed> storedpair = Editable.First();
 			foreach (var pair in Editable)
 			{
-				for (int i = 0; i < pair.Value.text.Count - 1; i++)
+				if (newcharacter)
 				{
-					writer.Write(pair.Value.text[i] + ",");
+					if (pair.Value.character.element == selected.character.element)
+					{
+						if (!inelement)
+						{
+							if (pair.Key.CompareTo(selected.character.name) > 0) // adding new character in the correct place
+							{
+								AddNewChar(writer, safe);
+							}
+						}
+						else
+						{
+							Logger.LogInformation($"{storedpair.Key} ~ {selected.character.name} = {storedpair.Key.CompareTo(selected.character.name)} {pair.Key} ~ {selected.character.name} = {pair.Key.CompareTo(selected.character.name)}");
+							if (storedpair.Key.CompareTo(selected.character.name) <= 0 && pair.Key.CompareTo(selected.character.name) > 0) // adding new character in the correct place
+							{
+								AddNewChar(writer, safe);
+							}
+						}
+						inelement = true;
+					}
+					else if (inelement)
+					{
+						if (pair.Key.CompareTo(selected.character.name) < 0) // adding new character in the correct place
+						{
+							AddNewChar(writer, safe);
+						}
+						inelement = false;
+					}
 				}
-				writer.Write(pair.Value.text[pair.Value.text.Count-1]);
-				if (safe < Editable.Count - 1)
-				{
-					writer.WriteLine(";");
-				}
-				safe++;
+
+				WriteCharacterInfo(writer, pair, safe++);
+				storedpair = pair;
 			}
 			writer.Close();
 			Calc.Reload();
+			LoadCharacters();
+			newcharacter = false;
 		}
 		selected = null;
+	}
+
+	void WriteCharacterInfo(StreamWriter writer, KeyValuePair<string, CharacterCondensed> pair, int safe)
+	{
+		for (int i = 0; i < pair.Value.text.Count - 1; i++)
+		{
+			writer.Write(pair.Value.text[i] + ",");
+		}
+		writer.Write(pair.Value.text[pair.Value.text.Count - 1]);
+		if (safe < Editable.Count - 1)
+		{
+			writer.WriteLine(";");
+		}
+	}
+
+	void AddNewChar(StreamWriter writer, int safe)
+	{
+		Logger.LogInformation("Ahoy!");
+		try
+		{
+			WriteCharacterInfo(writer, new KeyValuePair<string, CharacterCondensed>(selected.character.name, selected), safe);
+		}
+		catch
+		{
+			WriteCharacterInfo(writer, new KeyValuePair<string, CharacterCondensed>(selected.character.name + " (1)", selected), safe);
+		}
+		newcharacter = false;
 	}
 
 	void NameUpdate(string old, string neww)
