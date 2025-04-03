@@ -78,9 +78,15 @@ Também foi usado [Mudblazor](https://mudblazor.com/) e [Drag and Drop Polyfill]
 Crédito a [wanderer.moe](https://wanderer.moe/) pelos ícones padrões dos personagens.
 
 ### Versions
+  * 0.8.3 <br>
+        - Ajustes nas guias
+        - Corrigido aceitar valores inválidos de dano
+        - Corrigido endereços incorretos de certas imagens
+        - Novos personagens são adicionados alfabeticamente em seu elemento
+        - Leve re-esctrita e limpesa no código
   * 0.8.2 <br>
         - Adicionado uma guia na página Principal (em inglês), para ajudar a navegar e conseguir os recursos necessários.
-        - Mudanças pequenas à pagina de detalhes de personagem.
+        - Leves mudanças à pagina de detalhes de personagem.
  * 0.8.1 <br>
         - Corrigido o travamento do aplicativo ao arrastar imagens <br>
         - Agora você pode arrastar os personagens por suas imagens em todas as páginas, exceto na página de Edição de Times <br>
