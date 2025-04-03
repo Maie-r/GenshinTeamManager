@@ -82,11 +82,11 @@ This tool is in no way associated to Hoyoverse
 
 ### Versions
   * 0.8.3 <br>
-        - Ajustments to the guides
-        - Fixed accepting invalid damage values
-        - Fixed incorrect image address in some images
-        - New characters are now inserted alphabetically in their element
-        - Minor rewriting and cleanup on code
+        - Ajustments to the guides.
+        - Fixed accepting invalid damage values.
+        - Fixed incorrect image address in some images.
+        - New characters are now inserted alphabetically in their element.
+        - Minor rewriting and cleanup on code.
   * 0.8.2 <br>
         - Added a guide in the Home page, to help navigate and get the necessary resources.
         - Minor changes to the character details page.
