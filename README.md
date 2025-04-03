@@ -82,14 +82,14 @@ This tool is in no way associated to Hoyoverse
 
 ### Versions
   * 0.8.3 <br>
-        - Ajustments to the guides.
-        - Fixed accepting invalid damage values.
-        - Fixed incorrect image address in some images.
-        - New characters are now inserted alphabetically in their element.
-        - Minor rewriting and cleanup on code.
+        - Ajustments to the guides <br>
+        - Fixed accepting invalid damage values <br>
+        - Fixed incorrect image address in some images <br>
+        - New characters are now inserted alphabetically in their element <br>
+        - Minor rewriting and cleanup on code <br>
   * 0.8.2 <br>
-        - Added a guide in the Home page, to help navigate and get the necessary resources.
-        - Minor changes to the character details page.
+        - Added a guide in the Home page, to help navigate and get the necessary resources <br>
+        - Minor changes to the character details page <br>
   * 0.8.1 <br>
         - Fixed app freezing on dragging images <br>
         - You can now drag characters by their image in all pages except in the Team Edit page <br>
