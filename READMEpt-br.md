@@ -79,14 +79,14 @@ Crédito a [wanderer.moe](https://wanderer.moe/) pelos ícones padrões dos pers
 
 ### Versions
   * 0.8.3 <br>
-        - Ajustes nas guias
-        - Corrigido aceitar valores inválidos de dano
-        - Corrigido endereços incorretos de certas imagens
-        - Novos personagens são adicionados alfabeticamente em seu elemento
-        - Leve re-esctrita e limpesa no código
+        - Ajustes nas guias <br>
+        - Corrigido aceitar valores inválidos de dano <br>
+        - Corrigido endereços incorretos de certas imagens <br>
+        - Novos personagens são adicionados alfabeticamente em seu elemento <br>
+        - Leve re-esctrita e limpesa no código <br>
   * 0.8.2 <br>
-        - Adicionado uma guia na página Principal (em inglês), para ajudar a navegar e conseguir os recursos necessários.
-        - Leves mudanças à pagina de detalhes de personagem.
+        - Adicionado uma guia na página Principal (em inglês), para ajudar a navegar e conseguir os recursos necessários <br>
+        - Leves mudanças à pagina de detalhes de personagem <br>
  * 0.8.1 <br>
         - Corrigido o travamento do aplicativo ao arrastar imagens <br>
         - Agora você pode arrastar os personagens por suas imagens em todas as páginas, exceto na página de Edição de Times <br>
