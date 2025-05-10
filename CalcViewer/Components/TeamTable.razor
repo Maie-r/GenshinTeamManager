@@ -23,7 +23,7 @@
         @if (InFilter(context))
         {
             <MudTd DataLabel="Team">
-                <a class="clickable" id="@context.name" @onclick="() => Selected(context)"> @context.name</a>
+                <a class="clickable" id="@context.name" @onclick="() => Selected(context)" style="@((context == selected || context == compare) ? "color: var(--color-highlight); font-weight: bold;" : "")"> @context.name</a>
             </MudTd>
             <MudTd DataLabel="Character 1" class="char">
                 <div class="text-@context.characters[0].element">
@@ -71,6 +71,14 @@
     [CascadingParameter]
     IEnumerable<Team> teams { get; set; }
 
+    [Parameter]
+    public bool comparing { get; set; }
+
+    [Parameter]
+    public Team selected { get; set; }
+    [Parameter]
+    public Team compare { get; set; }
+
     string searchString = "";
 
     [Parameter]
@@ -79,7 +87,10 @@
     async void Selected(Team team)
     {
         await OnTeamSelected.InvokeAsync(team);
-        //icalc.Setlect(team);
+        if (comparing)
+            compare = team;
+        else
+            selected = team;
     }
 
     private string GetRowClass(Team item, int rowIndex)

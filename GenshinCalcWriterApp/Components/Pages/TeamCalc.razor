@@ -2,6 +2,6 @@
 @using CalcViewer.Components
 <div class="p-0 m-0 col-12">
     <div class="p-0 m-0 mt-5 text-light">
-        <TeamTablePage />
+        <TeamTablePage selectedid="@CalcService.NormalSelected" compairedid="@CalcService.NormalCompare" onselect="@((e) => CalcService.NormalSelected = e)" oncompare="@((e) => CalcService.NormalCompare = e)" />
     </div>
 </div>

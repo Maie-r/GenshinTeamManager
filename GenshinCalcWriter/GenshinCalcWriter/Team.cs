@@ -229,7 +229,8 @@ namespace GenshinTeamCalc
 
         public void Update()
         {
-            Debug.WriteLine("updating!");
+            //Debug.WriteLine("updating!");
+            Debug.WriteLine($"{team.name} {this.innername}");
             string[] temp = text[0].Split('-'); // Team info
             temp[0] = team.name;
             temp[1] = team.rotlen.ToString();
@@ -249,7 +250,7 @@ namespace GenshinTeamCalc
                     {
                         int index = int.Parse(temp2[1].Replace("!", ""));
                         double mult = team.characters[i - 1].dmg / Calc.GetDmg(team.characters[i - 1], index);
-                        Debug.WriteLine($"ITS RELATIVE {team.characters[i - 1].dmg} / {Calc.GetDmg(team.characters[i - 1], index)} {mult}");
+                        //Debug.WriteLine($"ITS RELATIVE {team.characters[i - 1].dmg} / {Calc.GetDmg(team.characters[i - 1], index)} {mult}");
                         if (temp2.Count <= 2) // no offset multiplier
                         {
                             if (mult != 1)
@@ -292,9 +293,10 @@ namespace GenshinTeamCalc
                         text[i] += $"-{temp2[j]}";
                     }
                 }
-            }
+            Debug.WriteLine($"{team.name} {this.innername}");
         }
     }
+}
 
     public class Character
     {

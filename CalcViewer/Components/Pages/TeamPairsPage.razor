@@ -68,7 +68,7 @@ else
                             {
                                 <MudTd DataLabel="Team Pair">
                                     <div>
-                                        <a class="clickable" @onclick="() => Select(context)">@context.Value[0].name and @context.Value[1].name </a>
+                                        <a class="clickable" @onclick="() => Select(context)" style="@((context.Value == selected || context.Value == compaired) ? "color: var(--color-highlight); font-weight: bold;" : "")">@context.Value[0].name and @context.Value[1].name </a>
                                     </div>
                                 </MudTd>
                                 @if (Calc.dmgType == "dps")
@@ -108,13 +108,20 @@ else
 {
     Dictionary<string, SortedDictionary<double, Team[]>[]> everything;
     Dictionary<string, string> svtablestate = new Dictionary<string, string>();
-    Team[] selected;
-    Team[]? compaired;
+    [Parameter]
+    public Team[] selected { get; set; }
+    [Parameter]
+    public Team[]? compaired { get; set; }
     Team[]? compairmem;
     bool MultipleAccount = false;
     bool Compare = false;
     int Loading = 0;
     string searchString = "";
+
+    [Parameter]
+    public EventCallback<Team[]> onselect { get; set; }
+    [Parameter]
+    public EventCallback<Team[]> oncompare { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -127,6 +134,8 @@ else
         {
             svtablestate.Add(k.Key, "shown");
         }
+        if (compaired != null)
+            Compare = true;
         Loading++;
     }
 
@@ -144,6 +153,7 @@ else
         if (Compare)
         {
             compaired = context.Value;
+            oncompare.InvokeAsync(compaired);
         }
         else
         {
@@ -156,6 +166,7 @@ else
 				selected = context.Value;
                 await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
 			}
+            onselect.InvokeAsync(selected);
         }
 	}
 

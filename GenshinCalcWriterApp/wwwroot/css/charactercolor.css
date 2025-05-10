@@ -30,6 +30,7 @@
 .bg-geo { background-color: rgb(245, 207, 39, 0.5); } /* Geo */
 
 .bg-highlight {  background-color: rgb(160, 80, 220); }
+.bg-highlight-slight {  background-color: rgba(160, 80, 220, 0.5); }
 .btn-unselect { background-color: rgba(160, 80, 220, 0.5); }
 .btn-selected {
     background-color: rgb(160, 80, 220);

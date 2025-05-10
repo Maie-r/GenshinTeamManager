@@ -74,7 +74,7 @@ else
 							<MudTd DataLabel="Team">
 								<MudTooltip Class="col-6 veryrounded bg-subtlegrad">
 									<ChildContent>
-										<a class="clickable" @onclick="() => Select(context.Value)"> @context.Value.team.name</a>
+										<a class="clickable" @onclick="() => Select(context.Value)" style="@((context.Value == selected) ? "color: var(--color-highlight); font-weight: bold;" : "")"> @context.Value.team.name</a>
 									</ChildContent>
 									<TooltipContent>
 										<CascadingValue Value="@context.Value.team" Name="Selected Team">
@@ -97,11 +97,25 @@ else
 @code 
 {
 	Dictionary<string, TeamCondensed> teams;
-	TeamCondensed? selected;
+	[Parameter]
+	public TeamCondensed? selected { get; set; }
 	TeamCondensed template;
 	bool MultipleAccount = false;
 	bool newteam = false;
 	string searchString = "";
+
+	[Parameter]
+	public string selectedtext { get; set; }
+
+	[Parameter]
+	public EventCallback<string> OnTeamSelected { get; set; }
+
+	[Parameter]
+	public EventCallback OnUpdate1 { get; set; }
+	[Parameter]
+	public EventCallback OnUpdate2 { get; set; }
+	[Parameter]
+	public EventCallback<string> OnUpdate3 { get; set; }
 
 	string error = "";
 	protected override async Task OnInitializedAsync()
@@ -121,6 +135,10 @@ else
 		{
 			TeamCondensed temp = new TeamCondensed(teamlist[i], teamtext[i], i);
 			teams.Add(teamlist[i].name, temp);
+		}
+		if (selectedtext != null){
+			selected = teams[selectedtext];
+			StateHasChanged();
 		}
 	}
 
@@ -157,7 +175,11 @@ else
 				safe++;
 			}
 			writer.Close();
+			OnUpdate1.InvokeAsync();
 			Calc.Reload();
+			OnUpdate2.InvokeAsync();
+			if (selected != null)
+				OnTeamSelected.InvokeAsync(selected.team.name);
 			newteam = false;
 		}
 	}
@@ -167,12 +189,15 @@ else
 		if (team == selected)
 		{
 			selected = null;
+			OnTeamSelected.InvokeAsync(null);
 		}
 		else
 		{
 			selected = team;
 			await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+			OnTeamSelected.InvokeAsync(selected.team.name);
 		}
+		
 	}
 
 	void Toggle(string teamname)

@@ -1,6 +1,6 @@
 ﻿@page "/edit"
 <div class="p-0 m-0 col-12">
     <div class="p-0 m-0 mt-5 text-light">
-        <EditPage />
+        <EditPage selectedtext="@CalcService.hashmemstring" OnTeamSelected="@((e) => CalcService.hashmemstring = e)"  OnUpdate1="CalcService.StorePositions" OnUpdate2="CalcService.RestorePositions" />
     </div>
 </div>
