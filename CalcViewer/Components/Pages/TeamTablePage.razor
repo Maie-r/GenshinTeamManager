@@ -42,7 +42,14 @@ else
                 </div>
             }
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="Comparecheck" @onchange="ToggleCompare">
+                @if (Compare)
+                {
+                    <input class="form-check-input" type="checkbox" value="" id="Comparecheck" @onchange="ToggleCompare" checked>
+                }
+                else
+                {
+                    <input class="form-check-input" type="checkbox" value="" id="Comparecheck" @onchange="ToggleCompare">
+                }
                 <label class="form-check-label" for="Comparecheck">
                     Compare
                 </label>

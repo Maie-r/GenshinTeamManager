@@ -139,7 +139,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         //everything = Calc.AccountTeamRanker(Calc.teams, null);
-        TeamPairer.PairTeams(Mesh);
         TeamPairer.SortPairs(2);
         if (TeamPairer.Pairs.Count > 1)
         {

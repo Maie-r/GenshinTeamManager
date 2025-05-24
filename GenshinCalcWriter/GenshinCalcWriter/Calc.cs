@@ -429,8 +429,9 @@ namespace GenshinTeamCalc
                 CosmeticDB.Add(individual[0], new string[] { individual[1], individual[individual.Length - 1] });
             }
             Teams();
+            TeamPairer.PairTeams(true);
         }
-        public static Dictionary<string, SortedDictionary<double, Team[]>[]> AccountTeamRanker(List<Team> teams, Team special)// Teams, Team to use. RETURN: Returns dictionary based on server, with 3 sorted dictionaries of pairing ranked in each category
+        /*public static Dictionary<string, SortedDictionary<double, Team[]>[]> AccountTeamRanker(List<Team> teams, Team special)// Teams, Team to use. RETURN: Returns dictionary based on server, with 3 sorted dictionaries of pairing ranked in each category
         {
             Dictionary<string, SortedDictionary<double, Team[]>[]> Everything = new Dictionary<string, SortedDictionary<double, Team[]>[]>(); // jesus christ..
             // Server, Array of Pairings (one for reach type of calc)
@@ -577,6 +578,7 @@ namespace GenshinTeamCalc
                 }
             }
         }
+        */
 
         /// <summary>
         /// Returns a list of lists of teams, separated by account.
@@ -772,6 +774,21 @@ namespace GenshinTeamCalc
             
         }
 
+        public static TeamPair GetPairByName(string name)
+        {
+            foreach (KeyValuePair<string, List<TeamPair>> kv in Pairs)
+            {
+                foreach (TeamPair pair in kv.Value)
+                {
+                    if (pair.Name == name)
+                    {
+                        return pair;
+                    }
+                }
+            }
+            return null;
+        }
+ 
         public static void Clear()
         {
             Pairs.Clear();
@@ -859,5 +876,6 @@ namespace GenshinTeamCalc
         {
             this.teams = teams;
         }
+        public TeamPair() { }
     }
 }
