@@ -22,7 +22,7 @@ else
 	{
 		<div class="maiedal">
 			<CascadingValue Value="selectedRelative">
-					<CharacterDetail Exit="RelativeClose" OnSelected="RelativeChanged" dmgonly="true"/>
+				<CharacterDetail Exit="RelativeClose" OnSelected="RelativeChanged" dmgonly="true"/>
 			</CascadingValue>
 		</div>
 	}
@@ -84,14 +84,14 @@ else
 								</ChildContent>
 								<TooltipContent>
 									<div class="text-light darken-95 rounded p-3">
-									@if (selected.characters[i].relative >= 0)
-									{
-										<span>Change Damage Type (current: relative)</span>
-									}
-									else
-									{
-										<span>Change Damage Type (current: raw)</span>
-									}
+										@if (selected.characters[i].relative >= 0)
+										{
+											<span>Change Damage Type (current: relative)</span>
+										}
+										else
+										{
+											<span>Change Damage Type (current: raw)</span>
+										}
 									</div>
 								</TooltipContent>
 							</MudTooltip>
@@ -174,6 +174,9 @@ else
 
 	void Update()
 	{
+		selected.name = selected.name.Replace(",", "");
+		selected.name = selected.name.Replace("+", "");
+		selected.name = selected.name.Replace("-", "");
 		selected.CalcDpm();
 		selectedcondensed.Update();
 	}
@@ -195,23 +198,26 @@ else
 
 	void ChangeCharacter(Character character)
 	{
-		temp = character;
+		temp = character; // temp stores the old character
 		characterchange = true;
 	}
 
 	void HandleCharSelected(Character chara)
 	{
+		selectedcondensed.RelativeReset(temp); // so it doesn't break'
 		Logger.LogInformation($"{temp.dmg} {temp.relative}");
 		temp.name = chara.name;
 		temp.element = chara.element;
 		temp.img = chara.img;
 		temp.aoe = chara.aoe;
+		temp.relative = -1;
+		
 		Update();
-		if (temp.dmg < 10)
+		/*if (temp.dmg < 10)
 		{
 			temp.relative = -1;
 			temp.dmg = 1000;
-		}
+		}*/
 		Logger.LogInformation($"{temp.dmg} {temp.relative}");
 		temp = null;
 	}
@@ -230,37 +236,7 @@ else
 
 	void RelativeChanged(int i)
 	{
-		for (int j = 1; j < selectedcondensed.text.Length; j++)
-		{
-			if (selectedcondensed.text[j].StartsWith(selectedRelative.character.name))
-			{
-				string[] temp = selectedcondensed.text[j].Split('-');
-				string mult;
-				try
-				{
-					mult = temp[2];
-				}
-				catch
-				{
-					mult = "1.00";
-				}
-				if (i >= 0)
-				{
-					temp[1] = $"!{i}"; // relative damage uses "!" to indicate itself.
-				}
-				else
-				{
-					temp[1] = $"{selectedRelative.character.dmg}";
-				}
-				string temp2 = $"{temp[0]}-{temp[1]}-{mult}";
-				for (int k = 3; k < temp.Length; k++)
-				{
-					temp2 += $"-{temp[k]}";
-				}
-				selectedcondensed.text[j] = temp2;
-				break;
-			}
-		}
+		selectedcondensed.RelativeChange(selectedRelative, i);
 		Update();
 		RelativeClose();
 	}

@@ -253,6 +253,9 @@ else
 
 	void Update()
 	{
+		selected.character.name = selected.character.name.Replace(",", "");
+		selected.character.name = selected.character.name.Replace("+", "");
+		selected.character.name = selected.character.name.Replace("-", "");
 		Logger.LogInformation(selected.character.aoe.ToString());
 		selected.Update();
 		if (dmgonly)

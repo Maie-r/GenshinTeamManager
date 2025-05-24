@@ -32,11 +32,20 @@ else
                 </CascadingValue>
             }
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" @onchange="ToggleCompare">
-                <label class="form-check-label" for="flexCheckDefault">
+                <input class="form-check-input" type="checkbox" value="" id="flexCompare" @onchange="ToggleCompare">
+                <label class="form-check-label" for="flexCompare">
                     Compare
                 </label>
             </div>
+            @if (MultipleAccount)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckMesh" @onchange="ToggleMesh">
+                    <label class="form-check-label" for="flexCheckMesh">
+                        Mesh account tables
+                    </label>
+                </div>
+            }
             @foreach (KeyValuePair<string, SortedDictionary<double, Team[]>[]>server in everything)
             {
                 @if (MultipleAccount)
@@ -46,7 +55,8 @@ else
                 <div id="@server.Key" class="@svtablestate[server.Key]">
                     <MudTable Items="@server.Value[0].AsEnumerable()" Hover="true" SortLabel="Sort by" MultiSort="true" Class="darken-50">
                         <ToolBarContent>
-                            <MudTextField @bind-Value="searchString" Placeholder="Search" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 text-light"></MudTextField>
+                            <MudTextField @bind-Value="searchString" Placeholder="Search" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 col-8 text-light"></MudTextField>
+                            <MudTextField @bind-Value="charsearchString" Placeholder="Character" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 col-4 text-light"></MudTextField>
                         </ToolBarContent>
                         <HeaderContent>
                             <MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<double, Team[]>, object>(x => x.Value[0].name)">Team Pair</MudTableSortLabel></MudTh>
@@ -68,7 +78,7 @@ else
                             {
                                 <MudTd DataLabel="Team Pair">
                                     <div>
-                                        <a class="clickable" @onclick="() => Select(context)" style="@((context.Value == selected || context.Value == compaired) ? "color: var(--color-highlight); font-weight: bold;" : "")">@context.Value[0].name and @context.Value[1].name </a>
+                                        <a class="clickable" @onclick="() => Select(context)" style="@((context.Value == selected || context.Value == compaired) ? "color: var(--color-highlight); font-weight: bold;" : "")"><span style="color: var(--color-@context.Value[0].characters[0].element)">@context.Value[0].name</span> and <span style="color: var(--color-@context.Value[1].characters[0].element)">@context.Value[1].name</span> </a>
                                     </div>
                                 </MudTd>
                                 @if (Calc.dmgType == "dps")
@@ -115,8 +125,10 @@ else
     Team[]? compairmem;
     bool MultipleAccount = false;
     bool Compare = false;
+    bool Mesh = false;
     int Loading = 0;
     string searchString = "";
+    string charsearchString = "";
 
     [Parameter]
     public EventCallback<Team[]> onselect { get; set; }
@@ -148,8 +160,8 @@ else
         }
     }
 
-	async void Select(KeyValuePair<double, Team[]> context)
-	{
+    async void Select(KeyValuePair<double, Team[]> context)
+    {
         if (Compare)
         {
             compaired = context.Value;
@@ -157,18 +169,18 @@ else
         }
         else
         {
-			if (context.Value == selected)
-			{
-				selected = null;
-			}
-			else
-			{
-				selected = context.Value;
+            if (context.Value == selected)
+            {
+                selected = null;
+            }
+            else
+            {
+                selected = context.Value;
                 await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
-			}
+            }
             onselect.InvokeAsync(selected);
         }
-	}
+    }
 
     async void Collapse(string server)
     {
@@ -182,11 +194,11 @@ else
         }
     }
 
-	string Test(string name)
-	{
-		Logger.LogInformation(name);
-		return name;
-	}
+    string Test(string name)
+    {
+        Logger.LogInformation(name);
+        return name;
+    }
 
     void ToggleCompare()
     {
@@ -202,22 +214,112 @@ else
         Compare = !Compare;
     }
 
+    void ToggleMesh()
+    {
+		if (Mesh)
+		{
+            
+		}
+		else
+		{
+			Mesh = true;
+		}
+    }
+
     void NavigateToEditPage()
     {
         Navigation.NavigateTo($"/edit");
     }
-    
+
     async void cssLoaded()
     {
-		Loading++;
+        Loading++;
     }
 
     bool InFilter(Team[] element)
     {
-        if (string.IsNullOrWhiteSpace(searchString))
-            return true;
-        if (element[0].name.Contains(searchString, StringComparison.OrdinalIgnoreCase) || element[1].name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        return false;
+        if (String.IsNullOrEmpty(searchString))
+        {
+            return InFilterChar(element);
+        }
+        bool veredict = false;
+        string[] includes = searchString.Split("+");
+        foreach (string f in includes)
+        {
+            string[] or = f.Split(",");
+            foreach (string o in or)
+            {
+                if (element[0].name.Contains(o.Trim(), StringComparison.OrdinalIgnoreCase) || element[1].name.Contains(o.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    veredict = InFilterChar(element);
+                    break;
+                }
+            }
+            if (!veredict)
+            {
+                return false;
+            }
+            veredict = false;
+        }
+        Logger.LogInformation("FELL THROUGH");
+        return true;
     }
+
+    bool InFilterChar(Team[] element)
+    {
+        if (String.IsNullOrEmpty(charsearchString))
+        {
+            return true;
+        }
+        bool veredict = false;
+        string[] dont = charsearchString.Split("-");
+        veredict = InFilterChar(element, dont[0].Split("+"));
+        if (dont.Length > 1 && veredict) // if above check failed, skip
+        {
+            for (int i = 1; i < dont.Length; i++)
+            {
+                if (InFilterChar(element, dont[i].Split("+"))) // return false because we don't want this character
+                {
+                    return false;
+                }
+            }
+        }
+        return veredict;
+    }
+
+    bool InFilterChar(Team[] element, string[] includes)
+    {
+        bool veredict = false;
+        foreach (string f in includes) // must be included
+        {
+            //Logger.LogInformation("INCLUDES: " + f);
+            string[] or = f.Split(",");
+            foreach (string o in or) // also include
+            {
+                foreach (Team team in element)
+                {
+                    foreach (Character character in team.characters)
+                    {
+                        if (character.name.Contains(o.Trim(), StringComparison.OrdinalIgnoreCase))
+                        {
+                            veredict = true;
+                            break;
+                        }
+                    }
+                    if (veredict)
+                    {
+                        break;
+                    }
+                }
+                if (!veredict)
+                {
+                    //Logger.LogInformation("FAILED AND OPERATION");
+                    return false;
+                }
+                veredict = false;
+            }
+        }
+        return true;
+    }
+
 }

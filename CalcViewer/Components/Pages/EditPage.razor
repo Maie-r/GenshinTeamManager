@@ -197,7 +197,7 @@ else
 			await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
 			OnTeamSelected.InvokeAsync(selected.team.name);
 		}
-		
+
 	}
 
 	void Toggle(string teamname)
@@ -226,8 +226,10 @@ else
 		}
 		TeamCondensed dupe = new TeamCondensed(dupeteam, text, teams.Count);
 		dupe.active = team.active;
-		dupe.innername += " Copy";
+		dupe.Update();
+		Logger.LogInformation($"AAH {dupe.team.name} {dupe.innername}");
 		teams.Add(dupe.innername, dupe);
+		Select(dupe);
 		Save();
 	}
 

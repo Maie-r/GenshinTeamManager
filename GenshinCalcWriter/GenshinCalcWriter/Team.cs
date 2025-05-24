@@ -295,6 +295,71 @@ namespace GenshinTeamCalc
                 }
             Debug.WriteLine($"{team.name} {this.innername}");
         }
+
+        public void RelativeChange(CharacterCondensed chara, int i)
+        {
+            for (int j = 1; j < this.text.Length; j++)
+            {
+                if (this.text[j].StartsWith(chara.character.name))
+                {
+                    string[] temp = this.text[j].Split('-');
+                    string mult;
+                    try
+                    {
+                        mult = temp[2];
+                    }
+                    catch
+                    {
+                        mult = "1.00";
+                    }
+                    if (i >= 0)
+                    {
+                        temp[1] = $"!{i}"; // relative damage uses "!" to indicate itself.
+                    }
+                    else
+                    {
+                        temp[1] = $"{chara.character.dmg}";
+                    }
+                    string temp2 = $"{temp[0]}-{temp[1]}-{mult}";
+                    for (int k = 3; k < temp.Length; k++)
+                    {
+                        temp2 += $"-{temp[k]}";
+                    }
+                    this.text[j] = temp2;
+                    break;
+                }
+            }
+            Update();
+        }
+
+        public void RelativeReset(Character chara)
+        {
+            for (int j = 1; j < this.text.Length; j++)
+            {
+                if (this.text[j].StartsWith(chara.name))
+                {
+                    string[] temp = this.text[j].Split('-');
+                    string mult;
+                    try
+                    {
+                        mult = temp[2];
+                    }
+                    catch
+                    {
+                        mult = "1.00";
+                    }
+                    temp[1] = $"{chara.dmg}";
+                    string temp2 = $"{temp[0]}-{temp[1]}-{mult}";
+                    for (int k = 3; k < temp.Length; k++)
+                    {
+                        temp2 += $"-{temp[k]}";
+                    }
+                    this.text[j] = temp2;
+                    break;
+                }
+            }
+            Update();
+        }
     }
 }
 

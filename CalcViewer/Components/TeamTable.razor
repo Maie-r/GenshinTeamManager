@@ -1,6 +1,10 @@
-﻿<MudTable Items="@teams" Hover="true" SortLabel="Sort by" MultiSort="true" Class="darken-50">
+﻿@using Microsoft.Extensions.Logging
+@inject ILogger<TeamTable> Logger
+
+<MudTable Items="@teams" Hover="true" SortLabel="Sort by" MultiSort="true" Class="darken-50">
     <ToolBarContent>
-        <MudTextField @bind-Value="searchString" Placeholder="Search" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 text-light"></MudTextField>
+        <MudTextField @bind-Value="searchString" Placeholder="Team Name" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 col-8 text-light"></MudTextField>
+        <MudTextField @bind-Value="charsearchString" Placeholder="Character" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 col-4 text-light"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh> <MudTableSortLabel SortBy="new Func<Team, object>(x => x.name)">Team</MudTableSortLabel></MudTh>
@@ -80,6 +84,7 @@
     public Team compare { get; set; }
 
     string searchString = "";
+    string charsearchString = "";
 
     [Parameter]
     public EventCallback<Team> OnTeamSelected { get; set; }
@@ -100,10 +105,79 @@
 
     bool InFilter(Team element)
     {
-        if (string.IsNullOrWhiteSpace(searchString))
+        if (String.IsNullOrEmpty(searchString))
+        {
+            return InFilterChar(element);
+        }
+        bool veredict = false;
+        string[] includes = searchString.Replace(",", "+").Split("+");
+        foreach (string f in includes)
+        {
+            if (element.name.Contains(f.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                veredict = InFilterChar(element);
+                break;
+            }
+        }
+        /*if (string.IsNullOrWhiteSpace(searchString))
             return true;
         if (element.name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;*/
+        Logger.LogInformation("FELL THROUGH");
+        return veredict;
+    }
+
+    bool InFilterChar(Team element)
+    {
+        if (String.IsNullOrEmpty(charsearchString))
+        {
             return true;
-        return false;
+        }
+        bool veredict = false;
+        string[] dont = charsearchString.Split("-");
+        veredict = InFilterChar(element, dont[0].Split("+"));
+        if (dont.Length > 1 && veredict) // if above check failed, skip
+        {
+            for (int i = 1; i < dont.Length; i++)
+            {
+                if (InFilterChar(element, dont[i].Split("+"))) // return false because we don't want this character
+                {
+                    return false;
+                }
+            }
+        }
+        return veredict;
+    }
+
+    bool InFilterChar(Team element, string[] includes)
+    {
+        bool veredict = false;
+        foreach (string f in includes) // must be included
+        {
+            //Logger.LogInformation("INCLUDES: " + f);
+            string[] or = f.Split(",");
+            foreach (string o in or) // also include
+            {
+                foreach (Character character in element.characters)
+                {
+                    if (character.name.Contains(o.Trim(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        veredict = true;
+                        break;
+                    }
+                }
+                if (veredict)
+                {
+                    break;
+                }
+            }
+            if (!veredict)
+            {
+                //Logger.LogInformation("FAILED AND OPERATION");
+                return false;
+            }
+            veredict = false;
+        }
+        return true;
     }
 }
