@@ -37,72 +37,73 @@ else
                     Compare
                 </label>
             </div>
-            @if (MultipleAccount)
-            {
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckMesh" @onchange="ToggleMesh">
-                    <label class="form-check-label" for="flexCheckMesh">
-                        Mesh account tables
-                    </label>
-                </div>
-            }
-            @foreach (KeyValuePair<string, SortedDictionary<double, Team[]>[]>server in everything)
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckMesh" @onchange="ToggleMesh">
+                <label class="form-check-label" for="flexCheckMesh">
+                    Mesh account tables
+                </label>
+            </div>
+            @foreach (KeyValuePair<string, List<TeamPair>>server in TeamPairer.Pairs)
             {
                 @if (MultipleAccount)
                 {
                     <a class="clickable d-flex justify-content-center flex-row flex-nowrap text-center" @onclick="() => Collapse(server.Key)"><h2>@server.Key</h2> <MudIcon class="text-center" Size="Size.Large" Icon="@(svtablestate[server.Key] == "shown" ? Icons.Material.Filled.KeyboardArrowUp : Icons.Material.Filled.KeyboardArrowDown)"></MudIcon></a>
                 }
                 <div id="@server.Key" class="@svtablestate[server.Key]">
-                    <MudTable Items="@server.Value[0].AsEnumerable()" Hover="true" SortLabel="Sort by" MultiSort="true" Class="darken-50">
+                    <MudTable Items="@server.Value.AsEnumerable()" Hover="true" SortLabel="Sort by" MultiSort="true" Class="darken-50">
                         <ToolBarContent>
                             <MudTextField @bind-Value="searchString" Placeholder="Search" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 col-8 text-light"></MudTextField>
                             <MudTextField @bind-Value="charsearchString" Placeholder="Character" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 col-4 text-light"></MudTextField>
                         </ToolBarContent>
                         <HeaderContent>
-                            <MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<double, Team[]>, object>(x => x.Value[0].name)">Team Pair</MudTableSortLabel></MudTh>
+                            <MudTh> <MudTableSortLabel SortBy="new Func<TeamPair, object>(x=>x.Name)">Team Pair</MudTableSortLabel></MudTh>
                             @if (Calc.dmgType == "dps")
                             {
-                                <MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<double, Team[]>, object>(x => -(x.Value[0].dpm + x.Value[1].dpm))">TOTAL DPS </MudTableSortLabel></MudTh>
-                                <MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<double, Team[]>, object>(x => -(x.Value[0].dpmAoe + x.Value[1].dpmAoe))">TOTAL DPS AOE</MudTableSortLabel></MudTh>
-                                <MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<double, Team[]>, object>(x => -(x.Value[0].dpm + x.Value[1].dpm + x.Value[0].dpmAoe + x.Value[1].dpmAoe)/2)">AVERAGE</MudTableSortLabel></MudTh>
+                                <MudTh> <MudTableSortLabel SortBy="new Func<TeamPair, object>(x=>x.Score)">TOTAL DPS </MudTableSortLabel></MudTh>
+                                <MudTh> <MudTableSortLabel SortBy="new Func<TeamPair, object>(x=>x.ScoreAoe)">TOTAL DPS AOE</MudTableSortLabel></MudTh>
+                                <MudTh> <MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<TeamPair, object>(x=>x.ScoreAvg)">AVERAGE</MudTableSortLabel></MudTh>
                             }
                             else
                             {
-                                <MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<double, Team[]>, object>(x => -(x.Value[0].dpm + x.Value[1].dpm))">TOTAL DPM </MudTableSortLabel></MudTh>
-                                <MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<double, Team[]>, object>(x => -(x.Value[0].dpmAoe + x.Value[1].dpmAoe))">TOTAL DPM AOE</MudTableSortLabel></MudTh>
-                                <MudTh> <MudTableSortLabel SortBy="new Func<KeyValuePair<double, Team[]>, object>(x => -(x.Value[0].dpm + x.Value[1].dpm + x.Value[0].dpmAoe + x.Value[1].dpmAoe)/2)">AVERAGE</MudTableSortLabel></MudTh>
+                                <MudTh> <MudTableSortLabel SortBy="new Func<TeamPair, object>(x=>x.Score)">TOTAL DPM </MudTableSortLabel></MudTh>
+                                <MudTh> <MudTableSortLabel SortBy="new Func<TeamPair, object>(x=>x.ScoreAoe)">TOTAL DPM AOE</MudTableSortLabel></MudTh>
+                                <MudTh> <MudTableSortLabel InitialDirection="SortDirection.Descending" SortBy="new Func<TeamPair, object>(x=>x.ScoreAvg)">AVERAGE</MudTableSortLabel></MudTh>
                             }
                         </HeaderContent>
                         <RowTemplate>
-                            @if (InFilter(context.Value))
+                            @if (InFilter(context.teams))
                             {
                                 <MudTd DataLabel="Team Pair">
                                     <div>
-                                        <a class="clickable" @onclick="() => Select(context)" style="@((context.Value == selected || context.Value == compaired) ? "color: var(--color-highlight); font-weight: bold;" : "")"><span style="color: var(--color-@context.Value[0].characters[0].element)">@context.Value[0].name</span> and <span style="color: var(--color-@context.Value[1].characters[0].element)">@context.Value[1].name</span> </a>
+                                        <a class="clickable" @onclick="() => Select(context)" style="@((context == selected || context == compaired) ? "color: var(--color-highlight); font-weight: bold;" : "")">
+                                            <span style="color: var(--color-@context.teams[0].characters[0].element)">@context.teams[0].name</span>
+                                            and 
+                                            <span style="color: var(--color-@context.teams[1].characters[0].element)">@context.teams[1].name</span> 
+                                        </a>
                                     </div>
                                 </MudTd>
                                 @if (Calc.dmgType == "dps")
                                 {
                                     <MudTd DataLabel="DPS" Class="text-light">
-                                        @(Math.Round((context.Value[0].dps + context.Value[1].dps) / 1000, 2))k
+                                        @(Math.Round(context.DpsScore / 1000, 2))k
                                     </MudTd>
                                     <MudTd DataLabel="DPS AOE" Class="text-light">
-                                        @(Math.Round((Calc.ToDps(context.Value[0].dpmAoe, context.Value[0].rotlen) + Calc.ToDps(context.Value[1].dpmAoe, context.Value[1].rotlen)) / 1000, 2))k
+                                        @(Math.Round(context.DpsScoreAoe / 1000, 2))k
                                     </MudTd>
                                     <MudTd DataLabel="AVERAGE">
-                                        @(Math.Round(((context.Value[0].dps + context.Value[1].dps + Calc.ToDps(context.Value[0].dpmAoe, context.Value[0].rotlen) + Calc.ToDps(context.Value[1].dpmAoe, context.Value[1].rotlen)) / 2000), 2))k
+                                        @(Math.Round((context.DpsScoreAvg / 1000), 2))k
                                     </MudTd>
                                 }
                                 else
                                 {
                                     <MudTd DataLabel="DPM" Class="text-light">
-                                        @(Math.Round((context.Value[0].dpm + context.Value[1].dpm), 2)) mi
+                                        @(Math.Round(context.Score, 2)) mi
                                     </MudTd>
                                     <MudTd DataLabel="DPM AOE" Class="text-light">
-                                        @(Math.Round((context.Value[0].dpmAoe + context.Value[1].dpmAoe), 2)) mi
+                                        @(Math.Round(context.ScoreAoe, 2)) mi
                                     </MudTd>
                                     <MudTd DataLabel="AVERAGE">
-                                        @(Math.Round(((context.Value[0].dpm + context.Value[1].dpm + context.Value[0].dpmAoe + context.Value[1].dpmAoe) / 2), 2)) mi
+                                        @(Math.Round(context.ScoreAvg, 2)) mi
                                     </MudTd>
                                 }
                             }
@@ -116,36 +117,39 @@ else
 
 @code
 {
-    Dictionary<string, SortedDictionary<double, Team[]>[]> everything;
+    //Dictionary<string, SortedDictionary<double, Team[]>[]> everything;
     Dictionary<string, string> svtablestate = new Dictionary<string, string>();
     [Parameter]
-    public Team[] selected { get; set; }
+    public TeamPair selected { get; set; }
     [Parameter]
-    public Team[]? compaired { get; set; }
-    Team[]? compairmem;
+    public TeamPair? compaired { get; set; }
+    TeamPair? compairmem;
     bool MultipleAccount = false;
     bool Compare = false;
-    bool Mesh = false;
+    bool Mesh = true;
     int Loading = 0;
     string searchString = "";
     string charsearchString = "";
 
     [Parameter]
-    public EventCallback<Team[]> onselect { get; set; }
+    public EventCallback<TeamPair> onselect { get; set; }
     [Parameter]
-    public EventCallback<Team[]> oncompare { get; set; }
+    public EventCallback<TeamPair> oncompare { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        everything = Calc.AccountTeamRanker(Calc.teams, null);
-        if (everything.Count > 1)
+        //everything = Calc.AccountTeamRanker(Calc.teams, null);
+        TeamPairer.PairTeams(Mesh);
+        TeamPairer.SortPairs(2);
+        if (TeamPairer.Pairs.Count > 1)
         {
             MultipleAccount = true;
         }
-        foreach (var k in everything)
+        foreach (var k in TeamPairer.Pairs)
         {
             svtablestate.Add(k.Key, "shown");
         }
+        svtablestate.Add("All", "shown");
         if (compaired != null)
             Compare = true;
         Loading++;
@@ -160,22 +164,22 @@ else
         }
     }
 
-    async void Select(KeyValuePair<double, Team[]> context)
+    async void Select(TeamPair context)
     {
         if (Compare)
         {
-            compaired = context.Value;
+            compaired = context;
             oncompare.InvokeAsync(compaired);
         }
         else
         {
-            if (context.Value == selected)
+            if (context == selected)
             {
                 selected = null;
             }
             else
             {
-                selected = context.Value;
+                selected = context;
                 await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
             }
             onselect.InvokeAsync(selected);
@@ -216,14 +220,11 @@ else
 
     void ToggleMesh()
     {
-		if (Mesh)
-		{
-            
-		}
-		else
-		{
-			Mesh = true;
-		}
+        MultipleAccount = !Mesh;
+        Mesh = !Mesh;
+        TeamPairer.PairTeams(Mesh);
+        TeamPairer.SortPairs(2);
+        StateHasChanged();
     }
 
     void NavigateToEditPage()

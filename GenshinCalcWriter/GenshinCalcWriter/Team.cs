@@ -15,10 +15,11 @@ namespace GenshinTeamCalc
         public string server;
         public List<Character> characters = new List<Character>();
         public double rotlen;
-        public double dps;
+        public double dps; // could prob do without
+        public double dpsAoe; // could prob do without
         public double dpm;
         public double dpmAoe;
-        public double som;
+        public double som; // could prob do without
 
         /*
         public Team(string[,] stuff, Calc calc) // from DB
@@ -160,6 +161,7 @@ namespace GenshinTeamCalc
             }
             this.som = Math.Round(som);
             dps = Math.Round((som / rotlen), 2);
+            dpsAoe = Math.Round((somAoe / rotlen), 2);
             dpm = Math.Round((som * (60 / rotlen)) / 1000000, 2);
             dpmAoe = Math.Round((somAoe * (60 / rotlen)) / 1000000, 2);
         }
@@ -361,7 +363,6 @@ namespace GenshinTeamCalc
             Update();
         }
     }
-}
 
     public class Character
     {
@@ -421,67 +422,68 @@ namespace GenshinTeamCalc
         }
     }
 
-public class CharacterCondensed
-{
-    public Character character;
-    public List<string> damages;
-    public string innername;
-    public List<string> text;
+    public class CharacterCondensed
+    {
+        public Character character;
+        public List<string> damages;
+        public string innername;
+        public List<string> text;
 
-    public CharacterCondensed(Character character, List<string> damages, string innername, List<string> text)
-    {
-        this.character = character;
-        this.damages = damages;
-        this.innername = innername;
-        this.text = text;
-    }
+        public CharacterCondensed(Character character, List<string> damages, string innername, List<string> text)
+        {
+            this.character = character;
+            this.damages = damages;
+            this.innername = innername;
+            this.text = text;
+        }
 
-    public CharacterCondensed(Character character) // TEMPLATE
-    {
-        this.character = character;
-        text = new List<string>();
-        damages = new List<string>();
-        text.Add(character.name);
-        text.Add(character.element);
-        if (character.aoe == null)
+        public CharacterCondensed(Character character) // TEMPLATE
         {
-            text.Add("1");
-        }
-        else
-        {
-            text.Add(character.aoe.ToString());
-        }
-        text.Add(character.img);
-    }
-    public void Update()
-    {
-        text[0] = character.name;
-        text[1] = character.element;
-        for (int i = 2; i < damages.Count + 2; i++)
-        {
-            if (damages.Count > text.Count - 4)
+            this.character = character;
+            text = new List<string>();
+            damages = new List<string>();
+            text.Add(character.name);
+            text.Add(character.element);
+            if (character.aoe == null)
             {
-                //if (damages[i - 2].Length <= 1) // to not conflict with relative
-                    //text.Insert(i, damages[i - 2] + "0");
-                text.Insert(i, damages[i - 2]);
+                text.Add("1");
             }
             else
             {
-                if (damages[i - 2] == "")
+                text.Add(character.aoe.ToString());
+            }
+            text.Add(character.img);
+        }
+        public void Update()
+        {
+            text[0] = character.name;
+            text[1] = character.element;
+            for (int i = 2; i < damages.Count + 2; i++)
+            {
+                if (damages.Count > text.Count - 4)
                 {
-                    text.RemoveAt(i);
-                    damages.RemoveAt(i - 2);
+                    //if (damages[i - 2].Length <= 1) // to not conflict with relative
+                    //text.Insert(i, damages[i - 2] + "0");
+                    text.Insert(i, damages[i - 2]);
                 }
                 else
                 {
-                    //if (damages[i - 2].Length <= 1) // to not conflict with relative
+                    if (damages[i - 2] == "")
+                    {
+                        text.RemoveAt(i);
+                        damages.RemoveAt(i - 2);
+                    }
+                    else
+                    {
+                        //if (damages[i - 2].Length <= 1) // to not conflict with relative
                         //text[i] = damages[i - 2] + "0";
-                    text[i] = damages[i - 2];
+                        text[i] = damages[i - 2];
+                    }
                 }
             }
+            text[text.Count - 2] = character.aoe.ToString(CultureInfo.InvariantCulture);
+            text[text.Count - 1] = character.img;
         }
-        text[text.Count - 2] = character.aoe.ToString(CultureInfo.InvariantCulture);
-        text[text.Count - 1] = character.img;
     }
-}
 
+}

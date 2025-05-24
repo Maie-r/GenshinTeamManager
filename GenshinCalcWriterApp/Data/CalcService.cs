@@ -14,7 +14,7 @@ namespace CalcViewer.Data
         public static string hashmemstring;
         private static int[] memory = { -1, -1}; // 0, 1: Team table. 2, 3: team pairs
         //private static TeamCondensed memory2; // Team manage
-        private static Team[][] teamPairs = new Team[2][]; // 0: selected, 1: compare
+        private static TeamPair[] teamPairs = new TeamPair[2]; // 0: selected, 1: compare
 
         public static int NormalSelected
         {
@@ -45,22 +45,22 @@ namespace CalcViewer.Data
             set { memory[3] = value; }
         }*/
 
-        public static void PairSelected(Team[] t)
+        public static void PairSelected(TeamPair t)
         {
             teamPairs[0] = t;
         }
 
-        public static Team[] PairSelected()
+        public static TeamPair PairSelected()
         {
             return teamPairs[0];
         }
 
-        public static void PairCompare(Team[] t)
+        public static void PairCompare(TeamPair t)
         {
             teamPairs[1] = t;
         }
 
-        public static Team[] PairCompare()
+        public static TeamPair PairCompare()
         {
             return teamPairs[1];
         }
@@ -96,7 +96,7 @@ namespace CalcViewer.Data
                         Debug.WriteLine(teamPairs[0] == null);
                         Debug.WriteLine(teamPairs[1] == null);*/
 
-                        hashmemory[(j + (i * 2))] = Calc.teams.IndexOf(teamPairs[i][j]);
+                        hashmemory[(j + (i * 2))] = Calc.teams.IndexOf(teamPairs[i].teams[j]);
                     }
                 }
                 else
@@ -140,9 +140,9 @@ namespace CalcViewer.Data
                     {
                         if (teamPairs[i] == null)
                         {
-                            teamPairs[i] = new Team[2];
+                            //teamPairs[i] = new TeamPair();
                         }
-                        teamPairs[i][j] = Calc.teams[hashmemory[(j + (i * 2))]];
+                        teamPairs[i].teams[j] = Calc.teams[hashmemory[(j + (i * 2))]];
                     }
                     
                 }

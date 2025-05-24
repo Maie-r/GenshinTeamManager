@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Policy;
+using System.ComponentModel;
 
 namespace GenshinTeamCalc
 {
@@ -665,6 +666,198 @@ namespace GenshinTeamCalc
             LoadStuff(true);
             //Teams();
             Debug.Write($"({teams.Count})");
+        }
+    }
+
+    public class TeamPairer
+    {
+        public static Dictionary<string, List<TeamPair>> Pairs = new Dictionary<string, List<TeamPair>>();
+        
+
+        public static Dictionary<string, List<TeamPair>>PairTeams(bool separateteams)
+        {
+            Pairs.Clear();
+            List<List<Team>> sample;
+            sample = Calc.AccountSeparate(Calc.teams, null);
+            foreach (List<Team> account in sample)
+            {
+                Pairs.Add(account[0].server, GetValidPairs(account));
+            }
+            if (!separateteams)
+            {
+                Dictionary<string, List<TeamPair>> temp = new Dictionary<string, List<TeamPair>>();
+                List<TeamPair> all = new List<TeamPair>();
+                foreach (KeyValuePair<string, List<TeamPair>> kv in Pairs)
+                {
+                    all.AddRange(kv.Value);
+                }
+                temp.Add("All", all);
+                Pairs = temp;
+            }
+            return Pairs;
+        }
+        static List<TeamPair> GetValidPairs(List<Team> teams)
+        {
+            StreamWriter dumper = new StreamWriter(@"E:/projects/GENSHIN/dump.txt", true);
+            List<TeamPair> valid = new List<TeamPair>();
+            for (int i = 0; i < teams.Count; i++)
+            {
+                for (int j = i + 1; j < teams.Count; j++)
+                {
+                    if (CheckOverlap(teams[i], teams[j]))
+                    {
+                        dumper.WriteLine($"Pairing {teams[i].name} and {teams[j].name} from {teams[i].server}");
+                        valid.Add(new TeamPair(new Team[] { teams[i], teams[j] }));
+                    }
+                }
+            }
+            dumper.Close();
+            return valid;
+        }
+        static bool CheckOverlap(Team team1, Team team2)
+        {
+            HashSet<string> team1Characters = new HashSet<string>(team1.characters.Select(c => c.name));
+            return !team2.characters.Any(character => team1Characters.Contains(character.name));
+        }
+
+        /// <summary>
+        ///  0: Single Target, 1: Aoe, 2: Average
+        /// </summary>
+        public static void SortPairs(int type)
+        {
+            foreach (KeyValuePair<string, List<TeamPair>> kv in Pairs)
+            {
+                if (kv.Value.Count > 0)
+                    QuickSort(kv.Value, 0, kv.Value.Count-1, type);
+                kv.Value.Reverse();
+            }
+        }
+        static List<TeamPair> QuickSort(List<TeamPair> array, int leftIndex, int rightIndex, int type)
+        {
+            try
+            {
+                var i = leftIndex;
+                var j = rightIndex;
+                var pivot = array[leftIndex].ScoreMenu(type);
+                while (i <= j)
+                {
+                    while (array[i].ScoreMenu(type) < pivot)
+                    {
+                        i++;
+                    }
+
+                    while (array[j].ScoreMenu(type) > pivot)
+                    {
+                        j--;
+                    }
+                    if (i <= j)
+                    {
+                        var temp = array[i];
+                        array[i] = array[j];
+                        array[j] = temp;
+                        i++;
+                        j--;
+                    }
+                }
+                if (leftIndex < j)
+                    QuickSort(array, leftIndex, j, type);
+                if (i < rightIndex)
+                    QuickSort(array, i, rightIndex, type);
+                return array;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+            
+        }
+
+        public static void Clear()
+        {
+            Pairs.Clear();
+        }
+    }
+
+    public class TeamPair
+    {
+        public Team[] teams = new Team[2];
+
+        public string Name
+        {
+            get
+            {
+                return teams[0].name + " and " + teams[1].name;
+            }
+        }
+
+        public double Score
+        {
+            get
+            {
+                return teams[0].dpm + teams[1].dpm;
+            }
+        }
+        public double ScoreAoe
+        {
+            get
+            {
+                return teams[0].dpmAoe + teams[1].dpmAoe;
+            }
+        }
+        public double ScoreAvg
+        {
+            get
+            {
+                return (teams[0].dpm + teams[1].dpm + teams[0].dpmAoe + teams[1].dpmAoe) / 2;
+            }
+        }
+        public double DpsScore
+        {
+            get
+            {
+                return teams[0].dps + teams[1].dps;
+            }
+        }
+        public double DpsScoreAoe
+        {
+            get
+            {
+                return teams[0].dpsAoe + teams[1].dpsAoe;
+            }
+        }
+        public double DpsScoreAvg
+        {
+            get
+            {
+                return (teams[0].dps + teams[1].dps + teams[0].dpsAoe + teams[1].dpsAoe) / 2;
+            }
+        }
+
+        public double ScoreMenu(int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return Score;
+                case 1:
+                    return ScoreAoe;
+                case 2:
+                    return ScoreAvg;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), "Invalid type");
+            }
+        }
+        public string Server
+        {
+            get
+            {
+                return teams[0].server;
+            }
+        }
+
+        public TeamPair(Team[] teams)
+        {
+            this.teams = teams;
         }
     }
 }
