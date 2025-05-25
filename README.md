@@ -18,7 +18,7 @@ A Tool for viewing and compairing teams, and team pairs from Genshin Impact.
 
 It will display a table of all of your registered teams, their members, and the DPM (or DPS) of the respective team in Single Target and in AoE. Can be sorted and searched.
 
-![uTKdG0QTPM](https://github.com/user-attachments/assets/f56be58c-c863-40e6-9fad-29825bf779c9)
+![image](https://github.com/Maie-r/GenshinTeamManager/blob/master/Showcase/TeamTable.png?raw=true)
 
 You can click on the name of a team to show its details, each team member along with their damage contribution to the total team output.
 
@@ -35,7 +35,7 @@ If you check the *Compare* checkbox, you can select another team to compare them
 
 It will display a table of all possible team pairings from the registered teams, along with their output in Single Target, AoE, and the average between the two. Can be sorted and searched.
 
-![SeG9uOGxcV](https://github.com/user-attachments/assets/2dc59868-8be5-46b3-af5a-795992aa3378)
+![image](https://github.com/Maie-r/GenshinTeamManager/blob/master/Showcase/TeamPairTable.png?raw=true)
 
 With the sort function, you can look up what is the theoretical best team pair for Abyss (disregarding enemies), if the abyss has more Single Target content, pick the pair with highest single target damage, if the abyss has more enemies in waves, pick the pair with highest AoE damage, if the abyss has both, pick the average.
 
