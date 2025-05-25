@@ -81,6 +81,10 @@ This tool is in no way associated to Hoyoverse
 
 
 ### Versions
+  * 0.9 <br>
+        - Now remembers selected teams when changing pages and after saving <br>
+        - Teams in the Team Pair table have their names colored by the element of the first character <br>
+        - Rewritten Team Pairing code to be more clean and less redundant <br>
   * 0.8.3 <br>
         - Ajustments to the guides <br>
         - Fixed accepting invalid damage values <br>
