@@ -78,6 +78,10 @@ Também foi usado [Mudblazor](https://mudblazor.com/) e [Drag and Drop Polyfill]
 Crédito a [wanderer.moe](https://wanderer.moe/) pelos ícones padrões dos personagens.
 
 ### Versions
+  * 0.9 <br>
+        - Agora lembra timmes selecionados quando trocando de paginas e depois de salvar <br>
+        - Times na tabela de Pares de Times têm seus nomes coloridos pelo elemento do primeiro personagem do time <br>
+        - Reescrito código de pareamento de times para ser mais limpo e menos redundante <br>
   * 0.8.3 <br>
         - Ajustes nas guias <br>
         - Corrigido aceitar valores inválidos de dano <br>
