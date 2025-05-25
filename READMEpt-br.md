@@ -18,7 +18,7 @@ Uma ferramenta para ver e comparar times, ou pares de times de Genshin Impact.
 
 Será exibido uma tabela com todos os times registrados, seus membros, e o DPM (ou DPS) do respectivo time em Alvo Único e em AoE. Pode ser ordenado e buscado.
 
-![uTKdG0QTPM](https://github.com/user-attachments/assets/f56be58c-c863-40e6-9fad-29825bf779c9)
+![image](https://github.com/Maie-r/GenshinTeamManager/blob/master/Showcase/TeamTable.png?raw=true)
 
 Você pode clicar no nome de um time para mostrar seus detalhes, cada membro e seu respectivo dano para o total do time.
 
@@ -35,7 +35,7 @@ Se você checar a caixa de seleção *Comparar*, você pode selecionar outro tim
 
 Exibe uma tabela com todas as combinações possíveis de pares de times registrados, junto com seus desempenhos em Alvo Único, Área de Efeito (AoE) e a média entre os dois. A tabela pode ser ordenada e pesquisada.
 
-![SeG9uOGxcV](https://github.com/user-attachments/assets/2dc59868-8be5-46b3-af5a-795992aa3378)
+![SeG9uOGxcV](https://github.com/Maie-r/GenshinTeamManager/blob/master/Showcase/TeamPairTable.png?raw=true)
 
 Com a função de ordenação, você pode descobrir qual é o par de times teoricamente melhor para o Abismo (desconsiderando os inimigos). Se o Abismo tiver mais conteúdo de Alvo Único, escolha o par com o maior dano de Alvo Único. Se o Abismo tiver mais inimigos em ondas, escolha o par com o maior dano em AoE. Se o Abismo tiver ambos, escolha pela média.
 
