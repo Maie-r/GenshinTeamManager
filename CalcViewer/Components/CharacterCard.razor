@@ -16,7 +16,7 @@
 	}
 
 	<div class="hole mx-0 p-0">
-		<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-1 text-center text-@(comparasion != null ? GetDiffColor(comparasion.dmg, character.dmg) : character.element)">@Calc.NumberClarity(character.dmg) @(comparasion != null ? $"({@GetDiffPercent(comparasion.dmgAoe, character.dmgAoe)})" : "")</h4>
+		<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-1 text-center text-@(comparasion != null ? GetDiffColor(comparasion.dmg, character.dmg) : character.element)">@Calc.NumberClarity(character.dmg) @(comparasion != null ? $"({@GetDiffPercent(comparasion.dmg, character.dmg)})" : "")</h4>
 	</div>
 	<div class="hole mx-0 p-0 text-center">
 		@if (percentage >= 0)
@@ -36,7 +36,7 @@
 	<div class="hole mx-0 p-0 text-center text-nowrap">
 		<MudTooltip class="col-2" Color="Color.Transparent">
 			<ChildContent>
-				<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-1 text-center text-@(comparasion != null ? GetDiffColor(comparasion.dmgAoe, character.dmgAoe) : character.element)">(@Calc.NumberClarity(character.dmgAoe)) @(comparasion != null ? $"({@GetDiffPercent(comparasion.dmg, character.dmg)})" : "")</h4>
+				<h4 class="p-0 fs-md-3 fs-lg-2 lh-sm m-1 text-center text-@(comparasion != null ? GetDiffColor(comparasion.dmgAoe, character.dmgAoe) : character.element)">(@Calc.NumberClarity(character.dmgAoe)) @(comparasion != null ? $"({@GetDiffPercent(comparasion.dmgAoe, character.dmgAoe)})" : "")</h4>
 			</ChildContent>
 			<TooltipContent>
 				<div class="text-light darken-95 rounded p-3">
@@ -50,7 +50,7 @@
 
 @code {
 	[Parameter]
-	public Character character { get; set; }
+	public required Character character { get; set; }
 
 	[Parameter]
 	public Character? comparasion { get; set; }
@@ -81,7 +81,7 @@
 		}
 		else if (selected > compare)
 		{
-			return "danger";
+			return "worse";
 		}
 		else
 		{

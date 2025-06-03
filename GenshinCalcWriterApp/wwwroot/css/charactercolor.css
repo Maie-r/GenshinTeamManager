@@ -19,7 +19,7 @@
 .text-geo { color: var(--color-geo); } /* Geo */
 
 .text-better { color: #40cf68; }
-.text-worse { color: #bd1e13; }
+.text-worse { color: #D22D4E; }
 
 .bg-pyro { background-color: rgba(245, 80, 39, 0.5); } /* Pyro */
 .bg-hydro { background-color: rgb(39, 115, 245, 0.5); } /* Hydro */
