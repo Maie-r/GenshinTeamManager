@@ -56,7 +56,7 @@ else
 								<MudIcon Icon="@Icons.Material.Filled.AddCircle" Title="Add" Size="Size.Large" Class="my-auto"/>
 							</div>
 						</a>
-						<h5 class="draggable m-2 text-light" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(selected.characters[i])" @onmousedown="(e) => StartDrag(e, selected.characters[i])" @ondragend="StopDrag"> Click to add a character</h5>
+						<h5 class="draggable m-2 text-light" draggable="true" @ondragleave="DragDropApi.OuttaHere" @ondragover="() => DragDropApi.OverHere(i)" @onmousedown="(e) => DragDropApi.StartDrag(i)" @ondragend="() => DragDropApi.StopDrag(selected)"> Click to add a character</h5>
 					</div>
 				}
 				else // Actual character
@@ -66,7 +66,7 @@ else
 							<a class="clickable">
 								<img src="@selected.characters[i].img" class="col-6 d-flex mx-auto" draggable="false" @onclick="() => ChangeCharacter(selected.characters[i])" />
 							</a>
-							<div class="draggable bg-@selected.characters[i].element rounded text-light" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(selected.characters[i])" @ondragstart="(e) => StartDrag(e, selected.characters[i])" @ondragend="StopDrag">
+							<div class="draggable bg-@selected.characters[i].element rounded text-light" draggable="true" @ondragleave="DragDropApi.OuttaHere" @ondragover="() => DragDropApi.OverHere(i)" @ondragstart="(e) => DragDropApi.StartDrag(i)" @ondragend="() => DragDropApi.StopDrag(selected)">
 								<h4 class="col-12 p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> @selected.characters[i].name </h4>
 							</div>
 						</div>
@@ -261,60 +261,4 @@ else
 	{
 		OnDelete.InvokeAsync(selectedcondensed);
 	}
-
-	void StartDrag(MouseEventArgs e, Character chara) // Characacter Draggin'
-	{ 
-		Logger.LogInformation($"Started drag with {chara.name}! {e.Detail}");
-		dragged = selected.characters.IndexOf(chara);
-		StateHasChanged();
-	}
-
-	void StopDrag(MouseEventArgs e) 
-	{
-		if (over >=0)
-		{
-			if (over != dragged)
-			{
-				Logger.LogInformation($"Switcheroo!");
-				foreach (var character in selected.characters){
-					Logger.LogInformation($"{character.name}");
-				}
-				Character temp = selected.characters[over];
-				selected.characters[over] = selected.characters[dragged];
-				selected.characters[dragged] = temp;
-				string temp2 = selectedcondensed.text[over+1];
-				selectedcondensed.text[over + 1] = selectedcondensed.text[dragged + 1];
-				selectedcondensed.text[dragged + 1] = temp2;
-				foreach (var character in selected.characters)
-				{
-					Logger.LogInformation($"{character.name}");
-				}
-				Update();
-			}
-			over = -1;
-			dragged = -1;
-		}
-		else 
-		{
-			Logger.LogInformation($"Stopped drag!");
-			dragged = -1;
-		}
-		StateHasChanged();
-
-	}
-
-	void OverHere(Character over)
-	{
-		Logger.LogInformation($"Mouse over {over.name}!");
-		this.over = selected.characters.IndexOf(over);
-		StateHasChanged();
-	}
-
-	void OuttaHere(MouseEventArgs e)
-	{
-		Logger.LogInformation($"Mouse out!");
-		over = -1;
-		StateHasChanged();
-	}
-	// End Characacter Draggin'
 }
