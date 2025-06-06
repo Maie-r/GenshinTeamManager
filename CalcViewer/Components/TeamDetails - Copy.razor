@@ -7,13 +7,12 @@
 @if (selected is null)
 {
 	<span> Loading Team </span>
-
 }
 else
 {
 	<div class="p-2 darken-50 veryrounded mb-2">
 		<div class="d-flex flex-row flex-wrap justify-content-evenly">
-			<CascadingValue Value="selected" Name="Selected Team">
+			@*<CascadingValue Value="selected" Name="Selected Team">
                     <CascadingValue Value="compare" Name="Team to compare">
 						<TeamDetailsChild></TeamDetailsChild>
 					</CascadingValue>
@@ -25,13 +24,15 @@ else
 						<TeamDetailsChild></TeamDetailsChild>
 					</CascadingValue>
 				</CascadingValue>
-			}
-			@*@if (compare == null) // single team display
+			}*@
+			@if (compare == null) // single team display
 			{
 				<h3 class="col-12 text-center mx-auto"> @selected.name (@(selected.rotlen)s)</h3>
 				for (int i = 0; i < selected.characters.Count; i++)
 				{
 					var local = i;
+					<CharacterCard character="@selected.characters[local]" percentage="@selectpercentages[local]"/>
+					@*
 					<div class="row d-flex flex-column justify-content-center col-6 col-sm-6 col-md-3 col-lg-3 d-flex">
 						<img draggable="false" src="@selected.characters[i].img" class="charimg" />
 						<h4 class="col-11 p-0 mx-2 fs-md-3 fs-lg-2 lh-sm m-0 bg-@selected.characters[i].element text-center"> @selected.characters[i].name </h4>
@@ -57,13 +58,13 @@ else
 								</ChildContent>
 								<TooltipContent>
 									<div class="text-light darken-95 rounded p-3">
-									@selected.characters[local].dmgAoe
+									@selected.characters[local].dmg * @selected.characters[local].aoe
 									</div>
 								</TooltipContent>
 							</MudTooltip>
 						</div>
-
 					</div>
+					*@
 				}
 			}
 			else // team comparasion display
@@ -71,7 +72,7 @@ else
 				<h3 class="col-12 text-center mx-auto"> @selected.name <span class="text-@GetDiffColor(-compare.rotlen, -selected.rotlen)">(@(selected.rotlen)s)</span></h3>
 				<div class="col-12 text-center mx-auto">
 					<h4 class="hole text-@GetDiffColor(compare.som, selected.som)"> @Calc.NumberClarity(selected.som) dmg per rotation (@GetDiffPercent(compare.som, selected.som))</h4>
-					@if (calc.dmgType == "dps")
+					@if (Calc.dmgType == "dps")
 					{
 						<h4 class="hole text-@GetDiffColor(compare.dpm, selected.dpm)"> @((selected.dps/1000).ToString("N2"))k dps (@GetDiffPercent(compare.dpm, selected.dpm))</h4>
 						<h4 class="hole text-@GetDiffColor(compare.dpmAoe, selected.dpmAoe)"> @(Calc.ToDps(selected.dpmAoe / 1000, selected.rotlen).ToString("N2"))k dps in Aoe (@GetDiffPercent(compare.dpmAoe, selected.dpmAoe))</h4>
@@ -85,6 +86,12 @@ else
 				for (int local = 0; local < selected.characters.Count; local++) // from selected
 				{
 					int i = local;
+					<CharacterCard character="@selected.characters[local]" comparasion="@compare.characters[local]" ImageSize="col-6" AllowDrag="true" 
+					OnDragStart="@((e) => DragDropApi.StartDrag(e, selected, 0))" 
+					OnDragEnd="() => DragDropApi.StopDrag(selected, 0)" 
+					OnMouseOver="@((e) => DragDropApi.OverHere(e, selected, 0))" 
+					OnMouseOut="DragDropApi.OuttaHere" />
+					@*
 					<div class="row d-flex justify-content-center col-6 col-sm-6 col-md-3 col-lg-3 d-flex">
 						<a class="text-center text-light" draggable="true" @ondragleave="OuttaHere" @ondragover="() => OverHere(selected.characters[i], 0)" @ondragstart="(e) => StartDrag(e, selected.characters[i], 0)" @ondragend="StopDrag">
 							<img draggable="false" src="@selected.characters[i].img" class="charimg mx-auto col-6" />
@@ -92,12 +99,18 @@ else
 						</a>
 						<h4 class="hole p-0 fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor(compare.characters[i].dmg, selected.characters[i].dmg)">@Calc.NumberClarity(selected.characters[i].dmg) (@GetDiffPercent(compare.characters[i].dmg, selected.characters[i].dmg))</h4>
 						<h4 class="hole p-0 fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor(compare.characters[i].dmgAoe, selected.characters[i].dmgAoe)">@Calc.NumberClarity(selected.characters[i].dmgAoe) (@GetDiffPercent(compare.characters[i].dmgAoe, selected.characters[i].dmgAoe)) </h4>
-					</div>
+					</div>*@
 				}
 				<div class="my-2 col-12 divideer darken-50"></div>
 				for (int local = 0; local < compare.characters.Count; local++) // from compare
 				{
 					int i = local;
+					<CharacterCard character="@compare.characters[local]" comparasion="@selected.characters[local]" ImageSize="col-6" AllowDrag="true" 
+					OnDragStart="@((e) => DragDropApi.StartDrag(e, compare, 1))" 
+					OnDragEnd="() => DragDropApi.StopDrag(compare, 1)" 
+					OnMouseOver="@((e) => DragDropApi.OverHere(e, compare, 1))" 
+					OnMouseOut="DragDropApi.OuttaHere" />
+					@*
 					<div class="row d-flex justify-content-center col-6 col-sm-6 col-md-3 col-lg-3 d-flex">
 						<h4 class="hole p-0 d-sm-none d-md-block fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor(selected.characters[i].dmg, compare.characters[i].dmg)">@Calc.NumberClarity(compare.characters[i].dmg) (@GetDiffPercent(selected.characters[i].dmg, compare.characters[i].dmg))</h4>
 						<h4 class="hole p-0 d-sm-none d-md-block fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor(selected.characters[i].dmgAoe, compare.characters[i].dmgAoe)">@Calc.NumberClarity(compare.characters[i].dmgAoe) (@GetDiffPercent(selected.characters[i].dmgAoe, compare.characters[i].dmgAoe)) </h4>
@@ -108,7 +121,7 @@ else
 						</a>
 						<h4 class="hole p-0 d-sm-block d-md-none fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor(selected.characters[i].dmg, compare.characters[i].dmg)">@Calc.NumberClarity(compare.characters[i].dmg) (@GetDiffPercent(selected.characters[i].dmg, compare.characters[i].dmg))</h4>
 						<h4 class="hole p-0 d-sm-block d-md-none fs-md-3 fs-lg-3 lh-sm m-0 text-center text-@GetDiffColor(selected.characters[i].dmgAoe, compare.characters[i].dmgAoe)">@Calc.NumberClarity(compare.characters[i].dmgAoe) (@GetDiffPercent(selected.characters[i].dmgAoe, compare.characters[i].dmgAoe)) </h4>
-					</div>
+					</div>*@
 				}
 				<h3 class="col-12 text-center mx-auto"> @compare.name <span class="text-@GetDiffColor(-selected.rotlen, -compare.rotlen)">(@(compare.rotlen)s)</span></h3>
 			}
@@ -117,7 +130,7 @@ else
 		{
 			<div class="col-12 text-center mx-auto">
 				<h4 class="hole"> @Calc.NumberClarity(selected.som) dmg per rotation </h4>
-				@if (calc.dmgType == "dps")
+				@if (Calc.dmgType == "dps")
 				{
 					<h4 class="hole"> @((selected.dps / 1000).ToString("N2"))k dps</h4>
 					<h4 class="hole"> @(Calc.ToDps(selected.dpmAoe / 1000, selected.rotlen).ToString("N2"))k dps in Aoe</h4>
@@ -133,7 +146,7 @@ else
 		{
 			<div class="col-12 text-center mx-auto">
 				<h4 class="hole text-@GetDiffColor(selected.som, compare.som)"> @Calc.NumberClarity(compare.som) dmg per rotation (@GetDiffPercent(selected.som, compare.som))</h4>
-				@if (calc.dmgType == "dps")
+				@if (Calc.dmgType == "dps")
 				{
 					<h4 class="hole text-@GetDiffColor(selected.dpm, compare.dpm)"> @((compare.dps/1000).ToString("N2"))k dps (@GetDiffPercent(selected.dpm, compare.dpm))</h4>
 					<h4 class="hole text-@GetDiffColor(selected.dpmAoe, compare.dpmAoe)"> @(Calc.ToDps(compare.dpmAoe/1000, compare.rotlen).ToString("N2"))k dps in Aoe (@GetDiffPercent(selected.dpmAoe, compare.dpmAoe))</h4>
@@ -145,8 +158,7 @@ else
 				}
 			</div>
 			<p> * You can drag and drop the characters from the same team to change their position</p>
-		}*@
-		</div>
+		}
 	</div>
 }
 
@@ -157,8 +169,8 @@ else
 	[CascadingParameter(Name = "Team to compare")]
 	public Team? compare { get; set; }
 
-	int[] dragged = new int[] { -1, -1 };
-	int[] over = new int[] { -1, -1 };
+	[Parameter]
+	public string? ImageSize { get; set; }
 
 	List<double> selectpercentages;
 	bool ShowAoe = false;
@@ -176,7 +188,7 @@ else
 		}
 		else if (selected > compare)
 		{
-			return "danger";
+			return "worse";
 		}
 		else
 		{
@@ -203,66 +215,4 @@ else
 			StateHasChanged(); 
 		}
 	}
-
-	void StartDrag(MouseEventArgs e, Character chara, int type) // (0 for select, 1 for compare) Characacter Draggin'
-	{
-		Logger.LogInformation($"Started drag with {chara.name}!");
-		if (type == 0)
-		{
-			dragged[0] = selected.characters.IndexOf(chara);
-		}
-		else 
-		{
-			dragged[1] = compare.characters.IndexOf(chara);
-		}
-	}
-
-	void StopDrag(MouseEventArgs e)
-	{
-		if (over[0] >= 0)
-		{
-			if (over[0] != dragged[0] && dragged[0] >= 0)
-			{
-				Logger.LogInformation($"Switcheroo!");
-				Character temp = selected.characters[over[0]];
-				selected.characters[over[0]] = selected.characters[dragged[0]];
-				selected.characters[dragged[0]] = temp;
-			}
-		}
-		else if (over[1] >= 0)
-		{
-			Logger.LogInformation($"Ahoy!");
-			if (over[1] != dragged[1] && dragged[1] >= 0)
-			{
-				Logger.LogInformation($"Switcheroo!");
-				Character temp = compare.characters[over[1]];
-				compare.characters[over[1]] = compare.characters[dragged[1]];
-				compare.characters[dragged[1]] = temp;
-			}
-		}
-		dragged[0] = dragged[1] = - 1;
-		over[0] = over[1] = -1;
-		StateHasChanged();
-
-	}
-
-	void OverHere(Character overchar, int i)
-	{
-		Logger.LogInformation($"Mouse over {overchar.name}!");
-		if (i == 0)
-		{
-			over[0] = selected.characters.IndexOf(overchar);
-		}
-		else 
-		{
-			over[1] = compare.characters.IndexOf(overchar);
-		}
-	}
-
-	void OuttaHere(MouseEventArgs e)
-	{
-		Logger.LogInformation($"Mouse out!");
-		over[0] = over[1] = -1;
-	}
-	// End Characacter Draggin'
 }
