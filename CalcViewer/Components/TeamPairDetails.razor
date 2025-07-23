@@ -66,10 +66,10 @@ else
 		{
 			<div>
 				<h3 class="col-12 text-center mx-auto">
-					<span class="draggable clickable team" draggable="true" @ondragleave="DragDropApi<Team>.OuttaHere" @ondragover="() => DragDropApi<Team>.OverHere(selected.teams, 0)" @ondragstart="() => DragDropApi<Team>.StartDrag(selected.teams, 0)" @ondragend="() => DragDropApi<Team>.StopDrag(true)">
+					<span class="draggable clickable team" draggable="true" @ondragleave="DragDropApi<Team>.OuttaHere" @ondragover="() => DragDropApi<Team>.OverHere(selected.teams, 0)" @ondragstart="() => DragDropApi<Team>.StartDrag(selected.teams, 0)" @ondragend="() => DragDropApi<Team>.StopDrag(true, DragDropBehaviour.Swap)">
 						@selected.teams[0].name
 					</span> and
-					<span class="draggable team" draggable="true" @ondragleave="DragDropApi<Team>.OuttaHere" @ondragover="() => DragDropApi<Team>.OverHere(selected.teams, 1)" @ondragstart="() => DragDropApi<Team>.StartDrag(selected.teams, 1)" @ondragend="() => DragDropApi<Team>.StopDrag(true)">
+					<span class="draggable team" draggable="true" @ondragleave="DragDropApi<Team>.OuttaHere" @ondragover="() => DragDropApi<Team>.OverHere(selected.teams, 1)" @ondragstart="() => DragDropApi<Team>.StartDrag(selected.teams, 1)" @ondragend="() => DragDropApi<Team>.StopDrag(true, DragDropBehaviour.Swap)">
 						@selected.teams[1].name
 					</span>
 				</h3>
@@ -94,7 +94,7 @@ else
 										@ondragleave="DragDropApi<Character>.OuttaHere" 
 											@ondragover="() => DragDropApi<Character>.OverHere(selected.teams[j].characters, i)"
 										   @ondragstart="() => DragDropApi<Character>.StartDrag(selected.teams[j].characters, i)"
-										   @ondragend="() => DragDropApi<Character>.StopDrag(true)">
+										   @ondragend="() => DragDropApi<Character>.StopDrag(true, DragDropBehaviour.Swap)">
 											<img src="@selected.teams[j].characters[i].img" draggable="false" class="charimg col-12" />
 											<h5 class="col-11 p-0 fs-md-5 fs-lg-4 lh-sm m-0 text-center bg-@selected.teams[j].characters[i].element">
 											@selected.teams[j].characters[i].name </h5>
@@ -172,10 +172,10 @@ else
 			</div>
 			<div>
 				<h3 class="col-12 text-center mx-auto">
-					<span class="draggable clickable team" draggable="true" @ondragleave="DragDropApi<Team>.OuttaHere" @ondragover="() => DragDropApi<Team>.OverHere(compaired.teams, 0)" @ondragstart="(e) => DragDropApi<Team>.StartDrag(compaired.teams, 0)" @ondragend="() => DragDropApi<Team>.StopDrag(true)">
+					<span class="draggable clickable team" draggable="true" @ondragleave="DragDropApi<Team>.OuttaHere" @ondragover="() => DragDropApi<Team>.OverHere(compaired.teams, 0)" @ondragstart="(e) => DragDropApi<Team>.StartDrag(compaired.teams, 0)" @ondragend="() => DragDropApi<Team>.StopDrag(true, DragDropBehaviour.Swap)">
 						@compaired.teams[0].name
 					</span> and
-					<span class="draggable team" draggable="true" @ondragleave="DragDropApi<Team>.OuttaHere" @ondragover="() => DragDropApi<Team>.OverHere(compaired.teams, 1)" @ondragstart="(e) => DragDropApi<Team>.StartDrag(compaired.teams, 1)" @ondragend="() => DragDropApi<Team>.StopDrag(true)">
+					<span class="draggable team" draggable="true" @ondragleave="DragDropApi<Team>.OuttaHere" @ondragover="() => DragDropApi<Team>.OverHere(compaired.teams, 1)" @ondragstart="(e) => DragDropApi<Team>.StartDrag(compaired.teams, 1)" @ondragend="() => DragDropApi<Team>.StopDrag(true, DragDropBehaviour.Swap)">
 						@compaired.teams[1].name
 					</span>
 				</h3>
@@ -198,7 +198,7 @@ else
 									
 
 									<div class="row d-flex justify-content-center col-3">
-										<a class="text-light text-center" draggable="true" @ondragleave="DragDropApi<Character>.OuttaHere" @ondragover="() => DragDropApi<Character>.OverHere(compaired.teams[j].characters, i)" @ondragstart="() => DragDropApi<Character>.StartDrag(compaired.teams[j].characters, i)" @ondragend="() => DragDropApi<Character>.StopDrag(true)">
+										<a class="text-light text-center" draggable="true" @ondragleave="DragDropApi<Character>.OuttaHere" @ondragover="() => DragDropApi<Character>.OverHere(compaired.teams[j].characters, i)" @ondragstart="() => DragDropApi<Character>.StartDrag(compaired.teams[j].characters, i)" @ondragend="() => DragDropApi<Character>.StopDrag(true, DragDropBehaviour.Swap)">
 											<img src="@compaired.teams[j].characters[i].img" draggable="false" class="charimg col-12"/>
 											<h5 class="draggable col-11 p-0 fs-md-4 fs-lg-3 lh-sm m-0 text-center bg-@compaired.teams[j].characters[i].element">
 											@compaired.teams[j].characters[i].name </h5>

@@ -88,7 +88,7 @@ else
 					int i = local;
 					<CharacterCard character="@selected.characters[local]" comparasion="@compare.characters[local]" ImageSize="col-6" AllowDrag="true" 
 					OnDragStart="@(() => DragDropApi<Character>.StartDrag(selected.characters, i))" 
-					OnDragEnd="() => DragDropApi<Character>.StopDrag(true)" 
+					OnDragEnd="() => DragDropApi<Character>.StopDrag(true, DragDropBehaviour.Swap)" 
 					OnMouseOver="@(() => DragDropApi<Character>.OverHere(selected.characters, i))" 
 					OnMouseOut="DragDropApi<Character>.OuttaHere" />
 				}
@@ -98,7 +98,7 @@ else
 					int i = local;
 					<CharacterCard character="@compare.characters[local]" comparasion="@selected.characters[local]" ImageSize="col-6" AllowDrag="true" 
 					OnDragStart="@(() => DragDropApi<Character>.StartDrag(compare.characters, i))" 
-					OnDragEnd="() => DragDropApi<Character>.StopDrag(true)" 
+					OnDragEnd="() => DragDropApi<Character>.StopDrag(true, DragDropBehaviour.Swap)" 
 					OnMouseOver="@(() => DragDropApi<Character>.OverHere(compare.characters, i))" 
 					OnMouseOut="DragDropApi<Character>.OuttaHere" />
 				}

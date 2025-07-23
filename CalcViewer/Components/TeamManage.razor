@@ -56,7 +56,7 @@ else
 								<MudIcon Icon="@Icons.Material.Filled.AddCircle" Title="Add" Size="Size.Large" Class="my-auto"/>
 							</div>
 						</a>
-						<h5 class="draggable m-2 text-light" draggable="true" @ondragleave="DragDropApi<Character>.OuttaHere" @ondragover="() => DragDropApi<Character>.OverHere(selected.characters, i)" @onmousedown="() => DragDropApi<Character>.StartDrag(selected.characters, i)" @ondragend="() => DragDropApi<Character>.StopDrag(true)"> Click to add a character</h5>
+						<h5 class="draggable m-2 text-light" draggable="true" @ondragleave="DragDropApi<Character>.OuttaHere" @ondragover="() => DragDropApi<Character>.OverHere(selected.characters, i)" @onmousedown="() => DragDropApi<Character>.StartDrag(selected.characters, i)" @ondragend="() => DragDropApi<Character>.StopDrag(true, DragDropBehaviour.Swap)"> Click to add a character</h5>
 					</div>
 				}
 				else // Actual character
@@ -66,7 +66,7 @@ else
 							<a class="clickable">
 								<img src="@selected.characters[i].img" class="col-6 d-flex mx-auto" draggable="false" @onclick="() => ChangeCharacter(selected.characters[i])" />
 							</a>
-							<div class="draggable bg-@selected.characters[i].element rounded text-light" draggable="true" @ondragleave="DragDropApi<Character>.OuttaHere" @ondragover="() => DragDropApi<Character>.OverHere(selected.characters, i)" @ondragstart="() => DragDropApi<Character>.StartDrag(selected.characters, i)" @ondragend="() => DragDropApi<Character>.StopDrag(true)">
+							<div class="draggable bg-@selected.characters[i].element rounded text-light" draggable="true" @ondragleave="DragDropApi<Character>.OuttaHere" @ondragover="() => DragDropApi<Character>.OverHere(selected.characters, i)" @ondragstart="() => DragDropApi<Character>.StartDrag(selected.characters, i)" @ondragend="() => DragDropApi<Character>.StopDrag(true, DragDropBehaviour.Swap)">
 								<h4 class="col-12 p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> @selected.characters[i].name </h4>
 							</div>
 						</div>
