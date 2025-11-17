@@ -154,11 +154,11 @@ else
 				@if (Calc.dmgType == "dps")
 				{
 					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor(compaired.Score, selected.Score)">
-						Total: @Math.Round(selected.DpsScore, 2)k dps Single Target (@GetDiffPercent(compaired.Score, selected.Score)) </h4>
+						Total: @Math.Round(selected.DpsScore / 1000, 2)k dps Single Target (@GetDiffPercent(compaired.Score, selected.Score)) </h4>
 					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor(compaired.ScoreAoe, selected.ScoreAoe)">
-						Total: @Math.Round(selected.DpsScoreAoe, 2)k dps Aoe (@GetDiffPercent(compaired.ScoreAoe, selected.ScoreAoe)) </h4>
+						Total: @Math.Round(selected.DpsScoreAoe / 1000, 2)k dps Aoe (@GetDiffPercent(compaired.ScoreAoe, selected.ScoreAoe)) </h4>
 					<h4 class="hole p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center text-@GetDiffColor(compaired.ScoreAvg, selected.ScoreAvg)">
-						Total: @Math.Round(selected.DpsScoreAvg, 2)k dps Average (@GetDiffPercent(compaired.ScoreAvg, selected.ScoreAvg)) </h4>
+						Total: @Math.Round(selected.DpsScoreAvg / 1000, 2)k dps Average (@GetDiffPercent(compaired.ScoreAvg, selected.ScoreAvg)) </h4>
 				}
 				else
 				{
