@@ -93,6 +93,11 @@ else
 		}
 	</div>
 }
+<style>
+	.mud-tooltip {
+		pointer-events: none;
+	}
+</style>
 
 @code 
 {
@@ -100,7 +105,7 @@ else
 	[Parameter]
 	public TeamCondensed? selected { get; set; }
 	TeamCondensed template;
-	bool MultipleAccount = false;
+	//bool MultipleAccount = false;
 	bool newteam = false;
 	string searchString = "";
 
@@ -117,6 +122,9 @@ else
 	[Parameter]
 	public EventCallback<string> OnUpdate3 { get; set; }
 
+	[Parameter]
+	public EventCallback OnLoaded { get; set; }
+
 	string error = "";
 	protected override async Task OnInitializedAsync()
 	{
@@ -125,7 +133,7 @@ else
 		List<string[]> teamtext = Calc.ALLTeams(teamlist);
 		if (Calc.GetAcountAmount(teamlist) > 1)
 		{
-			MultipleAccount = true;
+			//MultipleAccount = true;
 		}
 		if (teamlist.Count != teamtext.Count)
 		{
@@ -136,10 +144,11 @@ else
 			TeamCondensed temp = new TeamCondensed(teamlist[i], teamtext[i], i);
 			teams.Add(teamlist[i].name, temp);
 		}
-		if (selectedtext != null){
+		if (!String.IsNullOrEmpty(selectedtext)){
 			selected = teams[selectedtext];
 			StateHasChanged();
 		}
+		await OnLoaded.InvokeAsync();
 	}
 
 	void Save()
@@ -189,13 +198,13 @@ else
 		if (team == selected)
 		{
 			selected = null;
-			OnTeamSelected.InvokeAsync(null);
+			await OnTeamSelected.InvokeAsync(null);
 		}
 		else
 		{
 			selected = team;
 			await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
-			OnTeamSelected.InvokeAsync(selected.team.name);
+			await OnTeamSelected.InvokeAsync(selected.team.name);
 		}
 
 	}

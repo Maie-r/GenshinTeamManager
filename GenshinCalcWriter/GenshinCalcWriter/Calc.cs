@@ -700,7 +700,7 @@ namespace GenshinTeamCalc
         }
         static List<TeamPair> GetValidPairs(List<Team> teams)
         {
-            StreamWriter dumper = new StreamWriter(@"E:/projects/GENSHIN/dump.txt", true);
+            StreamWriter dumper = new StreamWriter("dump.txt", true);
             List<TeamPair> valid = new List<TeamPair>();
             for (int i = 0; i < teams.Count; i++)
             {

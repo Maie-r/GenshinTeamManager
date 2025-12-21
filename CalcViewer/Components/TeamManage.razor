@@ -66,7 +66,7 @@ else
 							<a class="clickable">
 								<img src="@selected.characters[i].img" class="col-6 d-flex mx-auto" draggable="false" @onclick="() => ChangeCharacter(selected.characters[i])" />
 							</a>
-							<div class="draggable bg-@selected.characters[i].element rounded text-light" draggable="true" @ondragleave="DragDropApi<Character>.OuttaHere" @ondragover="() => DragDropApi<Character>.OverHere(selected.characters, i)" @ondragstart="() => DragDropApi<Character>.StartDrag(selected.characters, i)" @ondragend="() => DragDropApi<Character>.StopDrag(true, DragDropBehaviour.Swap)">
+							<div class="draggable bg-@selected.characters[i].element rounded text-light" draggable="true" @ondragleave="DragDropApi<Character>.OuttaHere" @ondragover="() => DragDropApi<Character>.OverHere(selected.characters, i)" @ondragstart="() => DragDropApi<Character>.StartDrag(selected.characters, i)" @ondragend="() => SwapCharacters()">
 								<h4 class="col-12 p-0 fs-md-3 fs-lg-2 lh-sm m-0 text-center"> @selected.characters[i].name </h4>
 							</div>
 						</div>
@@ -163,8 +163,8 @@ else
 	Character? temp;
 	bool characterchange = false;
 	bool relativeChange = false;
-	int dragged = -1;
-	int over = -1;
+	//int dragged = -1;
+	//int over = -1;
 	bool yousure = false;
 
 	[Parameter]
@@ -205,20 +205,20 @@ else
 	void HandleCharSelected(Character chara)
 	{
 		selectedcondensed.RelativeReset(temp); // so it doesn't break'
-		Logger.LogInformation($"{temp.dmg} {temp.relative}");
+		Logger.LogInformation($"damage: {temp.dmg} Relative: {temp.relative}");
 		temp.name = chara.name;
 		temp.element = chara.element;
 		temp.img = chara.img;
 		temp.aoe = chara.aoe;
 		temp.relative = -1;
-		
+
 		Update();
 		/*if (temp.dmg < 10)
 		{
 			temp.relative = -1;
 			temp.dmg = 1000;
-		}*/
-		Logger.LogInformation($"{temp.dmg} {temp.relative}");
+			}*/
+										Logger.LogInformation($"{temp.dmg} {temp.relative}");
 		temp = null;
 	}
 
@@ -236,6 +236,8 @@ else
 
 	void RelativeChanged(int i)
 	{
+		//Logger.LogInformation("Ahoy!");
+		//Logger.LogInformation($"{selectedRelative} {i}");
 		selectedcondensed.RelativeChange(selectedRelative, i);
 		Update();
 		RelativeClose();
@@ -245,6 +247,13 @@ else
 	{
 		relativeChange = false;
 		selectedRelative = null;
+	}
+
+	void SwapCharacters()
+	{
+		DragDropApi<Character>.StopDrag(true, DragDropBehaviour.Swap);
+		selectedcondensed.SwapCharacters();
+		Update();
 	}
 
 	void Yousure()

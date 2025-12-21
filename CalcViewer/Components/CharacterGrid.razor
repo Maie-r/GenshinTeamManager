@@ -146,7 +146,7 @@ else
 	async void Select(Character chara)
 	{
 		await OnCharSelected.InvokeAsync(chara);
-		Exit.InvokeAsync();
+		await Exit.InvokeAsync();
 	}
 
 	async void Select(CharacterCondensed chara)

@@ -168,7 +168,7 @@ else
         if (Compare)
         {
             compaired = context;
-            oncompare.InvokeAsync(compaired);
+            await oncompare.InvokeAsync(compaired);
         }
         else
         {
@@ -181,7 +181,7 @@ else
                 selected = context;
                 await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
             }
-            onselect.InvokeAsync(selected);
+            await onselect.InvokeAsync(selected);
         }
     }
 

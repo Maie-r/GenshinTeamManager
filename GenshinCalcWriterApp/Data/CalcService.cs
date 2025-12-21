@@ -10,7 +10,7 @@ namespace CalcViewer.Data
 {
     public static class CalcService
     {
-        public static string hashmemstring;
+        public static string hashmemstring = "";
         static int[] memory = { -1, -1}; // 0, 1: Team table
         //private static TeamCondensed memory2; // Team manage
         private static TeamPair[] teamPairs = new TeamPair[2]; // 0: selected, 1: compare
@@ -55,7 +55,7 @@ namespace CalcViewer.Data
             }
             for (int i = 0; i < teamPairs.Length; i++)
             {
-                teamPairs[i] = null;
+                teamPairs[i] = default;
             }
         }
 

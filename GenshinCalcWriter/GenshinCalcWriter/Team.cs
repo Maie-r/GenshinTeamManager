@@ -298,6 +298,60 @@ namespace GenshinTeamCalc
             Debug.WriteLine($"{team.name} {this.innername}");
         }
 
+        public void SwapCharacters()
+        {
+            foreach (string temp in this.text)
+            {
+                Debug.WriteLine(temp);
+            }
+            foreach (Character c in this.team.characters)
+            {
+                Debug.WriteLine($"{c.name}: {c.dmg}");
+            }
+            List<int> indexes = new List<int>();
+            for (int i = 0; i < this.team.characters.Count; i++)
+            {
+                if (!this.text[i+1].Contains(this.team.characters[i].name))
+                {
+                    indexes.Add(i);
+                }
+            }
+            if (indexes.Count <= 0)
+            {
+                Update();
+                return;
+            }
+            else if (indexes.Count == 2)
+            {
+                if (this.text[indexes[1]+1].Contains(this.team.characters[indexes[0]].name) &&
+                    this.text[indexes[0] + 1].Contains(this.team.characters[indexes[1]].name))
+                {
+                    Character temp = this.team.characters[indexes[0]];
+                    string temptext = this.text[indexes[0] + 1];
+                    this.text[indexes[0] + 1] = this.text[indexes[1] + 1];
+                    this.text[indexes[1] + 1] = temptext;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Swapped characters are not consistent in names");
+                }
+            }
+            else
+            {
+                throw new IndexOutOfRangeException($"Couldn't swap characters, more than two changes were made.");
+            }
+
+            foreach (string temp in this.text)
+            {
+                Debug.WriteLine(temp);
+            }
+            foreach (Character c in this.team.characters)
+            {
+                Debug.WriteLine($"{c.name}: {c.dmg}");
+            }
+            Update();
+        }
+
         public void RelativeChange(CharacterCondensed chara, int i)
         {
             for (int j = 1; j < this.text.Length; j++)
@@ -331,11 +385,13 @@ namespace GenshinTeamCalc
                     break;
                 }
             }
+            
             Update();
         }
 
         public void RelativeReset(Character chara)
         {
+            Debug.WriteLine("Ahoy!");
             for (int j = 1; j < this.text.Length; j++)
             {
                 if (this.text[j].StartsWith(chara.name))

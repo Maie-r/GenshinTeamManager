@@ -150,20 +150,20 @@ else
         if (Compare)
         {
             compaired = team;
-            oncompare.InvokeAsync(Calc.teams.IndexOf(compaired));
+            await oncompare.InvokeAsync(Calc.teams.IndexOf(compaired));
         }
         else
         {
             if (team == selected)
             {
                 selected = null;
-                onselect.InvokeAsync(-1);
+                await onselect.InvokeAsync(-1);
             }
             else
             {
                 selected = team;
                 await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
-                onselect.InvokeAsync(Calc.teams.IndexOf(selected));
+                await onselect.InvokeAsync(Calc.teams.IndexOf(selected));
             }
             
         }

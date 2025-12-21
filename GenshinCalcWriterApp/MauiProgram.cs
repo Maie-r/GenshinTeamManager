@@ -23,9 +23,9 @@ namespace GenshinCalcWriterApp
             {
                 Calc.LoadStuff(true);
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception("Couldn't load data");
+                throw new Exception("Couldn't load data, " + e.Message);
             }
             /*
             try

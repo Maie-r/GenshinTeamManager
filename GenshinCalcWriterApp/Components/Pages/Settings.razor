@@ -68,11 +68,11 @@ else
 
 @code 
 {
-    string error;
+    string error = "";
     bool errorfix = false;
     bool EditOn = false;
     string advancedop = "shown";
-    string db, teamdb, product, dmgType;
+    string db, teamdb, product, dmgType = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,7 +93,7 @@ else
                 FileName = db,
                 UseShellExecute = true
             });
-            error = null;
+            error = "";
         }
         catch
         {
@@ -110,7 +110,7 @@ else
                 FileName = teamdb,
                 UseShellExecute = true
             });
-            error = null;
+            error = "";
         }
         catch
         {
@@ -143,7 +143,7 @@ else
         }
         else
         {
-            error = null;
+            error = "";
             StreamWriter writer = new StreamWriter(Calc.configlocation, false);
             writer.Write($"DB;{db};\nTeamDB;{teamdb};\nOutput;{product};\ndmgtype;{dmgType}");
             writer.Close();
